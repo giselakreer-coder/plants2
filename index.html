@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Pflanzen">
+<meta name="theme-color" content="#0f0f0f">
+<title>Meine Pflanzen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f0f0f;
+  --ink2: #3a3a3a;
+  --ink3: #888;
+  --paper: #fafaf8;
+  --white: #ffffff;
+  --rule: #e8e8e4;
+  --c1: #27187D; --c2: #FE8601; --c3: #758AFD;
+  --c4: #AEB8FF; --c5: #F1F2F6; --c6: #FEC1FE;
+  --c7: #FE8D5C; --c8: #FE98FE;
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans: 'DM Sans', system-ui, sans-serif;
+  --r: 4px; --r-lg: 12px; --r-xl: 20px;
+}
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html,body { height:100%; background:var(--paper); font-family:var(--sans); color:var(--ink); overflow:hidden; }
+
+/* ── Shell ── */
+#app { display:flex; flex-direction:column; height:100dvh; max-width:430px; margin:0 auto; background:var(--paper); }
+#view { flex:1; overflow-y:auto; padding-bottom:72px; }
+#view::-webkit-scrollbar { display:none; }
+
+/* ── Nav ── */
+nav {
+  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:430px; background:var(--white);
+  border-top:1px solid var(--rule); display:flex;
+  padding-bottom:env(safe-area-inset-bottom); z-index:100;
+}
+nav button {
+  flex:1; border:none; background:none; padding:10px 4px 8px;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  font-size:10px; font-weight:600; color:var(--ink3); cursor:pointer;
+  font-family:var(--sans); letter-spacing:.4px; text-transform:uppercase;
+  transition:color .15s;
+}
+nav button.active { color:var(--ink); }
+nav button svg { width:20px; height:20px; stroke-width:1.8; }
+
+/* ── Pages ── */
+.page { display:none; }
+.page.active { display:block; animation:fadeIn .2s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── Topbar ── */
+.topbar {
+  padding: 54px 20px 0;
+  background: var(--white);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 16px;
+}
+.topbar-row { display:flex; justify-content:space-between; align-items:flex-end; }
+.topbar-label { font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink3); margin-bottom:4px; }
+.topbar h1 { font-family:var(--serif); font-size:32px; font-weight:400; line-height:1; }
+.topbar-count { font-size:12px; color:var(--ink3); font-weight:400; margin-top:4px; }
+
+/* ── Add button ── */
+.add-btn {
+  border:1.5px solid var(--ink); background:transparent; border-radius:40px;
+  padding:8px 18px; font-size:12px; font-weight:600; cursor:pointer;
+  font-family:var(--sans); letter-spacing:.3px; transition:background .15s, color .15s;
+  display:flex; align-items:center; gap:6px;
+}
+.add-btn:active { background:var(--ink); color:var(--white); }
+
+/* ── Plant list ── */
+.plant-list { padding:0; }
+.plant-row {
+  display:flex; align-items:center; gap:14px;
+  padding:14px 20px;
+  border-bottom:1px solid var(--rule);
+  cursor:pointer; background:var(--white);
+  transition:background .1s;
+}
+.plant-row:active { background:#f5f5f0; }
+.plant-thumb {
+  width:52px; height:52px; border-radius:var(--r-lg);
+  display:flex; align-items:center; justify-content:center;
+  font-size:26px; flex-shrink:0; overflow:hidden; position:relative;
+}
+.plant-thumb img { width:100%; height:100%; object-fit:cover; }
+.plant-row-info { flex:1; min-width:0; }
+.plant-row-info h3 { font-size:15px; font-weight:600; line-height:1.2; }
+.plant-row-info p { font-size:12px; color:var(--ink3); font-style:italic; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.plant-row-right { display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0; }
+.water-chip {
+  font-size:10px; font-weight:700; padding:3px 9px;
+  border-radius:20px; letter-spacing:.3px; white-space:nowrap;
+}
+.chip-overdue { background:#fde8e8; color:#c0392b; }
+.chip-today   { background:#fef3cd; color:#b7650a; }
+.chip-soon    { background:#ede9fe; color:#5b35c5; }
+.chip-ok      { background:#e8f5e8; color:#2d7d2d; }
+.chip-never   { background:#f0f0f0; color:#888; }
+.water-quick {
+  border:1px solid var(--rule); background:var(--paper); border-radius:20px;
+  padding:3px 10px; font-size:11px; font-weight:600; cursor:pointer;
+  font-family:var(--sans); color:var(--ink2); transition:background .1s;
+}
+.water-quick:active { background:var(--c3); color:white; border-color:var(--c3); }
+
+/* ── Section header ── */
+.section-label {
+  font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--ink3); padding:20px 20px 8px; background:var(--paper);
+}
+
+/* ── Empty ── */
+.empty { text-align:center; padding:60px 30px; }
+.empty .big { font-size:52px; margin-bottom:16px; }
+.empty h3 { font-family:var(--serif); font-size:22px; font-weight:400; margin-bottom:8px; }
+.empty p { font-size:14px; color:var(--ink3); line-height:1.6; }
+
+/* ── Detail ── */
+#detail {
+  display:none; position:fixed; inset:0; z-index:200;
+  background:var(--paper); overflow-y:auto; max-width:430px; margin:0 auto;
+}
+#detail.open { display:block; animation:slideIn .25s ease; }
+@keyframes slideIn { from{transform:translateX(100%)} to{transform:translateX(0)} }
+
+.detail-hero {
+  height:260px; display:flex; align-items:center; justify-content:center;
+  position:relative; overflow:hidden;
+}
+.detail-hero-img { width:100%; height:100%; object-fit:cover; }
+.detail-hero-emoji { font-size:96px; }
+.detail-nav {
+  position:absolute; top:0; left:0; right:0;
+  padding:52px 16px 0; display:flex; justify-content:space-between;
+}
+.detail-nav-btn {
+  background:rgba(255,255,255,.88); border:none; border-radius:30px;
+  padding:7px 16px; font-size:12px; font-weight:600; cursor:pointer;
+  font-family:var(--sans); backdrop-filter:blur(4px);
+}
+
+.detail-header { padding:20px 20px 0; background:var(--white); border-bottom:1px solid var(--rule); }
+.detail-header .label { font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink3); margin-bottom:4px; }
+.detail-header h2 { font-family:var(--serif); font-size:30px; font-weight:400; line-height:1.1; }
+.detail-header .species { font-size:13px; color:var(--ink3); font-style:italic; margin-top:4px; margin-bottom:16px; }
+
+/* Water stats bar */
+.water-bar { display:flex; border-top:1px solid var(--rule); }
+.water-stat { flex:1; padding:12px 16px; border-right:1px solid var(--rule); }
+.water-stat:last-child { border-right:none; }
+.water-stat .n { font-family:var(--serif); font-size:24px; color:var(--ink); }
+.water-stat .l { font-size:9px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--ink3); margin-top:2px; }
+
+/* Big water btn */
+.water-action {
+  margin:16px 20px; border:none; background:var(--ink); color:var(--white);
+  border-radius:var(--r-xl); padding:16px; font-size:15px; font-weight:600;
+  cursor:pointer; font-family:var(--sans); width:calc(100% - 40px);
+  letter-spacing:.2px; transition:opacity .15s;
+}
+.water-action:active { opacity:.8; }
+
+/* Care blocks */
+.care-block { border-bottom:1px solid var(--rule); }
+.care-block-header {
+  padding:16px 20px; display:flex; justify-content:space-between; align-items:center;
+  cursor:pointer;
+}
+.care-block-header h4 { font-size:11px; font-weight:600; letter-spacing:1.2px; text-transform:uppercase; }
+.care-block-header span { font-size:18px; color:var(--ink3); transition:transform .2s; }
+.care-block-header span.open { transform:rotate(180deg); }
+.care-block-body { padding:0 20px 16px; font-size:14px; line-height:1.7; color:var(--ink2); display:none; }
+.care-block-body.open { display:block; }
+.poison-block .care-block-body { color:#c0392b; }
+
+/* Log in detail */
+.log-row { display:flex; gap:12px; align-items:center; padding:8px 0; border-bottom:1px solid var(--rule); font-size:13px; }
+.log-row:last-child { border-bottom:none; }
+.log-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.log-date { color:var(--ink2); }
+.log-time { margin-left:auto; color:var(--ink3); font-size:11px; }
+
+.delete-link { display:block; text-align:center; padding:20px; font-size:13px; color:var(--ink3); cursor:pointer; border-top:1px solid var(--rule); text-decoration:underline; }
+.detail-bottom-pad { height:40px; }
+
+/* ── Reminder page ── */
+.remind-header { padding:54px 20px 16px; background:var(--white); border-bottom:1px solid var(--rule); }
+.remind-header .label { font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink3); margin-bottom:4px; }
+.remind-header h1 { font-family:var(--serif); font-size:32px; font-weight:400; }
+
+.remind-list { padding:0; }
+.remind-item {
+  padding:16px 20px; border-bottom:1px solid var(--rule);
+  display:flex; align-items:center; gap:14px; background:var(--white);
+}
+.remind-thumb { width:44px; height:44px; border-radius:var(--r-lg); display:flex; align-items:center; justify-content:center; font-size:22px; overflow:hidden; flex-shrink:0; }
+.remind-thumb img { width:100%; height:100%; object-fit:cover; }
+.remind-info { flex:1; min-width:0; }
+.remind-info h4 { font-size:14px; font-weight:600; }
+.remind-info p { font-size:11px; color:var(--ink3); margin-top:2px; }
+.remind-action { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+
+/* ── Log page ── */
+.log-header { padding:54px 20px 16px; background:var(--white); border-bottom:1px solid var(--rule); }
+.log-header .label { font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink3); margin-bottom:4px; }
+.log-header h1 { font-family:var(--serif); font-size:32px; font-weight:400; }
+.log-feed { padding:0; }
+.log-feed-item {
+  display:flex; align-items:center; gap:14px; padding:14px 20px;
+  border-bottom:1px solid var(--rule); background:var(--white);
+}
+.log-feed-thumb { width:40px; height:40px; border-radius:var(--r-lg); display:flex; align-items:center; justify-content:center; font-size:20px; overflow:hidden; flex-shrink:0; }
+.log-feed-thumb img { width:100%; height:100%; object-fit:cover; }
+.log-feed-info h4 { font-size:13px; font-weight:600; }
+.log-feed-info p { font-size:11px; color:var(--ink3); margin-top:1px; }
+.log-feed-time { margin-left:auto; text-align:right; font-size:11px; color:var(--ink3); white-space:nowrap; }
+
+/* ── Modal ── */
+.modal-bg {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.5); z-index:400;
+  align-items:flex-end; justify-content:center;
+}
+.modal-bg.open { display:flex; }
+.modal {
+  background:var(--white); border-radius:24px 24px 0 0;
+  padding:24px 20px 0; width:100%; max-width:430px;
+  max-height:92dvh; overflow-y:auto;
+  animation:sheetUp .3s cubic-bezier(.32,0,.67,0);
+}
+.modal::-webkit-scrollbar { display:none; }
+@keyframes sheetUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+.modal-handle { width:36px; height:4px; background:#ddd; border-radius:2px; margin:0 auto 20px; }
+.modal h3 { font-family:var(--serif); font-size:24px; font-weight:400; margin-bottom:20px; }
+
+.form-field { margin-bottom:16px; }
+.form-field label { font-size:10px; font-weight:600; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink3); display:block; margin-bottom:6px; }
+.form-field input, .form-field textarea, .form-field select {
+  width:100%; border:1px solid var(--rule); border-radius:var(--r-lg);
+  padding:11px 14px; font-size:14px; font-family:var(--sans);
+  background:var(--paper); color:var(--ink); outline:none;
+  transition:border-color .15s;
+}
+.form-field input:focus, .form-field textarea:focus { border-color:var(--ink); }
+.form-field textarea { min-height:72px; resize:none; }
+
+.form-row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+/* Photo upload */
+.photo-zone {
+  width:100%; height:130px; border:1.5px dashed var(--rule); border-radius:var(--r-xl);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:6px; cursor:pointer; background:var(--paper); position:relative; overflow:hidden;
+}
+.photo-zone img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.photo-zone span { font-size:12px; font-weight:600; color:var(--ink3); position:relative; z-index:1; }
+.photo-zone .cam { font-size:26px; position:relative; z-index:1; }
+#photo-input { display:none; }
+
+/* Emoji & Color pickers */
+.emoji-row { display:flex; flex-wrap:wrap; gap:8px; }
+.e-opt { width:40px; height:40px; border-radius:var(--r-lg); border:1.5px solid transparent; background:var(--paper); font-size:22px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:border-color .1s; }
+.e-opt.sel { border-color:var(--ink); }
+.color-row { display:flex; gap:10px; flex-wrap:wrap; }
+.col-opt { width:32px; height:32px; border-radius:50%; border:2.5px solid transparent; cursor:pointer; transition:border-color .1s, transform .1s; }
+.col-opt.sel { border-color:var(--ink); transform:scale(1.1); }
+
+/* Buttons */
+.btn-row { display:flex; gap:10px; padding:16px 0 32px; }
+.btn { flex:1; border:none; border-radius:var(--r-xl); padding:15px; font-size:14px; font-weight:600; cursor:pointer; font-family:var(--sans); transition:opacity .15s; }
+.btn:active { opacity:.8; }
+.btn-dark { background:var(--ink); color:var(--white); }
+.btn-light { background:var(--paper); color:var(--ink); border:1px solid var(--rule); }
+</style>
+</head>
+<body>
+<div id="app">
+<div id="view">
+
+  <!-- ── HOME ── -->
+  <div class="page active" id="page-home">
+    <div class="topbar">
+      <div class="topbar-row">
+        <div>
+          <div class="topbar-label">Meine Sammlung</div>
+          <h1>Pflanzen</h1>
+          <div class="topbar-count" id="home-count"></div>
+        </div>
+        <button class="add-btn" onclick="openAdd()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Hinzufügen
+        </button>
+      </div>
+    </div>
+    <div id="plant-list" class="plant-list"></div>
+    <div id="home-empty" class="empty" style="display:none">
+      <div class="big">🪴</div>
+      <h3>Noch keine Pflanzen</h3>
+      <p>Tippe auf „Hinzufügen" um deine erste Pflanze anzulegen.</p>
+    </div>
+  </div>
+
+  <!-- ── REMINDERS ── -->
+  <div class="page" id="page-remind">
+    <div class="remind-header">
+      <div class="label">Überblick</div>
+      <h1>Gießplan</h1>
+    </div>
+    <div id="remind-list" class="remind-list"></div>
+  </div>
+
+  <!-- ── LOG ── -->
+  <div class="page" id="page-log">
+    <div class="log-header">
+      <div class="label">Verlauf</div>
+      <h1>Tagebuch</h1>
+    </div>
+    <div id="log-feed" class="log-feed"></div>
+    <div id="log-empty" class="empty" style="display:none">
+      <div class="big">📋</div>
+      <h3>Noch kein Eintrag</h3>
+      <p>Sobald du eine Pflanze gießt, erscheint es hier.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── BOTTOM NAV ── -->
+<nav>
+  <button class="active" onclick="showPage('home',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Übersicht
+  </button>
+  <button onclick="showPage('remind',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22a2 2 0 004 0"/><path d="M18 16V11A6 6 0 006 11v5l-2 2h16l-2-2z"/></svg>
+    Gießplan
+  </button>
+  <button onclick="showPage('log',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    Tagebuch
+  </button>
+</nav>
+</div>
+
+<!-- ── DETAIL ── -->
+<div id="detail">
+  <div class="detail-hero" id="d-hero">
+    <div class="detail-nav">
+      <button class="detail-nav-btn" onclick="closeDetail()">← Zurück</button>
+      <button class="detail-nav-btn" onclick="openEdit()">Bearbeiten</button>
+    </div>
+  </div>
+  <div style="background:var(--white); border-bottom:1px solid var(--rule)">
+    <div class="detail-header">
+      <div class="label" id="d-label">Zimmerpflanze</div>
+      <h2 id="d-name"></h2>
+      <p class="species" id="d-species"></p>
+    </div>
+    <div class="water-bar">
+      <div class="water-stat"><div class="n" id="d-ago">–</div><div class="l">Tage seit Guss</div></div>
+      <div class="water-stat"><div class="n" id="d-interval">–</div><div class="l">Tage Intervall</div></div>
+      <div class="water-stat"><div class="n" id="d-next">–</div><div class="l">Nächster Guss</div></div>
+    </div>
+  </div>
+  <button class="water-action" id="d-water-btn" onclick="waterCurrent()">💧 Jetzt gegossen!</button>
+
+  <div id="care-blocks"></div>
+
+  <div style="padding:0 20px 0; background:var(--white); border-top:1px solid var(--rule); margin-top:8px;">
+    <div style="padding:16px 0 8px; font-size:10px; font-weight:600; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink3)">Giessverlauf</div>
+    <div id="d-log"></div>
+  </div>
+
+  <span class="delete-link" onclick="deletePlant()">Pflanze löschen</span>
+  <div class="detail-bottom-pad"></div>
+</div>
+
+<!-- ── MODAL ── -->
+<div class="modal-bg" id="modal-bg" onclick="handleModalBgClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-handle"></div>
+    <h3 id="modal-title">Neue Pflanze</h3>
+
+    <div class="form-field">
+      <label>Foto</label>
+      <div class="photo-zone" id="photo-zone">
+        <span class="cam">📷</span>
+        <span>Foto aufnehmen oder auswählen</span>
+        <img id="photo-prev" style="display:none">
+      </div>
+      <input type="file" id="photo-input" accept="image/*" capture="environment">
+    </div>
+
+    <div class="form-field">
+      <label>Symbol (falls kein Foto)</label>
+      <div class="emoji-row" id="emoji-row"></div>
+    </div>
+
+    <div class="form-field">
+      <label>Kartenfarbe</label>
+      <div class="color-row" id="color-row"></div>
+    </div>
+
+    <div class="form-row2">
+      <div class="form-field">
+        <label>Name</label>
+        <input id="f-name" placeholder="z. B. Monstera">
+      </div>
+      <div class="form-field">
+        <label>Lateinisch</label>
+        <input id="f-species" placeholder="z. B. M. deliciosa" style="font-style:italic">
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label>Gieß-Intervall in Tagen</label>
+      <input id="f-interval" type="number" min="1" max="90" value="7">
+    </div>
+
+    <div class="form-field"><label>☀ Standort & Licht</label><textarea id="f-standort" placeholder="Lichtverhältnisse, Temperatur, Fensterplatz..."></textarea></div>
+    <div class="form-field"><label>⚘ Erde</label><textarea id="f-erde" placeholder="Erdmischung, pH, Drainage..."></textarea></div>
+    <div class="form-field"><label>💧 Gießen & Luftfeuchtigkeit</label><textarea id="f-giessen" placeholder="Wie oft, wie viel, Luftfeuchtigkeit..."></textarea></div>
+    <div class="form-field"><label>▲ Düngen</label><textarea id="f-duengen" placeholder="Wann, wie oft, welcher Dünger..."></textarea></div>
+    <div class="form-field"><label>⬡ Schädlinge & Krankheiten</label><textarea id="f-schaedlinge" placeholder="Häufige Probleme & Behandlung..."></textarea></div>
+    <div class="form-field"><label>⚠ Giftigkeit (leer lassen wenn nicht giftig)</label><input id="f-poison" placeholder="z. B. Giftig für Katzen und Hunde"></div>
+    <div class="form-field"><label>📝 Notizen</label><textarea id="f-notes" placeholder="Eigene Beobachtungen, Besonderheiten..."></textarea></div>
+
+    <div class="btn-row">
+      <button class="btn btn-light" onclick="closeModal()">Abbrechen</button>
+      <button class="btn btn-dark" onclick="savePlant()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const COLORS=['#27187D','#FE8601','#758AFD','#AEB8FF','#F1F2F6','#FEC1FE','#FE8D5C','#FE98FE'];
+const EMOJIS=['🌿','🌵','🌺','🌸','🌼','🍃','🪴','🌱','🌾','🎋','🌴','🍀','🌳','🌲','🌻','🎍'];
+const tcOf=c=>c==='#27187D'?'#ffffff':'#111111';
+const darkBg=c=>['#27187D','#758AFD','#FE8601','#FE8D5C'].includes(c);
+
+let plants=JSON.parse(localStorage.getItem('plants')||'[]');
+let wlog=JSON.parse(localStorage.getItem('wlog')||'[]');
+let curId=null, editId=null, selEmoji='🪴', selColor='#758AFD', photoData=null;
+
+const save=()=>{localStorage.setItem('plants',JSON.stringify(plants));localStorage.setItem('wlog',JSON.stringify(wlog));};
+const daysBetween=d=>d?Math.floor((Date.now()-new Date(d).getTime())/86400000):null;
+const daysUntil=p=>{if(!p.lastWatered)return null;return Math.ceil((new Date(p.lastWatered).getTime()+(p.interval||7)*86400000-Date.now())/86400000);};
+const fmtDate=d=>d?new Date(d).toLocaleDateString('de-AT',{day:'2-digit',month:'2-digit',year:'2-digit'}):'–';
+const fmtTime=d=>d?new Date(d).toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'}):'';
+
+function chipFor(p){
+  const d=daysUntil(p);
+  if(d===null)return['Noch nie gegossen','chip-never'];
+  if(d<0)return[`${Math.abs(d)}d überfällig`,'chip-overdue'];
+  if(d===0)return['Heute gießen','chip-today'];
+  if(d<=3)return[`in ${d}d gießen`,'chip-soon'];
+  return[`in ${d}d`,'chip-ok'];
+}
+
+// ── Render Home ──────────────────────────────────────────────────
+function renderHome(){
+  const list=document.getElementById('plant-list');
+  const empty=document.getElementById('home-empty');
+  document.getElementById('home-count').textContent=plants.length?`${plants.length} Pflanze${plants.length!==1?'n':''}`:''
+  if(!plants.length){list.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+
+  // Group: needs water vs ok
+  const overdue=plants.filter(p=>{const d=daysUntil(p);return d===null||d<=0;});
+  const rest=plants.filter(p=>{const d=daysUntil(p);return d!==null&&d>0;});
+
+  let html='';
+  if(overdue.length){html+=`<div class="section-label">Braucht Wasser</div>`;overdue.forEach(p=>{html+=plantRow(p);});}
+  if(rest.length){html+=`<div class="section-label">Gut versorgt</div>`;rest.forEach(p=>{html+=plantRow(p);});}
+  list.innerHTML=html;
+}
+
+function plantRow(p){
+  const bg=p.color||'#758AFD';
+  const [chipTxt,chipCls]=chipFor(p);
+  const thumbContent=p.photo
+    ?`<img src="${p.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:12px">`
+    :`<span style="font-size:26px">${p.emoji||'🪴'}</span>`;
+  return `<div class="plant-row" onclick="openDetail('${p.id}')">
+    <div class="plant-thumb" style="background:${bg}20">${thumbContent}</div>
+    <div class="plant-row-info">
+      <h3>${p.name}</h3>
+      <p>${p.species||'&nbsp;'}</p>
+    </div>
+    <div class="plant-row-right">
+      <span class="water-chip ${chipCls}">${chipTxt}</span>
+      <button class="water-quick" onclick="event.stopPropagation();quickWater('${p.id}')">💧 Gegossen</button>
+    </div>
+  </div>`;
+}
+
+// ── Render Reminders ─────────────────────────────────────────────
+function renderReminders(){
+  const list=document.getElementById('remind-list');
+  if(!plants.length){list.innerHTML='<div class="empty"><div class="big">💧</div><h3>Keine Pflanzen</h3><p>Füge zuerst Pflanzen hinzu.</p></div>';return;}
+  const sorted=[...plants].sort((a,b)=>(daysUntil(a)??-999)-(daysUntil(b)??-999));
+  list.innerHTML=sorted.map(p=>{
+    const bg=p.color||'#758AFD';
+    const [chipTxt,chipCls]=chipFor(p);
+    const thumbContent=p.photo
+      ?`<img src="${p.photo}">`
+      :`<span>${p.emoji||'🪴'}</span>`;
+    return `<div class="remind-item">
+      <div class="remind-thumb" style="background:${bg}25">${thumbContent}</div>
+      <div class="remind-info">
+        <h4>${p.name}</h4>
+        <p>Alle ${p.interval||7} Tage · zuletzt ${fmtDate(p.lastWatered)}</p>
+      </div>
+      <div class="remind-action">
+        <span class="water-chip ${chipCls}">${chipTxt}</span>
+        <button class="water-quick" onclick="quickWater('${p.id}')">💧 Gegossen</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Render Log ───────────────────────────────────────────────────
+function renderLog(){
+  const feed=document.getElementById('log-feed');
+  const empty=document.getElementById('log-empty');
+  if(!wlog.length){feed.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  feed.innerHTML=wlog.slice(0,60).map(l=>{
+    const p=plants.find(x=>x.id===l.plantId);
+    const bg=p?p.color||'#758AFD':'#758AFD';
+    const thumbContent=p&&p.photo?`<img src="${p.photo}">`:`<span>${l.emoji||'🪴'}</span>`;
+    return `<div class="log-feed-item">
+      <div class="log-feed-thumb" style="background:${bg}25">${thumbContent}</div>
+      <div class="log-feed-info"><h4>${l.name}</h4><p>💧 Gegossen</p></div>
+      <div class="log-feed-time">${fmtDate(l.date)}<br>${fmtTime(l.date)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── Quick water ──────────────────────────────────────────────────
+function quickWater(id){
+  const p=plants.find(x=>x.id===id);if(!p)return;
+  p.lastWatered=new Date().toISOString();
+  wlog.unshift({plantId:id,name:p.name,emoji:p.emoji||'🪴',date:p.lastWatered});
+  if(wlog.length>300)wlog.pop();
+  save();renderHome();renderReminders();renderLog();
+  if(navigator.vibrate)navigator.vibrate(30);
+}
+
+// ── Detail ───────────────────────────────────────────────────────
+function openDetail(id){
+  curId=id;
+  const p=plants.find(x=>x.id===id);if(!p)return;
+  const bg=p.color||'#758AFD';
+  const tc=tcOf(bg);
+
+  // Hero
+  const hero=document.getElementById('d-hero');
+  hero.style.background=bg;
+  if(p.photo){
+    hero.innerHTML=`<div class="detail-nav"><button class="detail-nav-btn" onclick="closeDetail()">← Zurück</button><button class="detail-nav-btn" onclick="openEdit()">Bearbeiten</button></div><img class="detail-hero-img" src="${p.photo}">`;
+  } else {
+    hero.innerHTML=`<div class="detail-nav"><button class="detail-nav-btn" onclick="closeDetail()">← Zurück</button><button class="detail-nav-btn" onclick="openEdit()">Bearbeiten</button></div><span class="detail-hero-emoji">${p.emoji||'🪴'}</span>`;
+  }
+
+  document.getElementById('d-label').textContent='Zimmerpflanze';
+  document.getElementById('d-name').textContent=p.name;
+  document.getElementById('d-species').textContent=p.species||'';
+
+  const ago=daysBetween(p.lastWatered);
+  const nxt=daysUntil(p);
+  document.getElementById('d-ago').textContent=ago!==null?ago:'–';
+  document.getElementById('d-interval').textContent=p.interval||7;
+  document.getElementById('d-next').textContent=nxt===null?'–':nxt<0?`${Math.abs(nxt)}d!`:nxt===0?'Heute':nxt;
+
+  const wbtn=document.getElementById('d-water-btn');
+  wbtn.style.background=bg;wbtn.style.color=tc;
+
+  // Care blocks
+  const careData=[
+    ['☀','Standort & Licht',p.standort,''],
+    ['⚘','Erde',p.erde,''],
+    ['💧','Gießen & Luftfeuchtigkeit',p.giessen,''],
+    ['▲','Düngen',p.duengen,''],
+    ['⬡','Schädlinge & Krankheiten',p.schaedlinge,''],
+    p.notes?['📝','Notizen',p.notes,'']:[],
+    p.poison?['⚠','Giftigkeit',p.poison,'poison-block']:[],
+  ].filter(x=>x.length&&x[2]);
+
+  document.getElementById('care-blocks').innerHTML=careData.map((x,i)=>`
+    <div class="care-block ${x[3]}" style="background:var(--white);border-top:1px solid var(--rule);">
+      <div class="care-block-header" onclick="toggleCare(${i})">
+        <h4>${x[0]} ${x[1]}</h4>
+        <span id="care-arrow-${i}">›</span>
+      </div>
+      <div class="care-block-body ${i===0?'open':''}" id="care-body-${i}">${x[2]}</div>
+    </div>
+  `).join('');
+  if(careData.length>0){
+    const arr=document.getElementById('care-arrow-0');
+    if(arr)arr.textContent='›';
+  }
+
+  // Log
+  const plog=wlog.filter(l=>l.plantId===id).slice(0,5);
+  document.getElementById('d-log').innerHTML=plog.length
+    ?plog.map(l=>`<div class="log-row"><div class="log-dot" style="background:${bg}"></div><span class="log-date">${fmtDate(l.date)}</span><span class="log-time">${fmtTime(l.date)}</span></div>`).join('')
+    :'<p style="font-size:13px;color:var(--ink3);padding:8px 0">Noch nicht gegossen</p>';
+
+  document.getElementById('detail').classList.add('open');
+}
+
+function toggleCare(i){
+  const body=document.getElementById('care-body-'+i);
+  const arrow=document.getElementById('care-arrow-'+i);
+  body.classList.toggle('open');
+  arrow.textContent=body.classList.contains('open')?'‹':'›';
+}
+
+function closeDetail(){document.getElementById('detail').classList.remove('open');curId=null;}
+function waterCurrent(){if(curId){quickWater(curId);openDetail(curId);}}
+function deletePlant(){
+  if(!curId||!confirm('Pflanze wirklich löschen?'))return;
+  plants=plants.filter(p=>p.id!==curId);
+  wlog=wlog.filter(l=>l.plantId!==curId);
+  save();closeDetail();renderHome();renderReminders();renderLog();
+}
+
+// ── Modal ────────────────────────────────────────────────────────
+function buildPickers(){
+  document.getElementById('emoji-row').innerHTML=EMOJIS.map(e=>`<div class="e-opt${e===selEmoji?' sel':''}" onclick="selEmoji='${e}';buildPickers()">${e}</div>`).join('');
+  document.getElementById('color-row').innerHTML=COLORS.map(c=>`<div class="col-opt${c===selColor?' sel':''}" style="background:${c}" onclick="selColor='${c}';buildPickers()"></div>`).join('');
+}
+function openAdd(){
+  editId=null;photoData=null;
+  selEmoji='🪴';selColor=COLORS[Math.floor(Math.random()*COLORS.length)];
+  document.getElementById('modal-title').textContent='Neue Pflanze';
+  document.getElementById('photo-prev').style.display='none';
+  ['name','species','standort','erde','giessen','duengen','schaedlinge','notes','poison'].forEach(f=>{const el=document.getElementById('f-'+f);if(el)el.value='';});
+  document.getElementById('f-interval').value=7;
+  buildPickers();
+  document.getElementById('modal-bg').classList.add('open');
+}
+function openEdit(){
+  const p=plants.find(x=>x.id===curId);if(!p)return;
+  editId=curId;photoData=p.photo||null;
+  selEmoji=p.emoji||'🪴';selColor=p.color||'#758AFD';
+  document.getElementById('modal-title').textContent='Pflanze bearbeiten';
+  document.getElementById('f-name').value=p.name||'';
+  document.getElementById('f-species').value=p.species||'';
+  document.getElementById('f-interval').value=p.interval||7;
+  document.getElementById('f-standort').value=p.standort||'';
+  document.getElementById('f-erde').value=p.erde||'';
+  document.getElementById('f-giessen').value=p.giessen||'';
+  document.getElementById('f-duengen').value=p.duengen||'';
+  document.getElementById('f-schaedlinge').value=p.schaedlinge||'';
+  document.getElementById('f-notes').value=p.notes||'';
+  document.getElementById('f-poison').value=p.poison||'';
+  if(photoData){const prev=document.getElementById('photo-prev');prev.src=photoData;prev.style.display='block';}
+  else{document.getElementById('photo-prev').style.display='none';}
+  buildPickers();
+  document.getElementById('modal-bg').classList.add('open');
+}
+function closeModal(){document.getElementById('modal-bg').classList.remove('open');}
+function handleModalBgClick(e){if(e.target===document.getElementById('modal-bg'))closeModal();}
+
+function savePlant(){
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){document.getElementById('f-name').focus();return;}
+  const d={name,species:document.getElementById('f-species').value.trim(),interval:parseInt(document.getElementById('f-interval').value)||7,emoji:selEmoji,color:selColor,photo:photoData||null,standort:document.getElementById('f-standort').value.trim(),erde:document.getElementById('f-erde').value.trim(),giessen:document.getElementById('f-giessen').value.trim(),duengen:document.getElementById('f-duengen').value.trim(),schaedlinge:document.getElementById('f-schaedlinge').value.trim(),notes:document.getElementById('f-notes').value.trim(),poison:document.getElementById('f-poison').value.trim()};
+  if(editId){const i=plants.findIndex(p=>p.id===editId);plants[i]={...plants[i],...d};}
+  else{plants.push({id:Date.now().toString(),lastWatered:null,...d});}
+  save();closeModal();renderHome();renderReminders();renderLog();
+  if(editId)openDetail(editId);
+}
+
+// Photo
+document.getElementById('photo-zone').addEventListener('click',()=>document.getElementById('photo-input').click());
+document.getElementById('photo-input').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{photoData=ev.target.result;const prev=document.getElementById('photo-prev');prev.src=photoData;prev.style.display='block';};
+  r.readAsDataURL(f);
+});
+
+// Nav
+function showPage(name,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(name==='remind')renderReminders();
+  if(name==='log')renderLog();
+}
+
+// Init
+renderHome();
+</script>
+</body>
+</html>
