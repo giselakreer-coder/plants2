@@ -352,14 +352,43 @@ nav button.active { color:var(--accent); border-top-color:var(--accent); }
     </div>
     <div class="legend">
       <div class="legend-title">Pflegebadges</div>
-      <div class="legend-row">
-        <div class="legend-item"><div class="legend-dot" style="background:#f0c830"></div>Direkte Sonne</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#f7e88a"></div>Helles Zimmer</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#fdf6d0;border:1px solid #ede8a0"></div>Halbschattig</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#378add"></div>Oft gießen</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#e6f1fb;border:1px solid #b5d4f4"></div>Selten gießen</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#1d9e75"></div>Luft hoch</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#27500a"></div>Oft düngen</div>
+      <div class="legend-row" style="flex-direction:column;gap:7px">
+        <div class="legend-item" style="gap:6px">
+          <span style="font-size:10px;font-weight:600;width:72px;flex-shrink:0;color:var(--ink2)">Licht</span>
+          <div style="display:flex;gap:4px;align-items:center">
+            <div class="legend-dot" style="background:#f0c830"></div>
+            <div class="legend-dot" style="background:#f7e88a"></div>
+            <div class="legend-dot" style="background:#fdf6d0;border:1px solid #ede8a0"></div>
+          </div>
+          <span style="font-size:10px;color:var(--ink3)">viel → wenig</span>
+        </div>
+        <div class="legend-item" style="gap:6px">
+          <span style="font-size:10px;font-weight:600;width:72px;flex-shrink:0;color:var(--ink2)">Gießen</span>
+          <div style="display:flex;gap:4px;align-items:center">
+            <div class="legend-dot" style="background:#378add"></div>
+            <div class="legend-dot" style="background:#85b7eb"></div>
+            <div class="legend-dot" style="background:#e6f1fb;border:1px solid #b5d4f4"></div>
+          </div>
+          <span style="font-size:10px;color:var(--ink3)">oft → selten</span>
+        </div>
+        <div class="legend-item" style="gap:6px">
+          <span style="font-size:10px;font-weight:600;width:72px;flex-shrink:0;color:var(--ink2)">Luftfeuchte</span>
+          <div style="display:flex;gap:4px;align-items:center">
+            <div class="legend-dot" style="background:#1d9e75"></div>
+            <div class="legend-dot" style="background:#5dcaa5"></div>
+            <div class="legend-dot" style="background:#e1f5ee;border:1px solid #9fe1cb"></div>
+          </div>
+          <span style="font-size:10px;color:var(--ink3)">hoch → normal</span>
+        </div>
+        <div class="legend-item" style="gap:6px">
+          <span style="font-size:10px;font-weight:600;width:72px;flex-shrink:0;color:var(--ink2)">Düngen</span>
+          <div style="display:flex;gap:4px;align-items:center">
+            <div class="legend-dot" style="background:#27500a"></div>
+            <div class="legend-dot" style="background:#3b6d11"></div>
+            <div class="legend-dot" style="background:#c0dd97;border:1px solid #a8c880"></div>
+          </div>
+          <span style="font-size:10px;color:var(--ink3)">oft → selten</span>
+        </div>
       </div>
     </div>
     <div id="plant-list"></div>
@@ -1345,13 +1374,17 @@ const PRESET_PLANTS = [
   },
 ];
 
-// Nur einmalig hinzufügen wenn noch nicht vorhanden
+// Pflanzen hinzufügen ODER aktualisieren — neue Felder werden immer aus Preset übernommen
+const SYNC_FIELDS = ['licht','luft','duengeWo','standort','erde','giessen','duengen','schaedlinge','notes','poison','name','species','color','interval','emoji'];
 PRESET_PLANTS.forEach(preset => {
-  if (!plants.find(p => p.id === preset.id)) {
+  const existing = plants.find(p => p.id === preset.id);
+  if (!existing) {
     plants.push(preset);
-    save();
+  } else {
+    SYNC_FIELDS.forEach(f => { existing[f] = preset[f]; });
   }
 });
+save();
 
 renderHome();
 </script>
