@@ -631,50 +631,75 @@ function duengkls(d) {
 }
 const LICHT_LABEL = { sonne:'Direkte Sonne', hell:'Helles Zimmer', halb:'Halbschattig' };
 const LICHT_DESC  = { sonne:'Südfenster, direkt am Glas', hell:'Ost/West-Fenster, kein Mittagslicht aber helles Zimmer', halb:'Nordfenster oder weiter weg vom Fenster' };
-const LUFT_LABEL  = { hoch:'Hoch >60%', 'hoch-ns':'Hoch, kein Besprühen', mit:'Mittel 40–60%', norm:'Normal' };
+const LUFT_LABEL  = {}; LUFT_LABEL['hoch']='Hoch >60%'; LUFT_LABEL['hoch-ns']='Hoch, kein Besprühen'; LUFT_LABEL['mit']='Mittel 40–60%'; LUFT_LABEL['norm']='Normal';
 const DUENG_LABEL = d => d<=2 ? `alle ${d} Wo.` : d<=4 ? `alle ${d} Wo.` : `alle ${d} Wo.`;
 
 function infoBadges(p) {
-  const ll = LICHT_LABEL[p.licht||'hell'] || 'Helles Zimmer';
-  const gl = `alle ${p.interval||7}d`;
+  const ll  = LICHT_LABEL[p.licht||'hell'] || 'Helles Zimmer';
+  const gl  = 'alle ' + (p.interval||7) + 'd';
   const luL = LUFT_LABEL[p.luft||'norm'] || 'Normal';
-  const duL = p.duengeWo ? `alle ${p.duengeWo} Wo.` : '–';
-  return `<div class="info-badges">
-    <span class="ibadge ${lichtkls(p.licht)}">${ll}</span>
-    <span class="ibadge ${giesskls(p.interval)}">${gl}</span>
-    <span class="ibadge ${luftkls(p.luft)}">${luL}</span>
-    <span class="ibadge ${duengkls(p.duengeWo)}">${duL}</span>
-  </div>`;
+  const duL = p.duengeWo ? 'alle ' + p.duengeWo + ' Wo.' : '–';
+  return '<div class="info-badges">' +
+    '<span class="ibadge ' + lichtkls(p.licht) + '">' + ll + '</span>' +
+    '<span class="ibadge ' + giesskls(p.interval) + '">' + gl + '</span>' +
+    '<span class="ibadge ' + luftkls(p.luft) + '">' + luL + '</span>' +
+    '<span class="ibadge ' + duengkls(p.duengeWo) + '">' + duL + '</span>' +
+  '</div>';
 }
 
 function detailInfoGrid(p) {
-  const ll  = LICHT_LABEL[p.licht||'hell'] || 'Helles Zimmer';
-  const ld  = LICHT_DESC[p.licht||'hell']  || '';
-  const luL = LUFT_LABEL[p.luft||'norm']   || 'Normal';
-  const duL = p.duengeWo ? `alle ${p.duengeWo} Wochen` : '–';
-  return `<div class="detail-info-grid">
-    <div class="detail-info-cell ${lichtkls(p.licht).replace('ib-','').replace('sonne','').replace('hell','').replace('halb','')}" style="background:${{sonne:'#f0c830',hell:'#f7e88a',halb:'#fdf6d0'}[p.licht||'hell']||'#f7e88a'};color:${{sonne:'#6a4e08',hell:'#7a5e08',halb:'#8a7020'}[p.licht||'hell']||'#7a5e08'}">
-      <div class="detail-info-label">Licht</div>
-      <div class="detail-info-value">${ll}</div>
-      <div class="detail-info-sub">${ld}</div>
-    </div>
-    <div class="detail-info-cell" style="background:${{7:'#378add',14:'#85b7eb',21:'#e6f1fb'}[Math.min(...[7,14,21].filter(x=>x>=(p.interval||7)))]||'#e6f1fb'};color:${{7:'#fff',14:'#0c447c',21:'#185fa5'}[Math.min(...[7,14,21].filter(x=>x>=(p.interval||7)))]||'#185fa5'}">
-      <div class="detail-info-label">Gießen</div>
-      <div class="detail-info-value">alle ${p.interval||7} Tage</div>
-      <div class="detail-info-sub">${(p.interval||7)<=7?'regelmäßig':(p.interval||7)<=14?'mäßig':'selten'}</div>
-    </div>
-    <div class="detail-info-cell" style="background:${{hoch:'#1d9e75','hoch-ns':'#5dcaa5',mit:'#9fe1cb',norm:'#e1f5ee'}[p.luft||'norm']||'#e1f5ee'};color:${{hoch:'#fff','hoch-ns':'#085041',mit:'#0f6e56',norm:'#0f6e56'}[p.luft||'norm']||'#0f6e56'}">
-      <div class="detail-info-label">Luftfeuchte</div>
-      <div class="detail-info-value">${luL}</div>
-      <div class="detail-info-sub">${{hoch:'täglich besprühen',\'hoch-ns\':\'Luftbefeuchter oder Schale — Blätter NICHT besprühen!\',mit:\'gelegentlich besprühen\',norm:\'normale Raumluft\'}[p.luft||'norm']||''}</div>
-    </div>
-    <div class="detail-info-cell" style="background:${{2:'#27500a',4:'#3b6d11',8:'#c0dd97'}[p.duengeWo<=2?2:p.duengeWo<=4?4:8]||'#c0dd97'};color:${{2:'#eaf3de',4:'#eaf3de',8:'#27500a'}[p.duengeWo<=2?2:p.duengeWo<=4?4:8]||'#27500a'}">
-      <div class="detail-info-label">Düngen</div>
-      <div class="detail-info-value">${duL}</div>
-      <div class="detail-info-sub">${p.duengeWo<=2?'März–Sept.':p.duengeWo<=4?'März–Sept.':'März–Sept.'}</div>
-    </div>
-  </div>`;
+  const licht = p.licht || 'hell';
+  const luft  = p.luft  || 'norm';
+
+  const lBg  = {sonne:'#f0c830', hell:'#f7e88a', halb:'#fdf6d0'}[licht] || '#f7e88a';
+  const lClr = {sonne:'#6a4e08', hell:'#7a5e08', halb:'#8a7020'}[licht] || '#7a5e08';
+  const lLbl = LICHT_LABEL[licht] || 'Helles Zimmer';
+  const lDesc= LICHT_DESC[licht]  || '';
+
+  const ivl  = p.interval || 7;
+  const gBg  = ivl<=7 ? '#378add' : ivl<=14 ? '#85b7eb' : '#e6f1fb';
+  const gClr = ivl<=7 ? '#fff'    : ivl<=14 ? '#0c447c' : '#185fa5';
+  const gSub = ivl<=7 ? 'regelmäßig' : ivl<=14 ? 'mäßig' : 'selten';
+
+  const luBg  = {hoch:'#1d9e75','hoch-ns':'#5dcaa5', mit:'#9fe1cb', norm:'#e1f5ee'}[luft] || '#e1f5ee';
+  const luClr = {hoch:'#fff',   'hoch-ns':'#085041', mit:'#0f6e56', norm:'#0f6e56'}[luft] || '#0f6e56';
+  const luLbl = LUFT_LABEL[luft] || 'Normal';
+  const luSub = {
+    hoch:    'täglich besprühen',
+    'hoch-ns': 'Luftbefeuchter oder Schale — Blätter NICHT besprühen!',
+    mit:     'gelegentlich besprühen',
+    norm:    'normale Raumluft'
+  }[luft] || '';
+
+  const dw   = p.duengeWo || 4;
+  const dBg  = dw<=2 ? '#27500a' : dw<=4 ? '#3b6d11' : '#c0dd97';
+  const dClr = dw<=2 ? '#eaf3de' : dw<=4 ? '#eaf3de' : '#27500a';
+  const dLbl = dw ? 'alle ' + dw + ' Wochen' : '–';
+
+  return '<div class="detail-info-grid">' +
+    '<div class="detail-info-cell" style="background:' + lBg + ';color:' + lClr + '">' +
+      '<div class="detail-info-label">Licht</div>' +
+      '<div class="detail-info-value">' + lLbl + '</div>' +
+      '<div class="detail-info-sub">' + lDesc + '</div>' +
+    '</div>' +
+    '<div class="detail-info-cell" style="background:' + gBg + ';color:' + gClr + '">' +
+      '<div class="detail-info-label">Gießen</div>' +
+      '<div class="detail-info-value">alle ' + ivl + ' Tage</div>' +
+      '<div class="detail-info-sub">' + gSub + '</div>' +
+    '</div>' +
+    '<div class="detail-info-cell" style="background:' + luBg + ';color:' + luClr + '">' +
+      '<div class="detail-info-label">Luftfeuchte</div>' +
+      '<div class="detail-info-value">' + luLbl + '</div>' +
+      '<div class="detail-info-sub">' + luSub + '</div>' +
+    '</div>' +
+    '<div class="detail-info-cell" style="background:' + dBg + ';color:' + dClr + '">' +
+      '<div class="detail-info-label">Düngen</div>' +
+      '<div class="detail-info-value">' + dLbl + '</div>' +
+      '<div class="detail-info-sub">März–September</div>' +
+    '</div>' +
+  '</div>';
 }
+
 
 function careBadge(color) {
   const labels = {'#f8efe8':'Sehr einfach','#ffd1b8':'Einfach','#fd9349':'Mittel','#fe4b53':'Anspruchsvoll','#3f71d6':'Heikel'};
