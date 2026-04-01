@@ -148,6 +148,7 @@ nav button.active { color:var(--accent); border-top-color:var(--accent); }
 .ib-lhoch   { background:#1d9e75; color:#fff; }
 .ib-lmit    { background:#5dcaa5; color:#085041; }
 .ib-lnorm   { background:#e1f5ee; color:#0f6e56; border:1px solid #9fe1cb; }
+.ib-lhochns { background:#5dcaa5; color:#085041; }
 /* Düngen */
 .ib-doft    { background:#27500a; color:#eaf3de; }
 .ib-dmit    { background:#3b6d11; color:#eaf3de; }
@@ -320,6 +321,8 @@ nav button.active { color:var(--accent); border-top-color:var(--accent); }
 .col-opt { width:34px; height:34px; border-radius:50%; border:2.5px solid transparent; cursor:pointer; transition:border-color .1s, transform .1s; }
 .col-opt.sel { border-color:var(--ink); transform:scale(1.15); }
 .col-label { font-size:12px; color:var(--ink3); margin-top:6px; font-weight:500; }
+.badge-pick { font-size:11px; font-weight:600; padding:6px 10px; border-radius:20px; cursor:pointer; opacity:.5; transition:opacity .15s; }
+.badge-pick.sel { opacity:1; outline:2.5px solid var(--ink); outline-offset:2px; }
 
 /* Emoji selector */
 .emoji-grid { display:flex; flex-wrap:wrap; gap:7px; }
@@ -469,13 +472,24 @@ nav button.active { color:var(--accent); border-top-color:var(--accent); }
       <h3 id="modal-title">Neue Pflanze</h3>
 
       <div class="f-group">
-        <label>Foto</label>
-        <div class="photo-zone" id="photo-zone">
-          <img class="prev" id="photo-prev">
-          <span class="photo-zone-label">Foto auswählen oder aufnehmen</span>
-          <span class="photo-zone-sub">Kamera · Galerie</span>
+        <label>Fotos (bis zu 3)</label>
+        <div style="display:flex;gap:8px">
+          <div class="photo-zone" id="photo-zone-0" onclick="document.getElementById('photo-input-0').click()" style="flex:1;height:90px">
+            <img class="prev" id="photo-prev-0">
+            <span class="photo-zone-label" id="photo-lbl-0">+ Foto</span>
+          </div>
+          <div class="photo-zone" id="photo-zone-1" onclick="document.getElementById('photo-input-1').click()" style="flex:1;height:90px">
+            <img class="prev" id="photo-prev-1">
+            <span class="photo-zone-label" id="photo-lbl-1">+ Foto</span>
+          </div>
+          <div class="photo-zone" id="photo-zone-2" onclick="document.getElementById('photo-input-2').click()" style="flex:1;height:90px">
+            <img class="prev" id="photo-prev-2">
+            <span class="photo-zone-label" id="photo-lbl-2">+ Foto</span>
+          </div>
         </div>
-        <input type="file" id="photo-input" accept="image/*">
+        <input type="file" id="photo-input-0" accept="image/*" style="display:none">
+        <input type="file" id="photo-input-1" accept="image/*" style="display:none">
+        <input type="file" id="photo-input-2" accept="image/*" style="display:none">
       </div>
 
       <div class="f-group">
@@ -484,9 +498,40 @@ nav button.active { color:var(--accent); border-top-color:var(--accent); }
       </div>
 
       <div class="f-group">
-        <label>Pflegeaufwand / Kartenfarbe</label>
-        <div class="color-grid" id="color-grid"></div>
-        <div class="col-label" id="col-label-text"></div>
+        <label>Licht</label>
+        <div style="display:flex;gap:6px" id="licht-picker">
+          <div class="badge-pick" data-val="sonne" onclick="selLicht='sonne';buildBadgePickers()" style="background:#f0c830;color:#6a4e08">Direkte Sonne</div>
+          <div class="badge-pick" data-val="hell"  onclick="selLicht='hell';buildBadgePickers()"  style="background:#f7e88a;color:#7a5e08">Helles Zimmer</div>
+          <div class="badge-pick" data-val="halb"  onclick="selLicht='halb';buildBadgePickers()"  style="background:#fdf6d0;color:#8a7020;border:1px solid #ede8a0">Halbschattig</div>
+        </div>
+      </div>
+
+      <div class="f-group">
+        <label>Gießen</label>
+        <div style="display:flex;gap:6px" id="giess-picker">
+          <div class="badge-pick" data-val="oft"   onclick="selGiess='oft';buildBadgePickers()"   style="background:#378add;color:#fff">Oft (3–7d)</div>
+          <div class="badge-pick" data-val="mit"   onclick="selGiess='mit';buildBadgePickers()"   style="background:#85b7eb;color:#0c447c">Mittel (8–14d)</div>
+          <div class="badge-pick" data-val="sel"   onclick="selGiess='sel';buildBadgePickers()"   style="background:#e6f1fb;color:#185fa5;border:1px solid #b5d4f4">Selten (15d+)</div>
+        </div>
+      </div>
+
+      <div class="f-group">
+        <label>Luftfeuchtigkeit</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap" id="luft-picker">
+          <div class="badge-pick" data-val="hoch"    onclick="selLuft='hoch';buildBadgePickers()"    style="background:#1d9e75;color:#fff">Hoch, besprühen ok</div>
+          <div class="badge-pick" data-val="hoch-ns" onclick="selLuft='hoch-ns';buildBadgePickers()" style="background:#5dcaa5;color:#085041">Hoch, KEIN Besprühen</div>
+          <div class="badge-pick" data-val="mit"     onclick="selLuft='mit';buildBadgePickers()"     style="background:#9fe1cb;color:#0f6e56">Mittel</div>
+          <div class="badge-pick" data-val="norm"    onclick="selLuft='norm';buildBadgePickers()"    style="background:#e1f5ee;color:#0f6e56;border:1px solid #9fe1cb">Normal</div>
+        </div>
+      </div>
+
+      <div class="f-group">
+        <label>Düngen</label>
+        <div style="display:flex;gap:6px" id="dueng-picker">
+          <div class="badge-pick" data-val="oft" onclick="selDueng='oft';buildBadgePickers()" style="background:#27500a;color:#eaf3de">Oft (1–2 Wo.)</div>
+          <div class="badge-pick" data-val="mit" onclick="selDueng='mit';buildBadgePickers()" style="background:#3b6d11;color:#eaf3de">Mittel (3–4 Wo.)</div>
+          <div class="badge-pick" data-val="sel" onclick="selDueng='sel';buildBadgePickers()" style="background:#c0dd97;color:#27500a">Selten (5+ Wo.)</div>
+        </div>
       </div>
 
       <div class="f-row2">
@@ -519,7 +564,9 @@ const tcOf = c => ['#d8e8c8','#b8c8a0'].includes(c) ? '#2a4018' : '#ffffff';
 
 let plants = JSON.parse(localStorage.getItem('pl_v3') || '[]');
 let wlog   = JSON.parse(localStorage.getItem('wl_v3') || '[]');
-let curId = null, editId = null, selEmoji = '🪴', selColor = '#b8c8a0', photoData = null;
+let curId = null, editId = null, selEmoji = '🪴', selColor = '#b8c8a0';
+let photoData = [null, null, null];
+let selLicht = 'hell', selGiess = 'mit', selLuft = 'norm', selDueng = 'mit';
 
 const save = () => { localStorage.setItem('pl_v3', JSON.stringify(plants)); localStorage.setItem('wl_v3', JSON.stringify(wlog)); };
 const daysAgo = d => d ? Math.floor((Date.now() - new Date(d)) / 86400000) : null;
@@ -571,8 +618,9 @@ function giesskls(g) {
 }
 function luftkls(l) {
   if (!l) return 'ib-lnorm';
-  if (l==='hoch') return 'ib-lhoch';
-  if (l==='mit')  return 'ib-lmit';
+  if (l==='hoch')    return 'ib-lhoch';
+  if (l==='hoch-ns') return 'ib-lhochns';
+  if (l==='mit')     return 'ib-lmit';
   return 'ib-lnorm';
 }
 function duengkls(d) {
@@ -583,7 +631,7 @@ function duengkls(d) {
 }
 const LICHT_LABEL = { sonne:'Direkte Sonne', hell:'Helles Zimmer', halb:'Halbschattig' };
 const LICHT_DESC  = { sonne:'Südfenster, direkt am Glas', hell:'Ost/West-Fenster, kein Mittagslicht aber helles Zimmer', halb:'Nordfenster oder weiter weg vom Fenster' };
-const LUFT_LABEL  = { hoch:'Hoch >60%', mit:'Mittel 40–60%', norm:'Normal' };
+const LUFT_LABEL  = { hoch:'Hoch >60%', 'hoch-ns':'Hoch, kein Besprühen', mit:'Mittel 40–60%', norm:'Normal' };
 const DUENG_LABEL = d => d<=2 ? `alle ${d} Wo.` : d<=4 ? `alle ${d} Wo.` : `alle ${d} Wo.`;
 
 function infoBadges(p) {
@@ -615,10 +663,10 @@ function detailInfoGrid(p) {
       <div class="detail-info-value">alle ${p.interval||7} Tage</div>
       <div class="detail-info-sub">${(p.interval||7)<=7?'regelmäßig':(p.interval||7)<=14?'mäßig':'selten'}</div>
     </div>
-    <div class="detail-info-cell" style="background:${{hoch:'#1d9e75',mit:'#5dcaa5',norm:'#e1f5ee'}[p.luft||'norm']||'#e1f5ee'};color:${{hoch:'#fff',mit:'#085041',norm:'#0f6e56'}[p.luft||'norm']||'#0f6e56'}">
+    <div class="detail-info-cell" style="background:${{hoch:'#1d9e75','hoch-ns':'#5dcaa5',mit:'#9fe1cb',norm:'#e1f5ee'}[p.luft||'norm']||'#e1f5ee'};color:${{hoch:'#fff','hoch-ns':'#085041',mit:'#0f6e56',norm:'#0f6e56'}[p.luft||'norm']||'#0f6e56'}">
       <div class="detail-info-label">Luftfeuchte</div>
       <div class="detail-info-value">${luL}</div>
-      <div class="detail-info-sub">${{hoch:'täglich besprühen',mit:'gelegentlich besprühen',norm:'normale Raumluft'}[p.luft||'norm']||''}</div>
+      <div class="detail-info-sub">${{hoch:'täglich besprühen',\'hoch-ns\':\'Luftbefeuchter oder Schale — Blätter NICHT besprühen!\',mit:\'gelegentlich besprühen\',norm:\'normale Raumluft\'}[p.luft||'norm']||''}</div>
     </div>
     <div class="detail-info-cell" style="background:${{2:'#27500a',4:'#3b6d11',8:'#c0dd97'}[p.duengeWo<=2?2:p.duengeWo<=4?4:8]||'#c0dd97'};color:${{2:'#eaf3de',4:'#eaf3de',8:'#27500a'}[p.duengeWo<=2?2:p.duengeWo<=4?4:8]||'#27500a'}">
       <div class="detail-info-label">Düngen</div>
@@ -639,8 +687,9 @@ function careBadge(color) {
 function rowHtml(p) {
   const bg = p.color || '#ffd1b8';
   const [stxt, scls] = statusFor(p);
-  const thumb = p.photo
-    ? `<img src="${p.photo}">`
+  const thumbSrc = (p.photos && p.photos[0]) || p.photo || null;
+  const thumb = thumbSrc
+    ? `<img src="${thumbSrc}">`
     : `<span style="font-size:26px">${p.emoji||'🪴'}</span>`;
   return `<div class="plant-row" onclick="openDetail('${p.id}')">
     <div class="plant-thumb" style="background:${p.photo?'transparent':bg}">${thumb}</div>
@@ -716,28 +765,17 @@ function openDetail(id) {
   // Hero
   const hero = document.getElementById('d-hero');
   hero.style.background = bg;
-  if (p.photo) {
-    hero.innerHTML = `<div class="detail-topnav"><button class="detail-nav-btn" onclick="closeDetail()">Zurück</button><button class="detail-nav-btn" onclick="openEdit()">Bearbeiten</button></div><img src="${p.photo}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">`;
+  const heroPhoto = (p.photos && p.photos[0]) || p.photo || null;
+  if (heroPhoto) {
+    hero.innerHTML = `<div class="detail-topnav"><button class="detail-nav-btn" onclick="closeDetail()">Zurück</button><button class="detail-nav-btn" onclick="openEdit()">Bearbeiten</button></div><img src="${heroPhoto}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">`;
   } else {
     hero.innerHTML = `<div class="detail-topnav"><button class="detail-nav-btn" onclick="closeDetail()">Zurück</button><button class="detail-nav-btn" onclick="openEdit()">Bearbeiten</button></div><span class="detail-hero-emoji">${p.emoji||'🪴'}</span>`;
   }
 
   document.getElementById('d-name').textContent = p.name;
   document.getElementById('d-species').textContent = p.species || '';
-  document.getElementById('d-color-dot').style.background = bg;
-  document.getElementById('d-color-dot').style.border = 'none';
-  document.getElementById('d-care-label').textContent = careLabel(bg);
-  // Style the care label as badge
-  const careEl = document.getElementById('d-care-label').parentElement;
-  careEl.style.background = bg;
-  const tcMap = {'#d8e8c8':'#3a5028','#b8c8a0':'#2a4018','#98a880':'#1a3010','#7a9060':'#fff','#5a7040':'#fff'};
-  careEl.style.color = tcMap[bg] || '#fff';
-  careEl.style.padding = '3px 10px';
-  careEl.style.borderRadius = '20px';
-  careEl.style.fontSize = '11px';
-  careEl.style.fontWeight = '600';
-  careEl.style.letterSpacing = '.5px';
-  careEl.style.display = 'inline-flex';
+  // Pflegeaufwand-Badge ausgeblendet — wird durch Info-Grid ersetzt
+  document.getElementById('d-color-dot').parentElement.style.display = 'none';
 
   const ago = daysAgo(p.lastWatered);
   const nxt = daysUntil(p);
@@ -794,6 +832,18 @@ function deletePlant() {
 }
 
 // ── MODAL ────────────────────────────────────────────────────────
+function buildBadgePickers() {
+  ['licht-picker','giess-picker','luft-picker','dueng-picker'].forEach(id => {
+    const container = document.getElementById(id);
+    if (!container) return;
+    container.querySelectorAll('.badge-pick').forEach(el => {
+      const map = {licht:selLicht, giess:selGiess, luft:selLuft, dueng:selDueng};
+      const key = id.replace('-picker','');
+      el.classList.toggle('sel', el.dataset.val === map[key]);
+    });
+  });
+}
+
 function buildPickers() {
   document.getElementById('emoji-grid').innerHTML = EMOJIS.map(e =>
     `<div class="e-opt${e===selEmoji?' sel':''}" onclick="selEmoji='${e}';buildPickers()">${e}</div>`
@@ -805,20 +855,24 @@ function buildPickers() {
 }
 
 function openAdd() {
-  editId=null; photoData=null;
-  selEmoji='🪴'; selColor=COLORS[1]; // #f2774b Einfach
+  editId=null; photoData=[null,null,null];
+  selEmoji='🪴'; selColor=COLORS[1];
+  selLicht='hell'; selGiess='mit'; selLuft='norm'; selDueng='mit';
   document.getElementById('modal-title').textContent = 'Neue Pflanze';
-  document.getElementById('photo-prev').style.display = 'none';
+  [0,1,2].forEach(i=>{ document.getElementById('photo-prev-'+i).style.display='none'; document.getElementById('photo-lbl-'+i).style.display=''; });
   ['name','species','standort','erde','giessen','duengen','schaedlinge','notes','poison'].forEach(f=>{const el=document.getElementById('f-'+f);if(el)el.value='';});
   document.getElementById('f-interval').value = 7;
-  buildPickers();
+  buildPickers(); buildBadgePickers();
   document.getElementById('modal-bg').classList.add('open');
 }
 
 function openEdit() {
   const p = plants.find(x=>x.id===curId); if(!p) return;
-  editId=curId; photoData=p.photo||null;
-  selEmoji=p.emoji||'🪴'; selColor=p.color||'#ffd1b8';
+  editId=curId;
+  const photos = p.photos || (p.photo ? [p.photo,null,null] : [null,null,null]);
+  photoData = [...photos];
+  selEmoji=p.emoji||'🪴'; selColor=p.color||'#b8c8a0';
+  selLicht=p.licht||'hell'; selGiess=p.giessKat||'mit'; selLuft=p.luft||'norm'; selDueng=p.duengKat||'mit';
   document.getElementById('modal-title').textContent = 'Bearbeiten';
   document.getElementById('f-name').value=p.name||'';
   document.getElementById('f-species').value=p.species||'';
@@ -830,9 +884,13 @@ function openEdit() {
   document.getElementById('f-schaedlinge').value=p.schaedlinge||'';
   document.getElementById('f-notes').value=p.notes||'';
   document.getElementById('f-poison').value=p.poison||'';
-  const prev=document.getElementById('photo-prev');
-  if(photoData){prev.src=photoData;prev.style.display='block';}else{prev.style.display='none';}
-  buildPickers();
+  [0,1,2].forEach(i=>{
+    const prev=document.getElementById('photo-prev-'+i);
+    const lbl=document.getElementById('photo-lbl-'+i);
+    if(photoData[i]){prev.src=photoData[i];prev.style.display='block';lbl.style.display='none';}
+    else{prev.style.display='none';lbl.style.display='';}
+  });
+  buildPickers(); buildBadgePickers();
   document.getElementById('modal-bg').classList.add('open');
 }
 
@@ -842,10 +900,15 @@ function handleBgClick(e) { if(e.target===document.getElementById('modal-bg'))cl
 function savePlant() {
   const name = document.getElementById('f-name').value.trim();
   if (!name) { document.getElementById('f-name').focus(); return; }
+  const giessKatMap = {oft:6, mit:10, sel:20};
+  const duengKatMap = {oft:2, mit:4, sel:7};
   const d = {
     name, species:document.getElementById('f-species').value.trim(),
-    interval:parseInt(document.getElementById('f-interval').value)||7,
-    emoji:selEmoji, color:selColor, photo:photoData||null,
+    interval:parseInt(document.getElementById('f-interval').value)||giessKatMap[selGiess]||7,
+    emoji:selEmoji, color:selColor,
+    photo:photoData[0]||null, photos:[...photoData],
+    licht:selLicht, giessKat:selGiess, luft:selLuft, duengKat:selDueng,
+    duengeWo:duengKatMap[selDueng]||4,
     standort:document.getElementById('f-standort').value.trim(),
     erde:document.getElementById('f-erde').value.trim(),
     giessen:document.getElementById('f-giessen').value.trim(),
@@ -860,13 +923,19 @@ function savePlant() {
   if (editId) openDetail(editId);
 }
 
-// Photo
-document.getElementById('photo-zone').addEventListener('click', ()=>document.getElementById('photo-input').click());
-document.getElementById('photo-input').addEventListener('change', e=>{
-  const f=e.target.files[0]; if(!f) return;
-  const r=new FileReader();
-  r.onload=ev=>{ photoData=ev.target.result; const prev=document.getElementById('photo-prev'); prev.src=photoData; prev.style.display='block'; };
-  r.readAsDataURL(f);
+// Photo — 3 Slots
+[0,1,2].forEach(i=>{
+  document.getElementById('photo-input-'+i).addEventListener('change', e=>{
+    const f=e.target.files[0]; if(!f) return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      photoData[i]=ev.target.result;
+      const prev=document.getElementById('photo-prev-'+i);
+      prev.src=photoData[i]; prev.style.display='block';
+      document.getElementById('photo-lbl-'+i).style.display='none';
+    };
+    r.readAsDataURL(f);
+  });
 });
 
 // Nav
@@ -882,7 +951,7 @@ function showPage(name, btn) {
 // ── Vorinstallierte Pflanzen ──────────────────────────────────────
 const PRESET_PLANTS = [
   {
-    id: 'preset-begonia-albopicta', licht: 'hell', luft: 'mit', duengeWo: 2,
+    id: 'preset-begonia-albopicta', licht: 'hell', luft: 'hoch-ns', duengeWo: 2,
     name: 'Weißgefleckte Begonie',
     species: 'Begonia × albopicta',
     emoji: '🌺',
@@ -899,7 +968,7 @@ const PRESET_PLANTS = [
     poison: '• Giftig für Menschen und Tiere (Hunde, Katzen, Kleinkinder)\n• Giftigste Teile: Wurzeln und Knollen\n• Auch Blätter und Stängel nicht ungefährlich\n• Enthält Calciumoxalat-Kristalle → Reizungen an Mund und Haut\n• Handschuhe beim Umtopfen empfohlen',
   },
   {
-    id: 'preset-begonia-maculata', licht: 'hell', luft: 'mit', duengeWo: 2,
+    id: 'preset-begonia-maculata', licht: 'hell', luft: 'hoch-ns', duengeWo: 2,
     name: 'Forellenbegonie',
     species: 'Begonia maculata',
     emoji: '🌸',
@@ -950,7 +1019,7 @@ const PRESET_PLANTS = [
     poison: '• In größeren Mengen giftig für Haustiere (Katzen, Hunde, Pferde)\n• Enthält Oxalsäure → Nierenprobleme bei übermäßigem Verzehr\n• In kleinen Mengen für Menschen nicht gefährlich\n• Haustiere von der Pflanze fernhalten',
   },
   {
-    id: 'preset-caladium-spring-fling', licht: 'hell', luft: 'hoch', duengeWo: 3,
+    id: 'preset-caladium-spring-fling', licht: 'hell', luft: 'hoch-ns', duengeWo: 3,
     name: 'Buntwurz Spring Fling',
     species: "Caladium bicolor 'Spring Fling'",
     emoji: '🌸',
@@ -967,7 +1036,7 @@ const PRESET_PLANTS = [
     poison: '• Giftig für Menschen und alle Haustiere\n• Enthält Calciumoxalat-Kristalle → Reizungen an Mund, Haut, Augen\n• Handschuhe beim Umtopfen empfohlen\n• Außer Reichweite von Kindern und Tieren halten',
   },
   {
-    id: 'preset-caladium-gingerland', licht: 'hell', luft: 'hoch', duengeWo: 3,
+    id: 'preset-caladium-gingerland', licht: 'hell', luft: 'hoch-ns', duengeWo: 3,
     name: 'Buntwurz Gingerland',
     species: "Caladium bicolor 'Gingerland'",
     emoji: '🌿',
@@ -1001,7 +1070,7 @@ const PRESET_PLANTS = [
     poison: '',
   },
   {
-    id: 'preset-hoya-flamingo-dream', licht: 'hell', luft: 'mit', duengeWo: 5,
+    id: 'preset-hoya-flamingo-dream', licht: 'hell', luft: 'hoch-ns', duengeWo: 5,
     name: 'Wachsblume Flamingo Dream',
     species: "Hoya carnosa 'Flamingo Dream Star of Java'",
     emoji: '🌸',
@@ -1069,7 +1138,7 @@ const PRESET_PLANTS = [
     poison: '• Giftig für Tiere (Hunde, Katzen) und Menschen\n• Enthält Calciumoxalat-Kristalle → Reizungen an Mund und Haut\n• Handschuhe beim Umtopfen empfohlen',
   },
   {
-    id: 'preset-gummibaum', licht: 'hell', luft: 'norm', duengeWo: 5,
+    id: 'preset-gummibaum', licht: 'hell', luft: 'hoch-ns', duengeWo: 5,
     name: 'Gummibaum',
     species: 'Ficus elastica',
     emoji: '🌳',
@@ -1101,7 +1170,7 @@ const PRESET_PLANTS = [
     poison: '• Leicht giftig für Menschen und Tiere\n• Handschuhe beim Umtopfen empfohlen',
   },
   {
-    id: 'preset-gluecksfarn', licht: 'halb', luft: 'hoch', duengeWo: 4,
+    id: 'preset-gluecksfarn', licht: 'halb', luft: 'hoch-ns', duengeWo: 4,
     name: 'Glücksfarn',
     species: 'Nephrolepis exaltata',
     emoji: '🌿',
@@ -1165,7 +1234,7 @@ const PRESET_PLANTS = [
     poison: '• Saft kann Haut reizen — Handschuhe empfohlen',
   },
   {
-    id: 'preset-buntnessel', licht: 'hell', luft: 'norm', duengeWo: 2,
+    id: 'preset-buntnessel', licht: 'hell', luft: 'hoch-ns', duengeWo: 2,
     name: 'Buntnessel',
     species: 'Coleus scutellarioides',
     emoji: '🌺',
@@ -1213,7 +1282,7 @@ const PRESET_PLANTS = [
     poison: '',
   },
   {
-    id: 'preset-tradescantia', licht: 'hell', luft: 'norm', duengeWo: 2,
+    id: 'preset-tradescantia', licht: 'hell', luft: 'hoch-ns', duengeWo: 2,
     name: 'Dreimasterblume',
     species: 'Tradescantia zebrina',
     emoji: '🌿',
