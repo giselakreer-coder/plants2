@@ -845,13 +845,10 @@ function buildBadgePickers() {
 }
 
 function buildPickers() {
-  document.getElementById('emoji-grid').innerHTML = EMOJIS.map(e =>
+  const eg = document.getElementById('emoji-grid');
+  if (eg) eg.innerHTML = EMOJIS.map(e =>
     `<div class="e-opt${e===selEmoji?' sel':''}" onclick="selEmoji='${e}';buildPickers()">${e}</div>`
   ).join('');
-  document.getElementById('color-grid').innerHTML = COLORS.map(c =>
-    `<div class="col-opt${c===selColor?' sel':''}" style="background:${c};${c==='#f8efe8'?'border:1.5px solid #d4cdc6':''}" onclick="selColor='${c}';buildPickers()"></div>`
-  ).join('');
-  document.getElementById('col-label-text').textContent = careLabel(selColor);
 }
 
 function openAdd() {
