@@ -161,6 +161,33 @@ nav button.active { color:var(--accent); border-top-color:var(--accent); }
 .detail-info-value { font-size:14px; font-weight:500; line-height:1.3; }
 .detail-info-sub { font-size:11px; opacity:.7; margin-top:2px; line-height:1.4; }
 
+
+/* ── Monatsplan ── */
+.season-banner { margin:14px 20px 0; background:#f0e0d0; border-radius:var(--r-lg); padding:12px 14px; border:1px solid #d8c0a8; }
+.sb-label { font-size:10px; font-weight:600; letter-spacing:1.2px; text-transform:uppercase; color:#7a4828; margin-bottom:4px; }
+.sb-text  { font-size:13px; color:#5a2e10; line-height:1.6; }
+.month-task-row { display:flex; align-items:flex-start; gap:12px; padding:13px 20px; border-bottom:1.5px solid var(--rule); }
+.mt-dot  { width:9px; height:9px; border-radius:50%; flex-shrink:0; margin-top:4px; background:#a07050; }
+.mt-info { flex:1; }
+.mt-title { font-size:14px; font-weight:500; color:var(--ink); }
+.mt-sub   { font-size:12px; color:var(--ink3); margin-top:2px; line-height:1.5; }
+.mt-badge { font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px; white-space:nowrap; flex-shrink:0; background:#f0e0d0; color:#7a4828; }
+.mt-badge.urgent { background:#c87848; color:#fff; }
+.plant-alert-row { display:flex; align-items:center; gap:12px; padding:11px 20px; border-bottom:1.5px solid var(--rule); }
+.pa-thumb { width:40px; height:40px; border-radius:var(--r-md); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:20px; background:#b8c8a0; overflow:hidden; }
+.pa-thumb img { width:100%; height:100%; object-fit:cover; border-radius:var(--r-md); }
+.pa-info { flex:1; min-width:0; }
+.pa-name { font-size:14px; font-weight:500; color:var(--ink); }
+.pa-action { font-size:12px; color:var(--ink3); margin-top:2px; line-height:1.4; }
+.pa-pill { font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px; white-space:nowrap; flex-shrink:0; }
+
+/* ── Düngen-Button im Gießplan ── */
+.remind-row-inner { display:flex; align-items:center; gap:12px; padding:11px 20px; border-bottom:1.5px solid var(--rule); }
+.remind-btns { display:flex; flex-direction:column; gap:4px; align-items:flex-end; }
+.dueng-btn { border:1.5px solid #a8c880; background:transparent; border-radius:20px; padding:4px 10px; font-size:10px; font-weight:700; cursor:pointer; font-family:var(--font); letter-spacing:.3px; text-transform:uppercase; color:#3b6d11; transition:background .1s; white-space:nowrap; }
+.dueng-btn.due  { background:#3b6d11; color:#eaf3de; border-color:#3b6d11; }
+.dueng-btn:active { opacity:.8; }
+
 /* ── Empty ── */
 .empty { padding:60px 24px; text-align:center; }
 .empty h3 { font-size:22px; font-weight:500; letter-spacing:-.5px; margin-bottom:8px; }
@@ -394,11 +421,24 @@ nav button.active { color:var(--accent); border-top-color:var(--accent); }
         </div>
       </div>
     </div>
+    <div id="season-strip"></div>
     <div id="plant-list"></div>
     <div id="home-empty" class="empty" style="display:none">
       <h3>Noch keine Pflanzen</h3>
       <p>Tippe auf „+ Hinzufügen" um loszulegen.</p>
     </div>
+  </div>
+
+
+  <!-- MONATSPLAN -->
+  <div class="page" id="page-month">
+    <div class="page-header">
+      <div class="eyebrow">Saisonal</div>
+      <h1 id="month-title">April</h1>
+    </div>
+    <div id="month-banner"></div>
+    <div id="month-tasks"></div>
+    <div id="month-plants"></div>
   </div>
 
   <!-- GIESPLAN -->
@@ -427,6 +467,7 @@ nav button.active { color:var(--accent); border-top-color:var(--accent); }
 
 <nav>
   <button class="active" onclick="showPage('home',this)">Übersicht</button>
+  <button onclick="showPage('month',this)">Monatsplan</button>
   <button onclick="showPage('remind',this)">Gießplan</button>
   <button onclick="showPage('log',this)">Tagebuch</button>
 </nav>
@@ -442,7 +483,7 @@ nav button.active { color:var(--accent); border-top-color:var(--accent); }
   </div>
   <div style="background:var(--bg);border-bottom:1.5px solid var(--rule)">
     <div class="detail-header">
-      <div class="detail-eyebrow">Zimmerpflanze</div>
+
       <h2 id="d-name"></h2>
       <p class="detail-species" id="d-species"></p>
       <div class="detail-color-label">
@@ -591,6 +632,126 @@ function statusFor(p) {
   return [`in ${d}d`, 'status-ok'];
 }
 
+// ── MONATSPLAN DATA ───────────────────────────────────────────────
+const MONATE = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+
+const SAISON_TIPPS = {
+  1:  'Ruhezeit — kaum gießen, nicht düngen. Pflanzen auf Schädlinge kontrollieren.',
+  2:  'Erste Anzeichen des Frühlings — Licht wird mehr. Noch nicht düngen, aber Gießen leicht erhöhen.',
+  3:  'Frühlingsbeginn — Umtopfen und erste Düngung starten. Neue Erde frisch nachdüngen.',
+  4:  'Wachstumssaison startet — Düngen beginnen, Umtopfen prüfen, Gießmenge erhöhen.',
+  5:  'Hauptwachstumszeit — regelmäßig düngen, Frühlingssonne kann intensiv sein.',
+  6:  'Hochsommer naht — öfter gießen, Mittagssonne meiden, Luftfeuchtigkeit beobachten.',
+  7:  'Heißester Monat — täglich Fingertest, Urlaubs-Bewässerung planen.',
+  8:  'Ende Hochsommer — Düngen noch laufend, Pflanzen auf Rückkehr aus dem Urlaub prüfen.',
+  9:  'Herbstbeginn — Düngen langsam reduzieren, Gießmenge verringern.',
+  10: 'Ruhephase vorbereiten — letztes Düngen, Ruhepflanzen zurückziehen lassen.',
+  11: 'Winterruhe — kaum düngen, wenig gießen, Standorte ans reduzierte Licht anpassen.',
+  12: 'Winterruhe — minimale Pflege, auf Zugluft und Heizungsluft achten.',
+};
+
+const MONAT_AUFGABEN = {
+  1:  [{t:'Wenig gießen',s:'Erde komplett trocknen lassen bei den meisten Pflanzen',u:false},{t:'Nicht düngen',s:'Winterruhe respektieren',u:false},{t:'Schädlingskontrolle',s:'Trockene Heizungsluft begünstigt Spinnmilben',u:false}],
+  2:  [{t:'Licht prüfen',s:'Pflanzen näher ans Fenster rücken',u:false},{t:'Gießen leicht erhöhen',s:'Erste Sonnentage erhöhen Verdunstung',u:false}],
+  3:  [{t:'Umtopfen beginnen',s:'Bester Zeitpunkt für die meisten Pflanzen',u:true},{t:'Erste Düngung',s:'März ist der Start der Düngesaison',u:true},{t:'Standorte prüfen',s:'Sonnenstunden nehmen zu',u:false}],
+  4:  [{t:'Düngesaison starten',s:'Ab April alle 2–4 Wo. flüssig düngen',u:true},{t:'Umtopfen prüfen',s:'Wurzeln aus den Löchern? Jetzt handeln',u:true},{t:'Gießmenge erhöhen',s:'Mehr Licht = mehr Verdunstung — öfter Fingertest',u:false},{t:'Frühlingssonne beachten',s:'Kann intensiver sein als erwartet',u:false}],
+  5:  [{t:'Regelmäßig düngen',s:'Hauptwachstumszeit läuft — alle 2 Wo.',u:true},{t:'Luftfeuchtigkeit erhöhen',s:'Heizung aus, aber trockene Luft bleibt',u:false}],
+  6:  [{t:'Öfter gießen',s:'Hitze erhöht Verdunstung stark',u:true},{t:'Mittagssonne meiden',s:'Pflanzen etwas zurückrücken',u:false},{t:'Urlaub vorbereiten',s:'Bewässerungslösung für Abwesenheit planen',u:false}],
+  7:  [{t:'Täglich Fingertest',s:'Im Hochsommer können Pflanzen viel schneller austrocknen',u:true},{t:'Luftfeuchtigkeit beachten',s:'Feuchtigkeitspflanzen täglich besprühen',u:false}],
+  8:  [{t:'Weiter düngen',s:'Saison läuft noch bis September',u:false},{t:'Nach Urlaub prüfen',s:'Pflanzen kontrollieren und ggf. nachgießen',u:false}],
+  9:  [{t:'Düngen reduzieren',s:'Ab September Abstände verlängern',u:false},{t:'Gießen verringern',s:'Verdunstung nimmt ab',u:false},{t:'Ruhepflanzen vorbereiten',s:'Caladien, Oxalis: Gießen langsam einstellen',u:true}],
+  10: [{t:'Letztes Düngen',s:'Oktober ist die letzte reguläre Düngung',u:false},{t:'Ruhepflanzen einziehen lassen',s:'Kein Düngen mehr für Caladien, Klivie, Oxalis',u:true},{t:'Standorte ans Winterlicht anpassen',s:'Pflanzen näher ans Fenster',u:false}],
+  11: [{t:'Kaum düngen',s:'Nur noch sehr selten und schwach',u:false},{t:'Wenig gießen',s:'Winterruhe respektieren',u:false},{t:'Heizungsluft beachten',s:'Luftbefeuchter aufstellen',u:false}],
+  12: [{t:'Minimale Pflege',s:'Gießen stark reduzieren bei den meisten Pflanzen',u:false},{t:'Zugluft vermeiden',s:'Beim Lüften Pflanzen von Fenstern wegstellen',u:false}],
+};
+
+// Pflanzen mit Ruhephasen
+const RUHEPHASEN = {
+  'preset-klivie':           { ruheMon:[10,11,12,1,2], ruheText:'Ruhephase (Okt–Feb) — kaum gießen, kühl stellen', aufwachText:'Ruhephase endet — wieder gießen & düngen starten' },
+  'preset-caladium-spring-fling': { ruheMon:[10,11,12,1,2,3], ruheText:'Knolle in Ruhephase — kaum gießen, dunkel lagern', aufwachText:'Jetzt Knolle einpflanzen! Min. 21°C nötig zum Austreiben' },
+  'preset-caladium-gingerland':   { ruheMon:[10,11,12,1,2,3], ruheText:'Knolle in Ruhephase — kaum gießen, dunkel lagern', aufwachText:'Jetzt Knolle einpflanzen! Min. 21°C nötig zum Austreiben' },
+  'preset-oxalis-sunny':     { ruheMon:[10,11,12,1], ruheText:'Ruhephase — Gießen einstellen, kühl & dunkel stellen', aufwachText:'Ruhephase endet — hell stellen und vorsichtig gießen' },
+};
+
+function renderMonthPage() {
+  const m = new Date().getMonth() + 1;
+  const mName = MONATE[m-1];
+  document.getElementById('month-title').textContent = mName;
+
+  // Banner
+  document.getElementById('month-banner').innerHTML =
+    '<div class="season-banner"><div class="sb-label">Saison-Tipp</div><div class="sb-text">' + (SAISON_TIPPS[m]||'') + '</div></div>';
+
+  // Aufgaben
+  const tasks = MONAT_AUFGABEN[m] || [];
+  const sectionLabel = '<div class="section-label">Diesen Monat allgemein</div>';
+  const tasksHtml = tasks.map(t =>
+    '<div class="month-task-row">' +
+      '<div class="mt-dot"></div>' +
+      '<div class="mt-info"><div class="mt-title">' + t.t + '</div><div class="mt-sub">' + t.s + '</div></div>' +
+      '<div class="mt-badge' + (t.u?' urgent':'') + '">' + (t.u?'Jetzt':'Info') + '</div>' +
+    '</div>'
+  ).join('');
+  document.getElementById('month-tasks').innerHTML = sectionLabel + tasksHtml;
+
+  // Pflanzen-Alerts
+  const alerts = [];
+  plants.forEach(p => {
+    const rp = RUHEPHASEN[p.id];
+    if (!rp) return;
+    const inRuhe = rp.ruheMon.includes(m);
+    const vorEnde = rp.ruheMon.includes(m+1===13?1:m+1) === false && rp.ruheMon.includes(m);
+    const aufwachen = !rp.ruheMon.includes(m) && rp.ruheMon.includes(m===1?12:m-1);
+    if (inRuhe || aufwachen) {
+      const thumbSrc = (p.photos && p.photos[0]) || p.photo || null;
+      const thumb = thumbSrc ? '<img src="' + thumbSrc + '">' : (p.emoji||'🪴');
+      alerts.push(
+        '<div class="plant-alert-row">' +
+          '<div class="pa-thumb">' + thumb + '</div>' +
+          '<div class="pa-info"><div class="pa-name">' + p.name + '</div><div class="pa-action">' + (aufwachen ? rp.aufwachText : rp.ruheText) + '</div></div>' +
+          '<div class="pa-pill" style="background:' + (aufwachen?'#c87848':'#f0e0d0') + ';color:' + (aufwachen?'#fff':'#7a4828') + '">' + (aufwachen?'Aufwachen':'Ruhe') + '</div>' +
+        '</div>'
+      );
+    }
+  });
+
+  const plantSection = alerts.length
+    ? '<div class="section-label">Deine Pflanzen im ' + mName + '</div>' + alerts.join('')
+    : '<div class="section-label">Deine Pflanzen im ' + mName + '</div><div class="empty" style="padding:30px 20px"><p>Keine besonderen Aktionen diesen Monat.</p></div>';
+  document.getElementById('month-plants').innerHTML = plantSection;
+}
+
+// ── SAISON-STRIP in der Übersicht ─────────────────────────────────
+function renderSeasonStrip() {
+  const m = new Date().getMonth() + 1;
+  const strip = document.getElementById('season-strip');
+  if (!strip) return;
+  strip.innerHTML =
+    '<div class="season-banner" style="margin:14px 20px 0">' +
+      '<div class="sb-label">' + MONATE[m-1] + ' — Saison-Tipp</div>' +
+      '<div class="sb-text">' + (SAISON_TIPPS[m]||'') + '</div>' +
+    '</div>';
+}
+
+
+// ── DÜNGEN ────────────────────────────────────────────────────────
+function duengenFaellig(p) {
+  if (!p.lastDuenged || !p.duengeWo) return true;
+  const faellig = new Date(p.lastDuenged).getTime() + p.duengeWo * 7 * 86400000;
+  return Date.now() >= faellig;
+}
+function duengenDaysLeft(p) {
+  if (!p.lastDuenged || !p.duengeWo) return 0;
+  return Math.ceil((new Date(p.lastDuenged).getTime() + p.duengeWo*7*86400000 - Date.now()) / 86400000);
+}
+function quickDuengen(id) {
+  const p = plants.find(x=>x.id===id); if(!p) return;
+  p.lastDuenged = new Date().toISOString();
+  save(); renderReminders();
+  if (navigator.vibrate) navigator.vibrate(30);
+}
+
+
 // ── HOME ─────────────────────────────────────────────────────────
 function renderHome() {
   const list = document.getElementById('plant-list');
@@ -599,6 +760,7 @@ function renderHome() {
   sub.textContent = plants.length ? `${plants.length} Pflanze${plants.length!==1?'n':''}` : '';
   if (!plants.length) { list.innerHTML=''; empty.style.display='block'; return; }
   empty.style.display = 'none';
+  renderSeasonStrip();
 
   const needsWater = plants.filter(p => { const d=daysUntil(p); return d===null||d<=0; });
   const ok         = plants.filter(p => { const d=daysUntil(p); return d!==null&&d>0; });
@@ -742,21 +904,29 @@ function renderReminders() {
   const list = document.getElementById('remind-list');
   if (!plants.length) { list.innerHTML = '<div class="empty"><h3>Keine Pflanzen</h3><p>Füge zuerst Pflanzen hinzu.</p></div>'; return; }
   const sorted = [...plants].sort((a,b) => (daysUntil(a)??-999) - (daysUntil(b)??-999));
+  const curMon = new Date().getMonth()+1;
+  const duegeActive = [3,4,5,6,7,8,9,10].includes(curMon);
   list.innerHTML = sorted.map(p => {
-    const bg = p.color || '#ffd1b8';
+    const bg = p.color || '#b8c8a0';
     const [stxt, scls] = statusFor(p);
-    const thumb = p.photo ? `<img src="${p.photo}">` : `<span>${p.emoji||'🪴'}</span>`;
-    return `<div class="remind-row">
-      <div class="remind-thumb" style="background:${bg}">${thumb}</div>
-      <div class="remind-info">
-        <h4>${p.name}</h4>
-        <p>Alle ${p.interval||7} Tage · zuletzt ${fmtD(p.lastWatered)}</p>
-      </div>
-      <div class="remind-right">
-        <span class="status-pill ${scls}">${stxt}</span>
-        <button class="water-btn-sm" onclick="quickWater('${p.id}')">Gegossen</button>
-      </div>
-    </div>`;
+    const thumbSrc = (p.photos && p.photos[0]) || p.photo || null;
+    const thumb = thumbSrc ? '<img src="' + thumbSrc + '">' : '<span>' + (p.emoji||'🪴') + '</span>';
+    const dFaellig = duegeActive && p.duengeWo && duengenFaellig(p);
+    const dLeft = duengenDaysLeft(p);
+    const dSub = !p.duengeWo ? '' : dFaellig ? 'Düngen fällig!' : 'Düngen in ' + dLeft + 'd';
+    const dBtn = p.duengeWo ? '<button class="dueng-btn' + (dFaellig?' due':'') + '" onclick="quickDuengen('' + p.id + '')">Gedüngt</button>' : '';
+    return '<div class="remind-row-inner">' +
+      '<div class="remind-thumb" style="background:' + bg + '">' + thumb + '</div>' +
+      '<div class="remind-info"><h4>' + p.name + '</h4>' +
+        '<p>Alle ' + (p.interval||7) + ' Tage · zuletzt ' + fmtD(p.lastWatered) + '</p>' +
+        (duegeActive && dSub ? '<p style="font-size:11px;color:' + (dFaellig?'#3b6d11':'var(--ink3)') + ';margin-top:1px;font-weight:' + (dFaellig?'600':'400') + '">' + dSub + '</p>' : '') +
+      '</div>' +
+      '<div class="remind-btns">' +
+        '<span class="status-pill ' + scls + '">' + stxt + '</span>' +
+        '<button class="water-btn-sm" onclick="quickWater('' + p.id + '')">Gegossen</button>' +
+        dBtn +
+      '</div>' +
+    '</div>';
   }).join('');
 }
 
@@ -766,6 +936,7 @@ function renderLog() {
   const empty = document.getElementById('log-empty');
   if (!wlog.length) { feed.innerHTML=''; empty.style.display='block'; return; }
   empty.style.display = 'none';
+  renderSeasonStrip();
   feed.innerHTML = wlog.slice(0,60).map(l => {
     const p = plants.find(x=>x.id===l.plantId);
     const bg = p ? (p.color||'#ffd1b8') : '#ffd1b8';
@@ -1003,6 +1174,7 @@ function showPage(name, btn) {
   btn.classList.add('active');
   if(name==='remind') renderReminders();
   if(name==='log') renderLog();
+  if(name==='month') renderMonthPage();
 }
 
 // ── Vorinstallierte Pflanzen ──────────────────────────────────────
@@ -1161,7 +1333,7 @@ const PRESET_PLANTS = [
     poison: '',
   },
   {
-    id: 'preset-alocasia-zebrina', licht: 'hell', luft: 'hoch', duengeWo: 2,
+    id: 'preset-alocasia-zebrina', licht: 'hell', luft: 'hoch', duengeWo: 4,
     name: 'Zebra-Alocasia',
     species: 'Alocasia zebrina',
     emoji: '🌿',
@@ -1172,13 +1344,13 @@ const PRESET_PLANTS = [
     standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Mind. 15 cm Abstand vom Glas\n• Temperatur 20–25 °C, nicht unter 18 °C\n• Kein Zug\n• Täglich mit kalkfreiem Wasser besprühen\n• 1× wöchentlich mit handwarmem Wasser abduschen',
     erde: '• Locker, leicht sauer, gut durchlässig\n• Mix: Blumenerde + Perlite + etwas Rindenmulch\n• Alternativ: spezielle Alocasia-Erde (erdlose Mischung funktioniert gut)\n• Drainagelöcher im Topf zwingend nötig',
     giessen: '• Erde stets leicht feucht halten — nie ganz austrocknen\n• Fingertest: obere 3 cm trocken → gießen\n• Sommer: wöchentlich\n• Winter: alle 10–14 Tage\n• Nur kalkfreies Wasser — Regenwasser oder abgestandenes Leitungswasser\n• Staunässe unbedingt vermeiden → Wurzelfäule\n• Gelb-braune Ränder = zu viel Wasser oder zu wenig Luftfeuchtigkeit',
-    duengen: '• April–Oktober: wöchentlich Flüssigdünger (niedrig dosiert)\n• Alternativ: alle 2 Wochen in normaler Dosierung\n• Winter: nicht düngen',
+    duengen: '• April–Oktober: 1× monatlich Flüssigdünger (laut PLNTS)\n• Nicht überdüngen — gelbe Blätter als Warnsignal\n• Winter: nicht düngen',
     schaedlinge: '• Spinnmilben (häufigstes Problem bei trockener Luft!) → Luftfeuchtigkeit erhöhen, abduschen\n• Schildläuse → Seifenlauge\n• Blattläuse → Neemöl\n• Wurzelfäule → bei Staunässe oder zu kalter Erde',
     notes: 'Besonderheit:\n• Gestreifte, zebramusterartige Stiele — sehr dekorativ\n• Kann bei Lichtmangel oder im Winter einzelne Blätter verlieren — normal!\n• Neue Blätter wachsen aus der Mitte nach\n\nUmtopfen:\n• Wenn Wurzeln aus Drainagelöchern wachsen\n• Topf max. 3–5 cm größer wählen\n• Bester Zeitpunkt: Frühjahr\n• Beim Umtopfen Rhizome trennen für Vermehrung möglich\n\nÜberwinterung:\n• Kühler Standort ok (nicht unter 18 °C)\n• Gießen und Düngen reduzieren\n• Pflanze kann im Winter ruhen und weniger Blätter haben',
     poison: '• Giftig für Menschen und Tiere\n• Enthält Calciumoxalat-Kristalle → Reizungen an Mund, Rachen, Haut\n• Handschuhe beim Umtopfen empfohlen\n• Außer Reichweite von Kindern und Haustieren halten',
   },
   {
-    id: 'preset-monstera-thai', licht: 'hell', luft: 'mit', duengeWo: 3,
+    id: 'preset-monstera-thai', licht: 'hell', luft: 'hoch', duengeWo: 3,
     name: 'Monstera Thai Constellation',
     species: "Monstera deliciosa 'Thai Constellation'",
     emoji: '🌿',
@@ -1195,7 +1367,7 @@ const PRESET_PLANTS = [
     poison: '• Giftig für Tiere (Hunde, Katzen) und Menschen\n• Enthält Calciumoxalat-Kristalle → Reizungen an Mund und Haut\n• Handschuhe beim Umtopfen empfohlen',
   },
   {
-    id: 'preset-gummibaum', licht: 'hell', luft: 'hoch-ns', duengeWo: 5,
+    id: 'preset-gummibaum', licht: 'hell', luft: 'norm', duengeWo: 5,
     name: 'Gummibaum',
     species: 'Ficus elastica',
     emoji: '🌳',
@@ -1204,7 +1376,7 @@ const PRESET_PLANTS = [
     lastWatered: null, photo: null,
     standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Braucht relativ viel Licht für gutes Wachstum\n• Temperatur mind. 18 °C, kein Zug\n• Buntblättrige Sorten brauchen noch mehr Licht\n• Standort möglichst nicht wechseln — wirft sonst Blätter ab',
     erde: '• Humusreiche, lockere, gut durchlässige Blumenerde\n• Mit Perlite oder Quarzsand mischen\n• Drainagelöcher zwingend nötig',
-    giessen: '• Obere 2–3 cm antrocknen lassen — mäßig gießen\n• Winter: deutlich weniger\n• Staunässe vermeiden — Blattfall droht\n• Blätter regelmäßig mit feuchtem Tuch abwischen',
+    giessen: '• Obere 2–3 cm antrocknen lassen — mäßig gießen\n• Winter: deutlich weniger\n• Staunässe vermeiden — Blattfall droht\n• Blätter regelmäßig mit feuchtem Tuch abwischen — verbessert Fotosynthese\n• Verträgt auch trockene Raumluft (bis 30% Luftfeuchtigkeit)',
     duengen: '• März–Oktober: alle 4–6 Wochen Flüssigdünger\n• November–Februar: nicht düngen',
     schaedlinge: '• Schildläuse, Wollläuse\n• Blätter regelmäßig abwischen — beugt Befall vor',
     notes: 'Umtopfen: alle 2–3 Jahre im Frühjahr\nKein häufiger Standortwechsel — wirft sonst Blätter ab',
@@ -1291,7 +1463,7 @@ const PRESET_PLANTS = [
     poison: '• Saft kann Haut reizen — Handschuhe empfohlen',
   },
   {
-    id: 'preset-buntnessel', licht: 'hell', luft: 'hoch-ns', duengeWo: 2,
+    id: 'preset-buntnessel', licht: 'hell', luft: 'norm', duengeWo: 2,
     name: 'Buntnessel',
     species: 'Coleus scutellarioides',
     emoji: '🌺',
@@ -1307,17 +1479,17 @@ const PRESET_PLANTS = [
     poison: '',
   },
   {
-    id: 'preset-ceropegia', licht: 'sonne', luft: 'norm', duengeWo: 5,
+    id: 'preset-ceropegia', licht: 'hell', luft: 'norm', duengeWo: 5,
     name: 'String of Hearts',
     species: 'Ceropegia woodii',
     emoji: '🍃',
     color: '#b8c8a0',
     interval: 14,
     lastWatered: null, photo: null,
-    standort: 'Direkte Sonne — hoch ans Fenster, gerne Südfenster\n• Als Hängepflanze ideal direkt am Glas\n• Im Halbschatten langsamer Wuchs',
+    standort: 'Helles Zimmer — helles indirektes Licht, kein direktes Mittagslicht\n• Ost- oder Nordfenster ideal laut PLNTS\n• Als Hängepflanze hoch ans Fenster\n• Im Halbschatten langsamer Wuchs',
     erde: '• Sukkulentenerde mit extra Sand und Perlite\n• Sehr durchlässig — kleine Töpfe bevorzugt',
     giessen: '• Sehr sparsam — sukkulentenartig\n• Erde komplett durchtrocknen lassen\n• Sommer: alle 2 Wochen\n• Winter: alle 4–6 Wochen',
-    duengen: '• April–September: alle 4–6 Wochen Kaktus-/Sukkulentendünger (schwach dosiert)\n• Winter: gar nicht',
+    duengen: '• April–September: alle 4–6 Wochen ausgewogener Flüssigdünger (laut PLNTS)\n• Nicht überdüngen — Ceropegia ist kein Starkzehrer\n• Winter: nicht düngen',
     schaedlinge: '• Wollläuse\n• Wurzelfäule bei Staunässe',
     notes: 'Tierfreundlich — ungiftig für Hunde und Katzen!\nIdeal für Hängeampel',
     poison: '',
@@ -1339,7 +1511,7 @@ const PRESET_PLANTS = [
     poison: '',
   },
   {
-    id: 'preset-tradescantia', licht: 'hell', luft: 'hoch-ns', duengeWo: 2,
+    id: 'preset-tradescantia', licht: 'hell', luft: 'norm', duengeWo: 2,
     name: 'Dreimasterblume',
     species: 'Tradescantia zebrina',
     emoji: '🌿',
@@ -1371,7 +1543,7 @@ const PRESET_PLANTS = [
     poison: '• Schwach giftig für Tiere und Menschen',
   },
   {
-    id: 'preset-alocasia-frydek', licht: 'hell', luft: 'hoch', duengeWo: 2,
+    id: 'preset-alocasia-frydek', licht: 'hell', luft: 'hoch', duengeWo: 4,
     name: 'Alocasia Frydek',
     species: 'Alocasia micholitziana',
     emoji: '🌿',
@@ -1451,7 +1623,7 @@ const PRESET_PLANTS = [
     poison: '• Alle Pflanzenteile giftig für Menschen und Tiere!\n• Handschuhe beim Umtopfen',
   },
   {
-    id: 'preset-monstera', licht: 'hell', luft: 'norm', duengeWo: 4,
+    id: 'preset-monstera', licht: 'hell', luft: 'mit', duengeWo: 4,
     name: 'Monstera Fensterblatt',
     species: 'Monstera deliciosa',
     emoji: '🌿',
@@ -1460,7 +1632,7 @@ const PRESET_PLANTS = [
     lastWatered: null, photo: null,
     standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Südfenster: mind. 1–2 m Abstand vom Glas\n• Temperatur 18–27 °C',
     erde: '• Nährstoffreiche, lockere Blumenerde mit Perlite oder Rindenmulch\n• Leicht sauer',
-    giessen: '• Obere 3–4 cm antrocknen lassen\n• Sommer: alle 1–2 Wochen\n• Winter: alle 3 Wochen\n• Blätter abwischen für bessere Fotosynthese',
+    giessen: '• Obere 3–4 cm antrocknen lassen\n• Sommer: alle 1–2 Wochen\n• Winter: alle 3 Wochen\n• Blätter abwischen für bessere Fotosynthese\n• Luftfeuchtigkeit 50–70% — gelegentlich besprühen ok\n• Moosstab einsetzen: fördert größere Blätter',
     duengen: '• April–September: alle 2 Wochen Flüssigdünger\n• Winter: nicht düngen\n• Kletterstab unterstützt Wachstum',
     schaedlinge: '• Spinnmilben, Blattläuse, Schildläuse, Thripse',
     notes: 'Umtopfen: alle 2 Jahre im Frühjahr',
@@ -1511,6 +1683,7 @@ PRESET_PLANTS.forEach(preset => {
   }
 });
 save();
+
 
 renderHome();
 </script>
