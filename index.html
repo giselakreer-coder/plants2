@@ -568,7 +568,14 @@ let curId = null, editId = null, selEmoji = '🪴', selColor = '#b8c8a0';
 let photoData = [null, null, null];
 let selLicht = 'hell', selGiess = 'mit', selLuft = 'norm', selDueng = 'mit';
 
-const save = () => { localStorage.setItem('pl_v3', JSON.stringify(plants)); localStorage.setItem('wl_v3', JSON.stringify(wlog)); };
+const save = () => {
+  try {
+    localStorage.setItem('pl_v3', JSON.stringify(plants));
+    localStorage.setItem('wl_v3', JSON.stringify(wlog));
+  } catch(e) {
+    alert('Speichern fehlgeschlagen — zu viele Fotos im Speicher. Bitte ein Foto entfernen.');
+  }
+};
 const daysAgo = d => d ? Math.floor((Date.now() - new Date(d)) / 86400000) : null;
 const daysUntil = p => { if (!p.lastWatered) return null; return Math.ceil((new Date(p.lastWatered).getTime() + (p.interval||7)*86400000 - Date.now()) / 86400000); };
 const fmtD = d => d ? new Date(d).toLocaleDateString('de-AT',{day:'2-digit',month:'2-digit',year:'2-digit'}) : '–';
@@ -630,8 +637,8 @@ function duengkls(d) {
   return 'ib-dsel';
 }
 const LICHT_LABEL = { sonne:'Direkte Sonne', hell:'Helles Zimmer', halb:'Halbschattig' };
-const LICHT_DESC  = { sonne:'Südfenster, direkt am Glas', hell:'Ost/West-Fenster, kein Mittagslicht aber helles Zimmer', halb:'Nordfenster oder weiter weg vom Fenster' };
-const LUFT_LABEL  = {}; LUFT_LABEL['hoch']='Hoch >60%'; LUFT_LABEL['hoch-ns']='Hoch, kein Besprühen'; LUFT_LABEL['mit']='Mittel 40–60%'; LUFT_LABEL['norm']='Normal';
+const LICHT_DESC  = { sonne:'Südfenster, direkt am Glas', hell:'Ost/West-Fenster oder mind. 1–2 m vom Südfenster — keine direkte Sonne', halb:'Nordfenster oder weiter vom Fenster entfernt' };
+const LUFT_LABEL  = {}; LUFT_LABEL['hoch']='Hoch >60%'; LUFT_LABEL['hoch-ns']='Hoch, kein Besprühen'; LUFT_LABEL['mit']='Mittel 40–60%'; LUFT_LABEL['norm']='Normal (40–50%)';
 const DUENG_LABEL = d => d<=2 ? `alle ${d} Wo.` : d<=4 ? `alle ${d} Wo.` : `alle ${d} Wo.`;
 
 function infoBadges(p) {
@@ -667,8 +674,8 @@ function detailInfoGrid(p) {
   const luSub = {
     hoch:    'täglich besprühen',
     'hoch-ns': 'Luftbefeuchter oder Schale — Blätter NICHT besprühen!',
-    mit:     'gelegentlich besprühen',
-    norm:    'normale Raumluft'
+    mit:     'gelegentlich besprühen (50–60%)',
+    norm:    'normale Raumluft (40–50%)'
   }[luft] || '';
 
   const dw   = p.duengeWo || 4;
@@ -919,16 +926,32 @@ function openEdit() {
 function closeModal() { document.getElementById('modal-bg').classList.remove('open'); }
 function handleBgClick(e) { if(e.target===document.getElementById('modal-bg'))closeModal(); }
 
+
+function compressPhoto(dataUrl, cb) {
+  if (!dataUrl) { cb(null); return; }
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    const MAX = 600;
+    let w = img.width, h = img.height;
+    if (w > h) { if (w > MAX) { h = h*MAX/w; w = MAX; } }
+    else        { if (h > MAX) { w = w*MAX/h; h = MAX; } }
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    cb(canvas.toDataURL('image/jpeg', 0.72));
+  };
+  img.src = dataUrl;
+}
+
 function savePlant() {
   const name = document.getElementById('f-name').value.trim();
   if (!name) { document.getElementById('f-name').focus(); return; }
   const giessKatMap = {oft:6, mit:10, sel:20};
   const duengKatMap = {oft:2, mit:4, sel:7};
-  const d = {
+  const baseData = {
     name, species:document.getElementById('f-species').value.trim(),
     interval:parseInt(document.getElementById('f-interval').value)||giessKatMap[selGiess]||7,
     emoji:selEmoji, color:selColor,
-    photo:photoData[0]||null, photos:[...photoData],
     licht:selLicht, giessKat:selGiess, luft:selLuft, duengKat:selDueng,
     duengeWo:duengKatMap[selDueng]||4,
     standort:document.getElementById('f-standort').value.trim(),
@@ -939,10 +962,22 @@ function savePlant() {
     notes:document.getElementById('f-notes').value.trim(),
     poison:document.getElementById('f-poison').value.trim(),
   };
-  if (editId) { const i=plants.findIndex(p=>p.id===editId); plants[i]={...plants[i],...d}; }
-  else { plants.push({id:Date.now().toString(), lastWatered:null, ...d}); }
-  save(); closeModal(); renderHome(); renderReminders(); renderLog();
-  if (editId) openDetail(editId);
+  // Compress all 3 photos then save
+  let done = 0;
+  const compressed = [null, null, null];
+  [0,1,2].forEach(i => {
+    compressPhoto(photoData[i], result => {
+      compressed[i] = result;
+      done++;
+      if (done === 3) {
+        const d = {...baseData, photo:compressed[0]||null, photos:[...compressed]};
+        if (editId) { const idx=plants.findIndex(p=>p.id===editId); plants[idx]={...plants[idx],...d}; }
+        else { plants.push({id:Date.now().toString(), lastWatered:null, ...d}); }
+        save(); closeModal(); renderHome(); renderReminders(); renderLog();
+        if (editId) openDetail(editId);
+      }
+    });
+  });
 }
 
 // Photo — 3 Slots
