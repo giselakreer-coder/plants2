@@ -12,464 +12,249 @@
 <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:       #e8dfd5;
-  --white:    #ffffff;
-  --ink:      #32363f;
-  --ink2:     #50555e;
-  --ink3:     #9a9890;
-  --rule:     #d4cdc6;
-  --accent:   #5a7a48;
-
-  --c1: #f1cfc3; /* sehr einfach — Rosa */
-  --c2: #f2774b; /* einfach — Orange */
-  --c3: #6a95a6; /* mittel — Blau-Grau */
-  --c4: #70757b; /* anspruchsvoll — Mittel-Grau */
-  --c5: #32363f; /* heikel — Dunkel-Navy */
-
-  --font: 'Epilogue', system-ui, sans-serif;
-  --r: 4px;
-  --r-md: 10px;
-  --r-lg: 16px;
-  --r-xl: 22px;
+  --bg:#e8dfd5; --white:#fff; --ink:#32363f; --ink2:#50555e; --ink3:#9a9890;
+  --rule:#d4cdc6; --accent:#5a7a48; --font:'Epilogue',system-ui,sans-serif;
+  --r:4px; --r-md:10px; --r-lg:16px; --r-xl:22px;
 }
-* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
-html,body { height:100%; background:var(--bg); font-family:var(--font); color:var(--ink); overflow:hidden; -webkit-font-smoothing:antialiased; }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased}
+#app{display:flex;flex-direction:column;height:100dvh;max-width:430px;margin:0 auto}
+#view{flex:1;overflow-y:auto;padding-bottom:72px}
+#view::-webkit-scrollbar{display:none}
 
-/* ── Shell ── */
-#app { display:flex; flex-direction:column; height:100dvh; max-width:430px; margin:0 auto; }
-#view { flex:1; overflow-y:auto; padding-bottom:64px; }
-#view::-webkit-scrollbar { display:none; }
+/* Nav */
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--bg);border-top:1.5px solid var(--rule);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:100}
+nav button{flex:1;border:none;background:none;padding:20px 4px 18px;font-size:13px;font-weight:500;color:var(--ink3);cursor:pointer;font-family:var(--font);letter-spacing:.5px;text-transform:uppercase;transition:color .15s;border-top:2px solid transparent}
+nav button.active{color:var(--accent);border-top-color:var(--accent)}
 
-/* ── Nav ── */
-nav {
-  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
-  width:100%; max-width:430px;
-  background:var(--bg); border-top:1.5px solid var(--rule);
-  display:flex; padding-bottom:env(safe-area-inset-bottom); z-index:100;
-}
-nav button {
-  flex:1; border:none; background:none;
-  padding:22px 4px 20px;
-  font-size:14px; font-weight:500; color:var(--ink3);
-  cursor:pointer; font-family:var(--font);
-  letter-spacing:.6px; text-transform:uppercase;
-  transition:color .15s; border-top:2px solid transparent;
-}
-nav button.active { color:var(--accent); border-top-color:var(--accent); }
+/* Pages */
+.page{display:none}
+.page.active{display:block;animation:fadeUp .2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── Pages ── */
-.page { display:none; }
-.page.active { display:block; animation:fadeUp .2s ease; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+/* Topbar */
+.topbar{padding:52px 20px 16px;background:var(--bg);border-bottom:1.5px solid var(--rule)}
+.topbar-eyebrow{font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);margin-bottom:5px}
+.topbar h1{font-size:34px;font-weight:400;line-height:.95;letter-spacing:-1px}
+.topbar-row{display:flex;justify-content:space-between;align-items:flex-end}
+.topbar-sub{font-size:13px;color:var(--ink3);margin-top:4px}
+.add-btn{border:1.5px solid var(--ink);background:transparent;border-radius:30px;padding:8px 18px;font-size:12px;font-weight:500;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;font-family:var(--font);transition:background .15s,color .15s;white-space:nowrap;align-self:flex-start}
+.add-btn:active{background:var(--accent);color:var(--white);border-color:var(--accent)}
 
-/* ── Top bar ── */
-.topbar {
-  padding:56px 20px 18px;
-  background:var(--bg);
-  border-bottom:1.5px solid var(--rule);
-}
-.topbar-row { display:flex; justify-content:space-between; align-items:flex-end; }
-.topbar-eyebrow { font-size:12px; font-weight:500; letter-spacing:1.8px; text-transform:uppercase; color:#5a7a48; margin-bottom:6px; }
-.topbar h1 { font-size:36px; font-weight:400; line-height:.95; letter-spacing:-1px; }
-.topbar-sub { font-size:13px; color:var(--ink3); font-weight:400; margin-top:5px; }
-.add-btn {
-  border:1.5px solid var(--ink); background:transparent;
-  border-radius:30px; padding:9px 20px;
-  font-size:13px; font-weight:500; letter-spacing:.4px;
-  text-transform:uppercase; cursor:pointer; font-family:var(--font);
-  transition:background .15s, color .15s; white-space:nowrap;
-  align-self:flex-start; margin-top:4px;
-}
-.add-btn:active { background:var(--accent); color:var(--white); border-color:var(--accent); }
+/* Section label */
+.sec-label{font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);padding:16px 20px 8px}
 
-/* ── Legend ── */
-.legend {
-  margin:0; padding:14px 20px;
-  border-bottom:1.5px solid var(--rule);
-  background:var(--bg);
-}
-.legend-title { font-size:11px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink3); margin-bottom:8px; }
-.legend-row { display:flex; gap:6px; flex-wrap:wrap; }
-.legend-item { display:flex; align-items:center; gap:5px; font-size:12px; font-weight:400; color:var(--ink2); }
-.legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+/* ── DIESE WOCHE ── */
+.urgent-card{margin:14px 20px 0;background:#c87848;border-radius:var(--r-lg);padding:14px 16px}
+.uc-eyebrow{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:5px}
+.uc-title{font-size:20px;font-weight:400;color:#fff;line-height:1.2}
+.uc-sub{font-size:12px;color:rgba(255,255,255,.75);margin-top:4px}
+.uc-btn{margin-top:10px;display:inline-block;background:rgba(255,255,255,.2);border-radius:30px;padding:7px 16px;font-size:11px;font-weight:600;color:#fff;cursor:pointer;letter-spacing:.3px;text-transform:uppercase}
+.uc-btn:active{background:rgba(255,255,255,.35)}
 
-/* ── Plant list ── */
-.section-label {
-  font-size:11px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase;
-  color:var(--ink3); padding:18px 20px 8px;
-}
-.plant-row {
-  display:flex; align-items:center; gap:14px;
-  padding:14px 20px; border-bottom:1.5px solid var(--rule);
-  background:var(--bg); cursor:pointer; transition:background .1s;
-}
-.plant-row:active { background:var(--rule); }
-.plant-thumb {
-  width:50px; height:50px; border-radius:var(--r-lg);
-  display:flex; align-items:center; justify-content:center;
-  font-size:26px; flex-shrink:0; overflow:hidden; position:relative;
-}
-.plant-thumb img { width:100%; height:100%; object-fit:cover; border-radius:var(--r-lg); }
-.plant-row-info { flex:1; min-width:0; }
-.plant-row-info h3 { font-size:15px; font-weight:500; line-height:1.2; letter-spacing:-.2px; }
-.plant-row-info p { font-size:13px; color:var(--ink3); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-style:italic; }
-.plant-row-right { display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0; }
-.status-pill {
-  font-size:12px; font-weight:500; padding:4px 11px;
-  border-radius:20px; letter-spacing:.2px; white-space:nowrap;
-  background:var(--ink); color:var(--white);
-}
-.status-ok    { background:transparent; color:var(--ink3); border:1px solid var(--rule); }
-.status-soon  { background:#ede9fe; color:#5b35c5; }
-.status-today { background:#fef3cd; color:#b7650a; }
-.status-over  { background:#fde8e8; color:#c0392b; }
-.water-btn-sm {
-  border:1.5px solid var(--rule); background:transparent;
-  border-radius:20px; padding:4px 12px;
-  font-size:12px; font-weight:500; cursor:pointer;
-  font-family:var(--font); letter-spacing:.3px; text-transform:uppercase;
-  color:var(--ink2); transition:background .1s, border-color .1s;
-}
-.water-btn-sm:active { background:var(--accent); color:var(--white); border-color:var(--accent); }
+.week-action{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1.5px solid var(--rule);cursor:pointer}
+.wa-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:500;flex-shrink:0}
+.wa-info{flex:1}
+.wa-title{font-size:15px;font-weight:500;color:var(--ink)}
+.wa-sub{font-size:12px;color:var(--ink3);margin-top:2px;line-height:1.4}
+.wa-check{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--rule);flex-shrink:0;transition:all .2s}
+.wa-check.done{background:var(--accent);border-color:var(--accent);display:flex;align-items:center;justify-content:center}
+.wa-check.done::after{content:'';width:10px;height:6px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px);display:block}
 
+.season-strip{margin:14px 20px 0;background:#f0e0d0;border-radius:var(--r-lg);padding:12px 14px;border:1px solid #d8c0a8}
+.ss-label{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:#7a4828;margin-bottom:4px}
+.ss-text{font-size:13px;color:#5a2e10;line-height:1.6}
 
-/* ── Info-Badges (Licht / Gießen / Luft / Düngen) ── */
-.info-badges { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
-.ibadge { font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px; letter-spacing:.3px; white-space:nowrap; }
-/* Licht */
-.ib-sonne   { background:#f0c830; color:#6a4e08; }
-.ib-hell    { background:#f7e88a; color:#7a5e08; }
-.ib-halb    { background:#fdf6d0; color:#8a7020; border:1px solid #ede8a0; }
-/* Gießen */
-.ib-goft    { background:#378add; color:#fff; }
-.ib-gmit    { background:#85b7eb; color:#0c447c; }
-.ib-gsel    { background:#e6f1fb; color:#185fa5; border:1px solid #b5d4f4; }
-/* Luft */
-.ib-lhoch   { background:#1d9e75; color:#fff; }
-.ib-lmit    { background:#5dcaa5; color:#085041; }
-.ib-lnorm   { background:#e1f5ee; color:#0f6e56; border:1px solid #9fe1cb; }
-.ib-lhochns { background:#5dcaa5; color:#085041; }
-/* Düngen */
-.ib-doft    { background:#27500a; color:#eaf3de; }
-.ib-dmit    { background:#3b6d11; color:#eaf3de; }
-.ib-dsel    { background:#c0dd97; color:#27500a; }
+/* ── PFLANZEN ── */
+.info-badges{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.ibadge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;letter-spacing:.2px;white-space:nowrap}
+.ib-sonne{background:#f0c830;color:#6a4e08}
+.ib-hell{background:#f7e88a;color:#7a5e08}
+.ib-halb{background:#fdf6d0;color:#8a7020;border:1px solid #ede8a0}
+.ib-goft{background:#378add;color:#fff}
+.ib-gmit{background:#85b7eb;color:#0c447c}
+.ib-gsel{background:#e6f1fb;color:#185fa5;border:1px solid #b5d4f4}
+.ib-lhoch{background:#1d9e75;color:#fff}
+.ib-lhochns{background:#5dcaa5;color:#085041}
+.ib-lmit{background:#9fe1cb;color:#0f6e56}
+.ib-lnorm{background:#e1f5ee;color:#0f6e56;border:1px solid #9fe1cb}
+.ib-doft{background:#27500a;color:#eaf3de}
+.ib-dmit{background:#3b6d11;color:#eaf3de}
+.ib-dsel{background:#c0dd97;color:#27500a}
 
-/* Detail-Info-Grid */
-.detail-info-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:16px 20px; border-bottom:1.5px solid var(--rule); }
-.detail-info-cell { border-radius:var(--r-lg); padding:10px 12px; }
-.detail-info-label { font-size:10px; font-weight:600; letter-spacing:1.2px; text-transform:uppercase; opacity:.75; margin-bottom:3px; }
-.detail-info-value { font-size:14px; font-weight:500; line-height:1.3; }
-.detail-info-sub { font-size:11px; opacity:.7; margin-top:2px; line-height:1.4; }
+.plant-row{display:flex;align-items:flex-start;gap:14px;padding:14px 20px;border-bottom:1.5px solid var(--rule);background:var(--bg);cursor:pointer;transition:background .1s}
+.plant-row:active{background:var(--rule)}
+.plant-thumb{width:52px;height:52px;border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;overflow:hidden}
+.plant-thumb img{width:100%;height:100%;object-fit:cover;border-radius:var(--r-lg)}
+.plant-row-info{flex:1;min-width:0}
+.plant-row-info h3{font-size:15px;font-weight:500;line-height:1.2;letter-spacing:-.2px}
+.plant-row-info p{font-size:12px;color:var(--ink3);margin-top:2px;font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plant-row-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+.status-pill{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.status-ok{background:transparent;color:var(--ink3);border:1px solid var(--rule)}
+.status-soon{background:#ede9fe;color:#5b35c5}
+.status-today{background:#fef3cd;color:#b7650a}
+.status-over{background:#fde8e8;color:#c0392b}
+.water-btn-sm{border:1.5px solid var(--rule);background:transparent;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);letter-spacing:.3px;text-transform:uppercase;color:var(--ink2);transition:background .1s}
+.water-btn-sm:active{background:var(--ink);color:var(--white);border-color:var(--ink)}
 
+.legend{padding:10px 20px 12px;border-bottom:1.5px solid var(--rule);background:var(--bg)}
+.legend-title{font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+.legend-cats{display:flex;flex-direction:column;gap:5px}
+.legend-cat{display:flex;align-items:center;gap:8px}
+.legend-cat-label{font-size:11px;font-weight:500;color:var(--ink2);width:80px;flex-shrink:0}
+.legend-dots{display:flex;gap:4px}
+.ldot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.legend-hint{font-size:10px;color:var(--ink3)}
 
-/* ── Monatsplan ── */
-.season-banner { margin:14px 20px 0; background:#f0e0d0; border-radius:var(--r-lg); padding:12px 14px; border:1px solid #d8c0a8; }
-.sb-label { font-size:10px; font-weight:600; letter-spacing:1.2px; text-transform:uppercase; color:#7a4828; margin-bottom:4px; }
-.sb-text  { font-size:13px; color:#5a2e10; line-height:1.6; }
-.month-task-row { display:flex; align-items:flex-start; gap:12px; padding:13px 20px; border-bottom:1.5px solid var(--rule); }
-.mt-dot  { width:9px; height:9px; border-radius:50%; flex-shrink:0; margin-top:4px; background:#a07050; }
-.mt-info { flex:1; }
-.mt-title { font-size:14px; font-weight:500; color:var(--ink); }
-.mt-sub   { font-size:12px; color:var(--ink3); margin-top:2px; line-height:1.5; }
-.mt-badge { font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px; white-space:nowrap; flex-shrink:0; background:#f0e0d0; color:#7a4828; }
-.mt-badge.urgent { background:#c87848; color:#fff; }
-.plant-alert-row { display:flex; align-items:center; gap:12px; padding:11px 20px; border-bottom:1.5px solid var(--rule); }
-.pa-thumb { width:40px; height:40px; border-radius:var(--r-md); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:20px; background:#b8c8a0; overflow:hidden; }
-.pa-thumb img { width:100%; height:100%; object-fit:cover; border-radius:var(--r-md); }
-.pa-info { flex:1; min-width:0; }
-.pa-name { font-size:14px; font-weight:500; color:var(--ink); }
-.pa-action { font-size:12px; color:var(--ink3); margin-top:2px; line-height:1.4; }
-.pa-pill { font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px; white-space:nowrap; flex-shrink:0; }
+.empty{padding:60px 24px;text-align:center}
+.empty h3{font-size:22px;font-weight:400;letter-spacing:-.5px;margin-bottom:8px}
+.empty p{font-size:14px;color:var(--ink3);line-height:1.6}
 
-/* ── Düngen-Button im Gießplan ── */
-.remind-row-inner { display:flex; align-items:center; gap:12px; padding:11px 20px; border-bottom:1.5px solid var(--rule); }
-.remind-btns { display:flex; flex-direction:column; gap:4px; align-items:flex-end; }
-.dueng-btn { border:1.5px solid #a8c880; background:transparent; border-radius:20px; padding:4px 10px; font-size:10px; font-weight:700; cursor:pointer; font-family:var(--font); letter-spacing:.3px; text-transform:uppercase; color:#3b6d11; transition:background .1s; white-space:nowrap; }
-.dueng-btn.due  { background:#3b6d11; color:#eaf3de; border-color:#3b6d11; }
-.dueng-btn:active { opacity:.8; }
+/* ── SAISONALES ── */
+.month-task-row{display:flex;align-items:flex-start;gap:12px;padding:13px 20px;border-bottom:1.5px solid var(--rule)}
+.mt-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;background:#a07050}
+.mt-info{flex:1}
+.mt-title{font-size:14px;font-weight:500;color:var(--ink)}
+.mt-sub{font-size:12px;color:var(--ink3);margin-top:2px;line-height:1.5}
+.mt-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0;background:#f0e0d0;color:#7a4828}
+.mt-badge.urgent{background:#c87848;color:#fff}
+.plant-alert-row{display:flex;align-items:center;gap:12px;padding:11px 20px;border-bottom:1.5px solid var(--rule)}
+.pa-thumb{width:40px;height:40px;border-radius:var(--r-md);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px;background:#b8c8a0;overflow:hidden}
+.pa-thumb img{width:100%;height:100%;object-fit:cover;border-radius:var(--r-md)}
+.pa-name{font-size:14px;font-weight:500;color:var(--ink)}
+.pa-action{font-size:12px;color:var(--ink3);margin-top:2px;line-height:1.4}
+.pa-pill{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
 
-/* ── Empty ── */
-.empty { padding:60px 24px; text-align:center; }
-.empty h3 { font-size:22px; font-weight:500; letter-spacing:-.5px; margin-bottom:8px; }
-.empty p { font-size:14px; color:var(--ink3); line-height:1.6; }
+/* ── DETAIL ── */
+#detail{display:none;position:fixed;inset:0;z-index:200;background:var(--bg);overflow-y:auto;max-width:430px;margin:0 auto}
+#detail.open{display:block;animation:slideIn .25s cubic-bezier(.4,0,.2,1)}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.detail-hero{height:260px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.detail-hero-emoji{font-size:100px}
+.detail-hero img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.detail-topnav{position:absolute;top:0;left:0;right:0;padding:16px 16px 0;display:flex;justify-content:space-between;z-index:10}
+.detail-nav-btn{background:rgba(255,255,255,.9);border:none;border-radius:30px;padding:8px 18px;font-size:12px;font-weight:500;letter-spacing:.3px;text-transform:uppercase;cursor:pointer;font-family:var(--font);backdrop-filter:blur(6px)}
+.detail-header{padding:20px 20px 0;background:var(--bg);border-bottom:1.5px solid var(--rule)}
+.detail-header h2{font-size:30px;font-weight:400;letter-spacing:-1px;line-height:1}
+.detail-species{font-size:13px;color:var(--ink3);font-style:italic;margin-top:4px;margin-bottom:16px}
+.stats-row{display:flex;border-top:1.5px solid var(--rule);border-bottom:1.5px solid var(--rule)}
+.stat-cell{flex:1;padding:14px 16px;border-right:1.5px solid var(--rule)}
+.stat-cell:last-child{border-right:none}
+.stat-n{font-size:26px;font-weight:400;letter-spacing:-1px;line-height:1}
+.stat-l{font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-top:3px}
+.detail-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:16px 20px;border-bottom:1.5px solid var(--rule)}
+.detail-info-cell{border-radius:var(--r-lg);padding:10px 12px}
+.detail-info-label{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;opacity:.75;margin-bottom:3px}
+.detail-info-value{font-size:14px;font-weight:500;line-height:1.3}
+.detail-info-sub{font-size:11px;opacity:.7;margin-top:2px;line-height:1.4}
+.water-action{display:block;width:calc(100% - 40px);margin:16px 20px;border:none;background:var(--accent);color:var(--white);border-radius:var(--r-xl);padding:15px;font-size:13px;font-weight:500;letter-spacing:.3px;cursor:pointer;font-family:var(--font);text-transform:uppercase;transition:opacity .15s}
+.water-action:active{opacity:.8}
+.care-item{border-bottom:1.5px solid var(--rule);background:var(--bg)}
+.care-header{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.care-header h4{font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase}
+.care-arrow{font-size:20px;color:var(--ink3);line-height:1;transition:transform .2s;font-weight:300}
+.care-arrow.open{transform:rotate(45deg)}
+.care-body{padding:0 20px 18px;font-size:14px;line-height:1.75;color:var(--ink2);display:none;white-space:pre-line}
+.care-body.open{display:block}
+.care-body.poison-text{color:#c0392b}
+.detail-log-title{font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);padding:18px 20px 8px}
+.log-entry-row{display:flex;gap:10px;align-items:center;padding:9px 20px;border-bottom:1px solid var(--rule);font-size:13px}
+.log-entry-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.log-entry-time{margin-left:auto;color:var(--ink3);font-size:11px}
+.delete-row{text-align:center;padding:22px 20px 40px}
+.delete-link{font-size:13px;color:var(--ink3);cursor:pointer;text-decoration:underline;font-weight:500}
 
-/* ── Detail ── */
-#detail {
-  display:none; position:fixed; inset:0; z-index:200;
-  background:var(--bg); overflow-y:auto;
-  max-width:430px; margin:0 auto;
-}
-#detail.open { display:block; animation:slideIn .25s cubic-bezier(.4,0,.2,1); }
-@keyframes slideIn { from{transform:translateX(100%)} to{transform:translateX(0)} }
-
-.detail-hero {
-  height:260px; position:relative; overflow:hidden;
-  display:flex; align-items:center; justify-content:center;
-}
-.detail-hero-emoji { font-size:100px; }
-.detail-hero img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
-.detail-topnav {
-  position:absolute; top:0; left:0; right:0; padding:16px 16px 0;
-  display:flex; justify-content:space-between; z-index:10;
-}
-.detail-nav-btn {
-  background:rgba(255,255,255,.9); border:none; border-radius:30px;
-  padding:8px 18px; font-size:13px; font-weight:500; letter-spacing:.3px;
-  text-transform:uppercase; cursor:pointer; font-family:var(--font);
-  backdrop-filter:blur(6px);
-}
-
-.detail-header {
-  padding:22px 20px 0; background:var(--bg);
-  border-bottom:1.5px solid var(--rule);
-}
-.detail-eyebrow { font-size:11px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink3); margin-bottom:5px; }
-.detail-header h2 { font-size:32px; font-weight:400; letter-spacing:-1px; line-height:1; }
-.detail-species { font-size:13px; color:var(--ink3); font-style:italic; margin-top:4px; margin-bottom:18px; }
-.detail-color-label { display:inline-flex; align-items:center; gap:7px; margin-bottom:16px; font-size:11px; font-weight:500; color:var(--ink2); }
-.detail-color-dot { width:12px; height:12px; border-radius:50%; }
-
-/* Stats row */
-.stats-row { display:flex; border-top:1.5px solid var(--rule); border-bottom:1.5px solid var(--rule); }
-.stat-cell { flex:1; padding:14px 16px; border-right:1.5px solid var(--rule); }
-.stat-cell:last-child { border-right:none; }
-.stat-n { font-size:26px; font-weight:400; letter-spacing:-1px; line-height:1; }
-.stat-l { font-size:11px; font-weight:500; letter-spacing:1px; text-transform:uppercase; color:var(--ink3); margin-top:3px; }
-
-/* Water action */
-.water-action {
-  display:block; width:calc(100% - 40px); margin:18px 20px;
-  border:none; background:var(--accent); color:var(--white);
-  border-radius:var(--r-xl); padding:16px;
-  font-size:14px; font-weight:500; letter-spacing:.3px;
-  cursor:pointer; font-family:var(--font);
-  text-transform:uppercase; transition:opacity .15s;
-}
-.water-action:active { opacity:.8; }
-
-/* Care accordion */
-.care-item { border-bottom:1.5px solid var(--rule); background:var(--bg); }
-.care-header {
-  padding:16px 20px; display:flex; justify-content:space-between;
-  align-items:center; cursor:pointer;
-}
-.care-header h4 { font-size:12px; font-weight:500; letter-spacing:1.2px; text-transform:uppercase; }
-.care-arrow { font-size:20px; color:var(--ink3); line-height:1; transition:transform .2s; font-weight:300; }
-.care-arrow.open { transform:rotate(45deg); }
-.care-body { padding:0 20px 18px; font-size:14px; line-height:1.75; color:var(--ink2); display:none; white-space:pre-line; }
-.care-body.open { display:block; }
-.care-body.poison-text { color:#c0392b; }
-
-/* Log in detail */
-.detail-log-title { font-size:11px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink3); padding:18px 20px 8px; }
-.log-entry-row { display:flex; gap:10px; align-items:center; padding:9px 20px; border-bottom:1px solid var(--rule); font-size:13px; }
-.log-entry-row:last-child { border-bottom:none; }
-.log-entry-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
-.log-entry-date { color:var(--ink2); }
-.log-entry-time { margin-left:auto; color:var(--ink3); font-size:13px; }
-.delete-row { text-align:center; padding:22px 20px 40px; }
-.delete-link { font-size:14px; color:var(--ink3); cursor:pointer; text-decoration:underline; font-weight:500; letter-spacing:.3px; }
-
-/* ── Remind page ── */
-.page-header {
-  padding:56px 20px 18px; background:var(--bg);
-  border-bottom:1.5px solid var(--rule);
-}
-.page-header .eyebrow { font-size:12px; font-weight:500; letter-spacing:1.8px; text-transform:uppercase; color:var(--ink3); margin-bottom:6px; }
-.page-header h1 { font-size:36px; font-weight:400; letter-spacing:-1px; line-height:.95; }
-
-.remind-row {
-  display:flex; align-items:center; gap:14px;
-  padding:14px 20px; border-bottom:1.5px solid var(--rule); background:var(--bg);
-}
-.remind-thumb { width:44px; height:44px; border-radius:var(--r-md); display:flex; align-items:center; justify-content:center; font-size:22px; overflow:hidden; flex-shrink:0; }
-.remind-thumb img { width:100%; height:100%; object-fit:cover; border-radius:var(--r-md); }
-.remind-info { flex:1; min-width:0; }
-.remind-info h4 { font-size:14px; font-weight:500; }
-.remind-info p { font-size:13px; color:var(--ink3); margin-top:2px; }
-.remind-right { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
-
-/* ── Log page ── */
-.log-feed-row {
-  display:flex; align-items:center; gap:14px;
-  padding:13px 20px; border-bottom:1.5px solid var(--rule); background:var(--bg);
-}
-.log-feed-thumb { width:40px; height:40px; border-radius:var(--r-md); display:flex; align-items:center; justify-content:center; font-size:20px; overflow:hidden; flex-shrink:0; }
-.log-feed-thumb img { width:100%; height:100%; object-fit:cover; border-radius:var(--r-md); }
-.log-feed-info h4 { font-size:13px; font-weight:500; }
-.log-feed-info p { font-size:13px; color:var(--ink3); margin-top:1px; }
-.log-feed-time { margin-left:auto; text-align:right; font-size:13px; color:var(--ink3); white-space:nowrap; }
-
-/* ── Modal ── */
-.modal-bg {
-  display:none; position:fixed; inset:0;
-  background:rgba(0,0,0,.45); z-index:400;
-  align-items:flex-end; justify-content:center;
-}
-.modal-bg.open { display:flex; }
-.modal {
-  background:var(--white); border-radius:24px 24px 0 0;
-  padding:0 20px 0; width:100%; max-width:430px;
-  max-height:93dvh; overflow-y:auto;
-  animation:sheetUp .3s cubic-bezier(.32,0,.67,0);
-}
-.modal::-webkit-scrollbar { display:none; }
-@keyframes sheetUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
-.modal-grip { width:36px; height:4px; background:#ddd; border-radius:2px; margin:16px auto 0; }
-.modal-inner { padding:20px 0 40px; }
-.modal-inner h3 { font-size:26px; font-weight:400; letter-spacing:-.8px; margin-bottom:22px; }
-
-/* Form */
-.f-group { margin-bottom:16px; }
-.f-group label { font-size:11px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink3); display:block; margin-bottom:7px; }
-.f-group input, .f-group textarea, .f-group select {
-  width:100%; border:1.5px solid #e0ddd8; border-radius:var(--r-lg);
-  padding:12px 14px; font-size:14px; font-family:var(--font);
-  background:#faf8f5; color:var(--ink); outline:none;
-  transition:border-color .15s; font-weight:400;
-}
-.f-group input:focus, .f-group textarea:focus { border-color:var(--ink); }
-.f-group textarea { min-height:72px; resize:none; line-height:1.6; }
-.f-row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-
-/* Photo */
-.photo-zone {
-  width:100%; height:130px; border:1.5px dashed #d0ccc6; border-radius:var(--r-xl);
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:5px; cursor:pointer; background:#faf8f5; position:relative; overflow:hidden;
-}
-.photo-zone img.prev { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:none; }
-.photo-zone-label { font-size:12px; font-weight:400; color:var(--ink3); position:relative; z-index:1; }
-.photo-zone-sub { font-size:12px; color:var(--ink3); position:relative; z-index:1; letter-spacing:.3px; }
-#photo-input { display:none; }
-
-/* Color selector */
-.color-grid { display:flex; gap:10px; flex-wrap:wrap; margin-top:4px; }
-.col-opt { width:34px; height:34px; border-radius:50%; border:2.5px solid transparent; cursor:pointer; transition:border-color .1s, transform .1s; }
-.col-opt.sel { border-color:var(--ink); transform:scale(1.15); }
-.col-label { font-size:12px; color:var(--ink3); margin-top:6px; font-weight:500; }
-.badge-pick { font-size:11px; font-weight:600; padding:6px 10px; border-radius:20px; cursor:pointer; opacity:.5; transition:opacity .15s; }
-.badge-pick.sel { opacity:1; outline:2.5px solid var(--ink); outline-offset:2px; }
-
-/* Emoji selector */
-.emoji-grid { display:flex; flex-wrap:wrap; gap:7px; }
-.e-opt { width:40px; height:40px; border-radius:var(--r-md); border:1.5px solid transparent; background:#f0ece7; font-size:22px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:border-color .1s; }
-.e-opt.sel { border-color:var(--ink); background:#e8e3dc; }
-
-/* Buttons */
-.btn-row { display:flex; gap:10px; padding:16px 0 0; }
-.btn { flex:1; border:none; border-radius:var(--r-xl); padding:15px; font-size:13px; font-weight:500; cursor:pointer; font-family:var(--font); letter-spacing:.4px; text-transform:uppercase; transition:opacity .15s; }
-.btn:active { opacity:.8; }
-.btn-dark { background:var(--accent); color:var(--white); }
-.btn-ghost { background:transparent; color:var(--ink); border:1.5px solid var(--rule); }
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--white);border-radius:24px 24px 0 0;padding:0 20px 0;width:100%;max-width:430px;max-height:93dvh;overflow-y:auto;animation:sheetUp .3s cubic-bezier(.32,0,.67,0)}
+.modal::-webkit-scrollbar{display:none}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-grip{width:36px;height:4px;background:#ddd;border-radius:2px;margin:16px auto 0}
+.modal-inner{padding:20px 0 40px}
+.modal-inner h3{font-size:24px;font-weight:400;letter-spacing:-.8px;margin-bottom:20px}
+.f-group{margin-bottom:16px}
+.f-group label{font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);display:block;margin-bottom:7px}
+.f-group input,.f-group textarea,.f-group select{width:100%;border:1.5px solid #e0ddd8;border-radius:var(--r-lg);padding:12px 14px;font-size:14px;font-family:var(--font);background:#faf8f5;color:var(--ink);outline:none;transition:border-color .15s}
+.f-group input:focus,.f-group textarea:focus{border-color:var(--ink)}
+.f-group textarea{min-height:72px;resize:none;line-height:1.6}
+.f-row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.photo-zone{width:100%;height:90px;border:1.5px dashed #d0ccc6;border-radius:var(--r-xl);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;background:#faf8f5;position:relative;overflow:hidden}
+.photo-zone img.prev{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+.photo-zone-label{font-size:12px;font-weight:500;color:var(--ink3);position:relative;z-index:1}
+.emoji-grid{display:flex;flex-wrap:wrap;gap:7px}
+.e-opt{width:40px;height:40px;border-radius:var(--r-md);border:1.5px solid transparent;background:#f0ece7;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .1s}
+.e-opt.sel{border-color:var(--ink);background:#e8e3dc}
+.badge-pick{font-size:11px;font-weight:600;padding:7px 11px;border-radius:20px;cursor:pointer;opacity:.5;transition:opacity .15s}
+.badge-pick.sel{opacity:1;outline:2.5px solid var(--ink);outline-offset:2px}
+.btn-row{display:flex;gap:10px;padding:16px 0 0}
+.btn{flex:1;border:none;border-radius:var(--r-xl);padding:15px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font);letter-spacing:.4px;text-transform:uppercase;transition:opacity .15s}
+.btn:active{opacity:.8}
+.btn-dark{background:var(--accent);color:var(--white)}
+.btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--rule)}
 </style>
 </head>
 <body>
 <div id="app">
 <div id="view">
 
-  <!-- HOME -->
-  <div class="page active" id="page-home">
+  <!-- DIESE WOCHE -->
+  <div class="page active" id="page-week">
+    <div class="topbar">
+      <div class="topbar-eyebrow" id="week-eyebrow"></div>
+      <h1 id="week-date"></h1>
+      <div class="topbar-sub" id="week-sub"></div>
+    </div>
+    <div id="week-urgent"></div>
+    <div id="week-actions"></div>
+    <div id="week-season"></div>
+    <div style="height:16px"></div>
+  </div>
+
+  <!-- PFLANZEN -->
+  <div class="page" id="page-plants">
     <div class="topbar">
       <div class="topbar-row">
         <div>
           <div class="topbar-eyebrow">Meine Sammlung</div>
           <h1>Pflanzen</h1>
-          <div class="topbar-sub" id="home-sub"></div>
+          <div class="topbar-sub" id="plants-sub"></div>
         </div>
         <button class="add-btn" onclick="openAdd()">+ Hinzufügen</button>
       </div>
     </div>
     <div class="legend">
       <div class="legend-title">Pflegebadges</div>
-      <div class="legend-row" style="flex-direction:column;gap:7px">
-        <div class="legend-item" style="gap:6px">
-          <span style="font-size:10px;font-weight:600;width:72px;flex-shrink:0;color:var(--ink2)">Licht</span>
-          <div style="display:flex;gap:4px;align-items:center">
-            <div class="legend-dot" style="background:#f0c830"></div>
-            <div class="legend-dot" style="background:#f7e88a"></div>
-            <div class="legend-dot" style="background:#fdf6d0;border:1px solid #ede8a0"></div>
-          </div>
-          <span style="font-size:10px;color:var(--ink3)">viel → wenig</span>
-        </div>
-        <div class="legend-item" style="gap:6px">
-          <span style="font-size:10px;font-weight:600;width:72px;flex-shrink:0;color:var(--ink2)">Gießen</span>
-          <div style="display:flex;gap:4px;align-items:center">
-            <div class="legend-dot" style="background:#378add"></div>
-            <div class="legend-dot" style="background:#85b7eb"></div>
-            <div class="legend-dot" style="background:#e6f1fb;border:1px solid #b5d4f4"></div>
-          </div>
-          <span style="font-size:10px;color:var(--ink3)">oft → selten</span>
-        </div>
-        <div class="legend-item" style="gap:6px">
-          <span style="font-size:10px;font-weight:600;width:72px;flex-shrink:0;color:var(--ink2)">Luftfeuchte</span>
-          <div style="display:flex;gap:4px;align-items:center">
-            <div class="legend-dot" style="background:#1d9e75"></div>
-            <div class="legend-dot" style="background:#5dcaa5"></div>
-            <div class="legend-dot" style="background:#e1f5ee;border:1px solid #9fe1cb"></div>
-          </div>
-          <span style="font-size:10px;color:var(--ink3)">hoch → normal</span>
-        </div>
-        <div class="legend-item" style="gap:6px">
-          <span style="font-size:10px;font-weight:600;width:72px;flex-shrink:0;color:var(--ink2)">Düngen</span>
-          <div style="display:flex;gap:4px;align-items:center">
-            <div class="legend-dot" style="background:#27500a"></div>
-            <div class="legend-dot" style="background:#3b6d11"></div>
-            <div class="legend-dot" style="background:#c0dd97;border:1px solid #a8c880"></div>
-          </div>
-          <span style="font-size:10px;color:var(--ink3)">oft → selten</span>
-        </div>
+      <div class="legend-cats">
+        <div class="legend-cat"><span class="legend-cat-label">Licht</span><div class="legend-dots"><div class="ldot" style="background:#f0c830"></div><div class="ldot" style="background:#f7e88a"></div><div class="ldot" style="background:#fdf6d0;border:1px solid #ede8a0"></div></div><span class="legend-hint">viel → wenig</span></div>
+        <div class="legend-cat"><span class="legend-cat-label">Gießen</span><div class="legend-dots"><div class="ldot" style="background:#378add"></div><div class="ldot" style="background:#85b7eb"></div><div class="ldot" style="background:#e6f1fb;border:1px solid #b5d4f4"></div></div><span class="legend-hint">oft → selten</span></div>
+        <div class="legend-cat"><span class="legend-cat-label">Luftfeuchte</span><div class="legend-dots"><div class="ldot" style="background:#1d9e75"></div><div class="ldot" style="background:#5dcaa5"></div><div class="ldot" style="background:#e1f5ee;border:1px solid #9fe1cb"></div></div><span class="legend-hint">hoch → normal</span></div>
+        <div class="legend-cat"><span class="legend-cat-label">Düngen</span><div class="legend-dots"><div class="ldot" style="background:#27500a"></div><div class="ldot" style="background:#3b6d11"></div><div class="ldot" style="background:#c0dd97;border:1px solid #a8c880"></div></div><span class="legend-hint">oft → selten</span></div>
       </div>
     </div>
-    <div id="season-strip"></div>
     <div id="plant-list"></div>
-    <div id="home-empty" class="empty" style="display:none">
-      <h3>Noch keine Pflanzen</h3>
-      <p>Tippe auf „+ Hinzufügen" um loszulegen.</p>
-    </div>
+    <div id="plants-empty" class="empty" style="display:none"><h3>Noch keine Pflanzen</h3><p>Tippe auf „+ Hinzufügen" um loszulegen.</p></div>
   </div>
 
-
-  <!-- MONATSPLAN -->
-  <div class="page" id="page-month">
-    <div class="page-header">
-      <div class="eyebrow">Saisonal</div>
-      <h1 id="month-title">April</h1>
+  <!-- SAISONALES -->
+  <div class="page" id="page-season">
+    <div class="topbar">
+      <div class="topbar-eyebrow">Aktuell</div>
+      <h1 id="season-title">Frühling</h1>
+      <div class="topbar-sub" id="season-sub"></div>
     </div>
-    <div id="month-banner"></div>
-    <div id="month-tasks"></div>
-    <div id="month-plants"></div>
-  </div>
-
-  <!-- GIESPLAN -->
-  <div class="page" id="page-remind">
-    <div class="page-header">
-      <div class="eyebrow">Überblick</div>
-      <h1>Gießplan</h1>
-    </div>
-    <div id="remind-list"></div>
-  </div>
-
-  <!-- TAGEBUCH -->
-  <div class="page" id="page-log">
-    <div class="page-header">
-      <div class="eyebrow">Verlauf</div>
-      <h1>Tagebuch</h1>
-    </div>
-    <div id="log-feed"></div>
-    <div id="log-empty" class="empty" style="display:none">
-      <h3>Noch kein Eintrag</h3>
-      <p>Sobald du eine Pflanze gießt, erscheint es hier.</p>
-    </div>
+    <div id="season-banner"></div>
+    <div id="season-tasks"></div>
+    <div id="season-plants"></div>
   </div>
 
 </div>
 
 <nav>
-  <button class="active" onclick="showPage('home',this)">Übersicht</button>
-  <button onclick="showPage('month',this)">Monatsplan</button>
-  <button onclick="showPage('remind',this)">Gießplan</button>
-  <button onclick="showPage('log',this)">Tagebuch</button>
+  <button class="active" onclick="showPage('week',this)">Diese Woche</button>
+  <button onclick="showPage('plants',this)">Pflanzen</button>
+  <button onclick="showPage('season',this)">Saisonales</button>
 </nav>
 </div>
 
@@ -483,17 +268,12 @@ nav button.active { color:var(--accent); border-top-color:var(--accent); }
   </div>
   <div style="background:var(--bg);border-bottom:1.5px solid var(--rule)">
     <div class="detail-header">
-
       <h2 id="d-name"></h2>
       <p class="detail-species" id="d-species"></p>
-      <div class="detail-color-label">
-        <div class="detail-color-dot" id="d-color-dot"></div>
-        <span id="d-care-label"></span>
-      </div>
     </div>
     <div class="stats-row">
       <div class="stat-cell"><div class="stat-n" id="d-ago">–</div><div class="stat-l">Tage seit Guss</div></div>
-      <div class="stat-cell"><div class="stat-n" id="d-int">–</div><div class="stat-l">Tage Intervall</div></div>
+      <div class="stat-cell"><div class="stat-n" id="d-int">–</div><div class="stat-l">Intervall</div></div>
       <div class="stat-cell"><div class="stat-n" id="d-next">–</div><div class="stat-l">Nächster Guss</div></div>
     </div>
   </div>
@@ -511,61 +291,43 @@ nav button.active { color:var(--accent); border-top-color:var(--accent); }
     <div class="modal-grip"></div>
     <div class="modal-inner">
       <h3 id="modal-title">Neue Pflanze</h3>
-
       <div class="f-group">
         <label>Fotos (bis zu 3)</label>
         <div style="display:flex;gap:8px">
-          <div class="photo-zone" id="photo-zone-0" onclick="document.getElementById('photo-input-0').click()" style="flex:1;height:90px">
-            <img class="prev" id="photo-prev-0">
-            <span class="photo-zone-label" id="photo-lbl-0">+ Foto</span>
-          </div>
-          <div class="photo-zone" id="photo-zone-1" onclick="document.getElementById('photo-input-1').click()" style="flex:1;height:90px">
-            <img class="prev" id="photo-prev-1">
-            <span class="photo-zone-label" id="photo-lbl-1">+ Foto</span>
-          </div>
-          <div class="photo-zone" id="photo-zone-2" onclick="document.getElementById('photo-input-2').click()" style="flex:1;height:90px">
-            <img class="prev" id="photo-prev-2">
-            <span class="photo-zone-label" id="photo-lbl-2">+ Foto</span>
-          </div>
+          <div class="photo-zone" id="photo-zone-0" onclick="document.getElementById('photo-input-0').click()" style="flex:1"><img class="prev" id="photo-prev-0"><span class="photo-zone-label" id="photo-lbl-0">+ Foto</span></div>
+          <div class="photo-zone" id="photo-zone-1" onclick="document.getElementById('photo-input-1').click()" style="flex:1"><img class="prev" id="photo-prev-1"><span class="photo-zone-label" id="photo-lbl-1">+ Foto</span></div>
+          <div class="photo-zone" id="photo-zone-2" onclick="document.getElementById('photo-input-2').click()" style="flex:1"><img class="prev" id="photo-prev-2"><span class="photo-zone-label" id="photo-lbl-2">+ Foto</span></div>
         </div>
         <input type="file" id="photo-input-0" accept="image/*" style="display:none">
         <input type="file" id="photo-input-1" accept="image/*" style="display:none">
         <input type="file" id="photo-input-2" accept="image/*" style="display:none">
       </div>
-
-      <div class="f-group">
-        <label>Symbol (falls kein Foto)</label>
-        <div class="emoji-grid" id="emoji-grid"></div>
-      </div>
-
+      <div class="f-group"><label>Symbol (falls kein Foto)</label><div class="emoji-grid" id="emoji-grid"></div></div>
       <div class="f-group">
         <label>Licht</label>
-        <div style="display:flex;gap:6px" id="licht-picker">
+        <div style="display:flex;gap:6px;flex-wrap:wrap" id="licht-picker">
           <div class="badge-pick" data-val="sonne" onclick="selLicht='sonne';buildBadgePickers()" style="background:#f0c830;color:#6a4e08">Direkte Sonne</div>
-          <div class="badge-pick" data-val="hell"  onclick="selLicht='hell';buildBadgePickers()"  style="background:#f7e88a;color:#7a5e08">Helles Zimmer</div>
-          <div class="badge-pick" data-val="halb"  onclick="selLicht='halb';buildBadgePickers()"  style="background:#fdf6d0;color:#8a7020;border:1px solid #ede8a0">Halbschattig</div>
+          <div class="badge-pick" data-val="hell" onclick="selLicht='hell';buildBadgePickers()" style="background:#f7e88a;color:#7a5e08">Helles Zimmer</div>
+          <div class="badge-pick" data-val="halb" onclick="selLicht='halb';buildBadgePickers()" style="background:#fdf6d0;color:#8a7020;border:1px solid #ede8a0">Halbschattig</div>
         </div>
       </div>
-
       <div class="f-group">
         <label>Gießen</label>
         <div style="display:flex;gap:6px" id="giess-picker">
-          <div class="badge-pick" data-val="oft"   onclick="selGiess='oft';buildBadgePickers()"   style="background:#378add;color:#fff">Oft (3–7d)</div>
-          <div class="badge-pick" data-val="mit"   onclick="selGiess='mit';buildBadgePickers()"   style="background:#85b7eb;color:#0c447c">Mittel (8–14d)</div>
-          <div class="badge-pick" data-val="sel"   onclick="selGiess='sel';buildBadgePickers()"   style="background:#e6f1fb;color:#185fa5;border:1px solid #b5d4f4">Selten (15d+)</div>
+          <div class="badge-pick" data-val="oft" onclick="selGiess='oft';buildBadgePickers()" style="background:#378add;color:#fff">Oft (3–7d)</div>
+          <div class="badge-pick" data-val="mit" onclick="selGiess='mit';buildBadgePickers()" style="background:#85b7eb;color:#0c447c">Mittel (8–14d)</div>
+          <div class="badge-pick" data-val="sel" onclick="selGiess='sel';buildBadgePickers()" style="background:#e6f1fb;color:#185fa5;border:1px solid #b5d4f4">Selten (15d+)</div>
         </div>
       </div>
-
       <div class="f-group">
         <label>Luftfeuchtigkeit</label>
         <div style="display:flex;gap:6px;flex-wrap:wrap" id="luft-picker">
-          <div class="badge-pick" data-val="hoch"    onclick="selLuft='hoch';buildBadgePickers()"    style="background:#1d9e75;color:#fff">Hoch, besprühen ok</div>
-          <div class="badge-pick" data-val="hoch-ns" onclick="selLuft='hoch-ns';buildBadgePickers()" style="background:#5dcaa5;color:#085041">Hoch, KEIN Besprühen</div>
-          <div class="badge-pick" data-val="mit"     onclick="selLuft='mit';buildBadgePickers()"     style="background:#9fe1cb;color:#0f6e56">Mittel</div>
-          <div class="badge-pick" data-val="norm"    onclick="selLuft='norm';buildBadgePickers()"    style="background:#e1f5ee;color:#0f6e56;border:1px solid #9fe1cb">Normal</div>
+          <div class="badge-pick" data-val="hoch" onclick="selLuft='hoch';buildBadgePickers()" style="background:#1d9e75;color:#fff">Hoch, besprühen ok</div>
+          <div class="badge-pick" data-val="hoch-ns" onclick="selLuft='hoch-ns';buildBadgePickers()" style="background:#5dcaa5;color:#085041">Hoch, kein Besprühen</div>
+          <div class="badge-pick" data-val="mit" onclick="selLuft='mit';buildBadgePickers()" style="background:#9fe1cb;color:#0f6e56">Mittel</div>
+          <div class="badge-pick" data-val="norm" onclick="selLuft='norm';buildBadgePickers()" style="background:#e1f5ee;color:#0f6e56;border:1px solid #9fe1cb">Normal</div>
         </div>
       </div>
-
       <div class="f-group">
         <label>Düngen</label>
         <div style="display:flex;gap:6px" id="dueng-picker">
@@ -574,20 +336,18 @@ nav button.active { color:var(--accent); border-top-color:var(--accent); }
           <div class="badge-pick" data-val="sel" onclick="selDueng='sel';buildBadgePickers()" style="background:#c0dd97;color:#27500a">Selten (5+ Wo.)</div>
         </div>
       </div>
-
       <div class="f-row2">
         <div class="f-group"><label>Name</label><input id="f-name" placeholder="z. B. Monstera"></div>
         <div class="f-group"><label>Lateinisch</label><input id="f-species" placeholder="z. B. M. deliciosa" style="font-style:italic"></div>
       </div>
       <div class="f-group"><label>Gieß-Intervall (Tage)</label><input id="f-interval" type="number" min="1" max="90" value="7"></div>
-      <div class="f-group"><label>Standort & Licht</label><textarea id="f-standort" placeholder="Fensterplatz, Lichtverhältnisse, Temperatur..."></textarea></div>
-      <div class="f-group"><label>Erde</label><textarea id="f-erde" placeholder="Erdmischung, pH, Drainage..."></textarea></div>
-      <div class="f-group"><label>Gießen & Luftfeuchtigkeit</label><textarea id="f-giessen" placeholder="Wie oft, wie viel, Fingertest, Besprühen..."></textarea></div>
+      <div class="f-group"><label>Standort & Licht</label><textarea id="f-standort" placeholder="Fensterplatz, Lichtverhältnisse..."></textarea></div>
+      <div class="f-group"><label>Erde</label><textarea id="f-erde" placeholder="Erdmischung, Drainage..."></textarea></div>
+      <div class="f-group"><label>Gießen & Luftfeuchtigkeit</label><textarea id="f-giessen" placeholder="Wie oft, Fingertest, Besprühen..."></textarea></div>
       <div class="f-group"><label>Düngen</label><textarea id="f-duengen" placeholder="Wann, wie oft, welcher Dünger..."></textarea></div>
       <div class="f-group"><label>Schädlinge & Krankheiten</label><textarea id="f-schaedlinge" placeholder="Häufige Probleme & Behandlung..."></textarea></div>
-      <div class="f-group"><label>Giftigkeit (leer lassen wenn nicht giftig)</label><input id="f-poison" placeholder="z. B. Giftig für Katzen und Hunde"></div>
-      <div class="f-group"><label>Notizen</label><textarea id="f-notes" placeholder="Eigene Beobachtungen, Besonderheiten..."></textarea></div>
-
+      <div class="f-group"><label>Giftigkeit (leer lassen wenn nicht giftig)</label><input id="f-poison" placeholder="z. B. Giftig für Katzen"></div>
+      <div class="f-group"><label>Notizen</label><textarea id="f-notes" placeholder="Eigene Beobachtungen..."></textarea></div>
       <div class="btn-row">
         <button class="btn btn-ghost" onclick="closeModal()">Abbrechen</button>
         <button class="btn btn-dark" onclick="savePlant()">Speichern</button>
@@ -598,586 +358,421 @@ nav button.active { color:var(--accent); border-top-color:var(--accent); }
 
 <script>
 const COLORS = ['#d8e8c8','#b8c8a0','#98a880','#7a9060','#5a7040'];
-const CARE_LABELS = ['Farbe 1','Farbe 2','Farbe 3','Farbe 4','Farbe 5'];
 const EMOJIS = ['🌿','🌵','🌺','🌸','🌼','🍃','🪴','🌱','🌾','🎋','🌴','🍀','🌳','🌲','🌻','🎍'];
+const WOCHENTAGE = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+const MONATE_LANG = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+const JAHRESZEITEN = {3:'Frühling',4:'Frühling',5:'Frühling',6:'Sommer',7:'Sommer',8:'Sommer',9:'Herbst',10:'Herbst',11:'Herbst',12:'Winter',1:'Winter',2:'Winter'};
 
-const tcOf = c => ['#d8e8c8','#b8c8a0'].includes(c) ? '#2a4018' : '#ffffff';
+const LICHT_LABEL = {sonne:'Direkte Sonne',hell:'Helles Zimmer',halb:'Halbschattig'};
+const LICHT_DESC  = {sonne:'Südfenster, direkt am Glas',hell:'Ost/West-Fenster oder mind. 1–2 m vom Südfenster — keine direkte Sonne',halb:'Nordfenster oder weiter vom Fenster entfernt'};
+const LUFT_LABEL  = {};
+LUFT_LABEL['hoch']='Hoch >60%'; LUFT_LABEL['hoch-ns']='Hoch, kein Besprühen'; LUFT_LABEL['mit']='Mittel 40–60%'; LUFT_LABEL['norm']='Normal (40–50%)';
 
-let plants = JSON.parse(localStorage.getItem('pl_v3') || '[]');
-let wlog   = JSON.parse(localStorage.getItem('wl_v3') || '[]');
+const SAISON_TIPPS = {
+  1:'Ruhezeit — wenig gießen, nicht düngen. Schädlinge kontrollieren, Heizungsluft beachten.',
+  2:'Licht nimmt zu — Pflanzen näher ans Fenster. Noch nicht düngen, Gießen leicht erhöhen.',
+  3:'Frühlingsbeginn — Umtopfen starten, erste Düngung, Gießmenge erhöhen.',
+  4:'Wachstumssaison — Düngen beginnen, Umtopfen prüfen, Frühlingssonne beachten.',
+  5:'Hauptwachstumszeit — regelmäßig düngen, Luftfeuchtigkeit beobachten.',
+  6:'Sommer — öfter gießen, Mittagssonne meiden, Urlaub vorbereiten.',
+  7:'Hochsommer — täglich Fingertest, Luftfeuchtigkeit erhöhen.',
+  8:'Spätsommer — weiter düngen, nach Urlaub Pflanzen prüfen.',
+  9:'Herbstbeginn — Düngen reduzieren, Gießmenge verringern, Ruhepflanzen vorbereiten.',
+  10:'Ruhephase vorbereiten — letztes Düngen, Winterstandorte anpassen.',
+  11:'Winterruhe — kaum düngen, wenig gießen, Heizungsluft beachten.',
+  12:'Winterruhe — minimale Pflege, auf Zugluft achten.',
+};
+
+const MONAT_AUFGABEN = {
+  1:[{t:'Wenig gießen',s:'Erde komplett trocknen lassen',u:false},{t:'Nicht düngen',s:'Winterruhe respektieren',u:false},{t:'Schädlingskontrolle',s:'Spinnmilben bei trockener Heizungsluft',u:false}],
+  2:[{t:'Licht prüfen',s:'Pflanzen näher ans Fenster rücken',u:false},{t:'Gießen leicht erhöhen',s:'Erste Sonnentage erhöhen Verdunstung',u:false}],
+  3:[{t:'Umtopfen beginnen',s:'Bester Zeitpunkt für die meisten Pflanzen',u:true},{t:'Erste Düngung',s:'März ist der Start der Düngesaison',u:true},{t:'Standorte prüfen',s:'Sonnenstunden nehmen zu',u:false}],
+  4:[{t:'Düngesaison starten',s:'Ab April alle 2–4 Wo. flüssig düngen',u:true},{t:'Umtopfen prüfen',s:'Wurzeln aus den Löchern? Jetzt handeln',u:true},{t:'Gießmenge erhöhen',s:'Mehr Licht = mehr Verdunstung',u:false}],
+  5:[{t:'Regelmäßig düngen',s:'Hauptwachstumszeit — alle 2 Wochen',u:true},{t:'Luftfeuchtigkeit',s:'Tropenpflanzen jetzt häufiger besprühen',u:false}],
+  6:[{t:'Öfter gießen',s:'Hitze erhöht Verdunstung stark',u:true},{t:'Urlaub vorbereiten',s:'Bewässerungslösung für Abwesenheit planen',u:false}],
+  7:[{t:'Täglich Fingertest',s:'Pflanzen trocknen im Hochsommer schneller aus',u:true},{t:'Luftfeuchtigkeit erhöhen',s:'Feuchtigkeitspflanzen täglich besprühen',u:true}],
+  8:[{t:'Weiter düngen',s:'Saison läuft noch bis September',u:false},{t:'Nach Urlaub prüfen',s:'Pflanzen kontrollieren und nachgießen',u:false}],
+  9:[{t:'Düngen reduzieren',s:'Ab September Abstände verlängern',u:false},{t:'Ruhepflanzen vorbereiten',s:'Caladien, Oxalis: Gießen langsam einstellen',u:true}],
+  10:[{t:'Letztes Düngen',s:'Oktober ist die letzte reguläre Düngung',u:false},{t:'Ruhepflanzen einziehen lassen',s:'Kein Düngen mehr für Caladien, Klivie, Oxalis',u:true}],
+  11:[{t:'Wenig gießen',s:'Winterruhe respektieren',u:false},{t:'Heizungsluft beachten',s:'Luftbefeuchter aufstellen',u:false}],
+  12:[{t:'Minimale Pflege',s:'Gießen stark reduzieren',u:false},{t:'Zugluft vermeiden',s:'Beim Lüften Pflanzen von Fenstern wegstellen',u:false}],
+};
+
+const RUHEPHASEN = {
+  'preset-klivie':{ruheMon:[10,11,12,1,2],ruheText:'Ruhephase — kaum gießen, kühl stellen (8–12°C)',aufwachText:'Ruhephase endet — wieder gießen & düngen starten'},
+  'preset-caladium-spring-fling':{ruheMon:[10,11,12,1,2,3],ruheText:'Knolle in Ruhephase — kaum gießen, dunkel lagern',aufwachText:'Jetzt Knolle einpflanzen! Min. 21°C nötig zum Austreiben'},
+  'preset-caladium-gingerland':{ruheMon:[10,11,12,1,2,3],ruheText:'Knolle in Ruhephase — kaum gießen, dunkel lagern',aufwachText:'Jetzt Knolle einpflanzen! Min. 21°C nötig zum Austreiben'},
+  'preset-oxalis-sunny':{ruheMon:[10,11,12,1],ruheText:'Ruhephase — Gießen einstellen, kühl & dunkel stellen',aufwachText:'Ruhephase endet — hell stellen und vorsichtig gießen'},
+};
+
+let plants = JSON.parse(localStorage.getItem('pl_v4') || '[]');
+let wlog   = JSON.parse(localStorage.getItem('wl_v4') || '[]');
 let curId = null, editId = null, selEmoji = '🪴', selColor = '#b8c8a0';
-let photoData = [null, null, null];
+let photoData = [null,null,null];
 let selLicht = 'hell', selGiess = 'mit', selLuft = 'norm', selDueng = 'mit';
 
 const save = () => {
   try {
-    localStorage.setItem('pl_v3', JSON.stringify(plants));
-    localStorage.setItem('wl_v3', JSON.stringify(wlog));
+    localStorage.setItem('pl_v4', JSON.stringify(plants));
+    localStorage.setItem('wl_v4', JSON.stringify(wlog));
   } catch(e) {
     alert('Speichern fehlgeschlagen — zu viele Fotos im Speicher. Bitte ein Foto entfernen.');
   }
 };
-const daysAgo = d => d ? Math.floor((Date.now() - new Date(d)) / 86400000) : null;
-const daysUntil = p => { if (!p.lastWatered) return null; return Math.ceil((new Date(p.lastWatered).getTime() + (p.interval||7)*86400000 - Date.now()) / 86400000); };
+
+// Migrate from old storage key
+(function migrate() {
+  const old = localStorage.getItem('pl_v3');
+  if (old && plants.length === 0) {
+    try { plants = JSON.parse(old); save(); } catch(e) {}
+  }
+})();
+
+const daysAgo   = d => d ? Math.floor((Date.now()-new Date(d))/86400000) : null;
+const daysUntil = p => { if(!p.lastWatered) return null; return Math.ceil((new Date(p.lastWatered).getTime()+(p.interval||7)*86400000-Date.now())/86400000); };
 const fmtD = d => d ? new Date(d).toLocaleDateString('de-AT',{day:'2-digit',month:'2-digit',year:'2-digit'}) : '–';
 const fmtT = d => d ? new Date(d).toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'}) : '';
-const careLabel = c => CARE_LABELS[COLORS.indexOf(c)] ?? 'Unbekannt';
+const thumbOf = p => { const s=(p.photos&&p.photos[0])||p.photo||null; return s?'<img src="'+s+'">':'<span style="font-size:26px">'+(p.emoji||'🪴')+'</span>'; };
+const thumbSm  = p => { const s=(p.photos&&p.photos[0])||p.photo||null; return s?'<img src="'+s+'">':'<span>'+(p.emoji||'🪴')+'</span>'; };
 
 function statusFor(p) {
   const d = daysUntil(p);
-  if (d === null) return ['Noch nie','status-today'];
-  if (d < 0)  return [`${Math.abs(d)}d überfällig`, 'status-over'];
-  if (d === 0) return ['Heute gießen', 'status-today'];
-  if (d <= 3)  return [`in ${d}d`, 'status-soon'];
-  return [`in ${d}d`, 'status-ok'];
+  if(d===null) return ['Noch nie','status-today'];
+  if(d<0) return [Math.abs(d)+'d über','status-over'];
+  if(d===0) return ['Heute','status-today'];
+  if(d<=3) return ['in '+d+'d','status-soon'];
+  return ['in '+d+'d','status-ok'];
 }
 
-// ── MONATSPLAN DATA ───────────────────────────────────────────────
-const MONATE = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
-
-const SAISON_TIPPS = {
-  1:  'Ruhezeit — kaum gießen, nicht düngen. Pflanzen auf Schädlinge kontrollieren.',
-  2:  'Erste Anzeichen des Frühlings — Licht wird mehr. Noch nicht düngen, aber Gießen leicht erhöhen.',
-  3:  'Frühlingsbeginn — Umtopfen und erste Düngung starten. Neue Erde frisch nachdüngen.',
-  4:  'Wachstumssaison startet — Düngen beginnen, Umtopfen prüfen, Gießmenge erhöhen.',
-  5:  'Hauptwachstumszeit — regelmäßig düngen, Frühlingssonne kann intensiv sein.',
-  6:  'Hochsommer naht — öfter gießen, Mittagssonne meiden, Luftfeuchtigkeit beobachten.',
-  7:  'Heißester Monat — täglich Fingertest, Urlaubs-Bewässerung planen.',
-  8:  'Ende Hochsommer — Düngen noch laufend, Pflanzen auf Rückkehr aus dem Urlaub prüfen.',
-  9:  'Herbstbeginn — Düngen langsam reduzieren, Gießmenge verringern.',
-  10: 'Ruhephase vorbereiten — letztes Düngen, Ruhepflanzen zurückziehen lassen.',
-  11: 'Winterruhe — kaum düngen, wenig gießen, Standorte ans reduzierte Licht anpassen.',
-  12: 'Winterruhe — minimale Pflege, auf Zugluft und Heizungsluft achten.',
-};
-
-const MONAT_AUFGABEN = {
-  1:  [{t:'Wenig gießen',s:'Erde komplett trocknen lassen bei den meisten Pflanzen',u:false},{t:'Nicht düngen',s:'Winterruhe respektieren',u:false},{t:'Schädlingskontrolle',s:'Trockene Heizungsluft begünstigt Spinnmilben',u:false}],
-  2:  [{t:'Licht prüfen',s:'Pflanzen näher ans Fenster rücken',u:false},{t:'Gießen leicht erhöhen',s:'Erste Sonnentage erhöhen Verdunstung',u:false}],
-  3:  [{t:'Umtopfen beginnen',s:'Bester Zeitpunkt für die meisten Pflanzen',u:true},{t:'Erste Düngung',s:'März ist der Start der Düngesaison',u:true},{t:'Standorte prüfen',s:'Sonnenstunden nehmen zu',u:false}],
-  4:  [{t:'Düngesaison starten',s:'Ab April alle 2–4 Wo. flüssig düngen',u:true},{t:'Umtopfen prüfen',s:'Wurzeln aus den Löchern? Jetzt handeln',u:true},{t:'Gießmenge erhöhen',s:'Mehr Licht = mehr Verdunstung — öfter Fingertest',u:false},{t:'Frühlingssonne beachten',s:'Kann intensiver sein als erwartet',u:false}],
-  5:  [{t:'Regelmäßig düngen',s:'Hauptwachstumszeit läuft — alle 2 Wo.',u:true},{t:'Luftfeuchtigkeit erhöhen',s:'Heizung aus, aber trockene Luft bleibt',u:false}],
-  6:  [{t:'Öfter gießen',s:'Hitze erhöht Verdunstung stark',u:true},{t:'Mittagssonne meiden',s:'Pflanzen etwas zurückrücken',u:false},{t:'Urlaub vorbereiten',s:'Bewässerungslösung für Abwesenheit planen',u:false}],
-  7:  [{t:'Täglich Fingertest',s:'Im Hochsommer können Pflanzen viel schneller austrocknen',u:true},{t:'Luftfeuchtigkeit beachten',s:'Feuchtigkeitspflanzen täglich besprühen',u:false}],
-  8:  [{t:'Weiter düngen',s:'Saison läuft noch bis September',u:false},{t:'Nach Urlaub prüfen',s:'Pflanzen kontrollieren und ggf. nachgießen',u:false}],
-  9:  [{t:'Düngen reduzieren',s:'Ab September Abstände verlängern',u:false},{t:'Gießen verringern',s:'Verdunstung nimmt ab',u:false},{t:'Ruhepflanzen vorbereiten',s:'Caladien, Oxalis: Gießen langsam einstellen',u:true}],
-  10: [{t:'Letztes Düngen',s:'Oktober ist die letzte reguläre Düngung',u:false},{t:'Ruhepflanzen einziehen lassen',s:'Kein Düngen mehr für Caladien, Klivie, Oxalis',u:true},{t:'Standorte ans Winterlicht anpassen',s:'Pflanzen näher ans Fenster',u:false}],
-  11: [{t:'Kaum düngen',s:'Nur noch sehr selten und schwach',u:false},{t:'Wenig gießen',s:'Winterruhe respektieren',u:false},{t:'Heizungsluft beachten',s:'Luftbefeuchter aufstellen',u:false}],
-  12: [{t:'Minimale Pflege',s:'Gießen stark reduzieren bei den meisten Pflanzen',u:false},{t:'Zugluft vermeiden',s:'Beim Lüften Pflanzen von Fenstern wegstellen',u:false}],
-};
-
-// Pflanzen mit Ruhephasen
-const RUHEPHASEN = {
-  'preset-klivie':           { ruheMon:[10,11,12,1,2], ruheText:'Ruhephase (Okt–Feb) — kaum gießen, kühl stellen', aufwachText:'Ruhephase endet — wieder gießen & düngen starten' },
-  'preset-caladium-spring-fling': { ruheMon:[10,11,12,1,2,3], ruheText:'Knolle in Ruhephase — kaum gießen, dunkel lagern', aufwachText:'Jetzt Knolle einpflanzen! Min. 21°C nötig zum Austreiben' },
-  'preset-caladium-gingerland':   { ruheMon:[10,11,12,1,2,3], ruheText:'Knolle in Ruhephase — kaum gießen, dunkel lagern', aufwachText:'Jetzt Knolle einpflanzen! Min. 21°C nötig zum Austreiben' },
-  'preset-oxalis-sunny':     { ruheMon:[10,11,12,1], ruheText:'Ruhephase — Gießen einstellen, kühl & dunkel stellen', aufwachText:'Ruhephase endet — hell stellen und vorsichtig gießen' },
-};
-
-function renderMonthPage() {
-  const m = new Date().getMonth() + 1;
-  const mName = MONATE[m-1];
-  document.getElementById('month-title').textContent = mName;
-
-  // Banner
-  document.getElementById('month-banner').innerHTML =
-    '<div class="season-banner"><div class="sb-label">Saison-Tipp</div><div class="sb-text">' + (SAISON_TIPPS[m]||'') + '</div></div>';
-
-  // Aufgaben
-  const tasks = MONAT_AUFGABEN[m] || [];
-  const sectionLabel = '<div class="section-label">Diesen Monat allgemein</div>';
-  const tasksHtml = tasks.map(t =>
-    '<div class="month-task-row">' +
-      '<div class="mt-dot"></div>' +
-      '<div class="mt-info"><div class="mt-title">' + t.t + '</div><div class="mt-sub">' + t.s + '</div></div>' +
-      '<div class="mt-badge' + (t.u?' urgent':'') + '">' + (t.u?'Jetzt':'Info') + '</div>' +
-    '</div>'
-  ).join('');
-  document.getElementById('month-tasks').innerHTML = sectionLabel + tasksHtml;
-
-  // Pflanzen-Alerts
-  const alerts = [];
-  plants.forEach(p => {
-    const rp = RUHEPHASEN[p.id];
-    if (!rp) return;
-    const inRuhe = rp.ruheMon.includes(m);
-    const vorEnde = rp.ruheMon.includes(m+1===13?1:m+1) === false && rp.ruheMon.includes(m);
-    const aufwachen = !rp.ruheMon.includes(m) && rp.ruheMon.includes(m===1?12:m-1);
-    if (inRuhe || aufwachen) {
-      const thumbSrc = (p.photos && p.photos[0]) || p.photo || null;
-      const thumb = thumbSrc ? '<img src="' + thumbSrc + '">' : (p.emoji||'🪴');
-      alerts.push(
-        '<div class="plant-alert-row">' +
-          '<div class="pa-thumb">' + thumb + '</div>' +
-          '<div class="pa-info"><div class="pa-name">' + p.name + '</div><div class="pa-action">' + (aufwachen ? rp.aufwachText : rp.ruheText) + '</div></div>' +
-          '<div class="pa-pill" style="background:' + (aufwachen?'#c87848':'#f0e0d0') + ';color:' + (aufwachen?'#fff':'#7a4828') + '">' + (aufwachen?'Aufwachen':'Ruhe') + '</div>' +
-        '</div>'
-      );
-    }
-  });
-
-  const plantSection = alerts.length
-    ? '<div class="section-label">Deine Pflanzen im ' + mName + '</div>' + alerts.join('')
-    : '<div class="section-label">Deine Pflanzen im ' + mName + '</div><div class="empty" style="padding:30px 20px"><p>Keine besonderen Aktionen diesen Monat.</p></div>';
-  document.getElementById('month-plants').innerHTML = plantSection;
-}
-
-// ── SAISON-STRIP in der Übersicht ─────────────────────────────────
-function renderSeasonStrip() {
-  const m = new Date().getMonth() + 1;
-  const strip = document.getElementById('season-strip');
-  if (!strip) return;
-  strip.innerHTML =
-    '<div class="season-banner" style="margin:14px 20px 0">' +
-      '<div class="sb-label">' + MONATE[m-1] + ' — Saison-Tipp</div>' +
-      '<div class="sb-text">' + (SAISON_TIPPS[m]||'') + '</div>' +
-    '</div>';
-}
-
-
-// ── DÜNGEN ────────────────────────────────────────────────────────
-function duengenFaellig(p) {
-  if (!p.lastDuenged || !p.duengeWo) return true;
-  const faellig = new Date(p.lastDuenged).getTime() + p.duengeWo * 7 * 86400000;
-  return Date.now() >= faellig;
-}
-function duengenDaysLeft(p) {
-  if (!p.lastDuenged || !p.duengeWo) return 0;
-  return Math.ceil((new Date(p.lastDuenged).getTime() + p.duengeWo*7*86400000 - Date.now()) / 86400000);
-}
-function quickDuengen(id) {
-  const p = plants.find(x=>x.id===id); if(!p) return;
-  p.lastDuenged = new Date().toISOString();
-  save(); renderReminders();
-  if (navigator.vibrate) navigator.vibrate(30);
-}
-
-
-// ── HOME ─────────────────────────────────────────────────────────
-function renderHome() {
-  const list = document.getElementById('plant-list');
-  const empty = document.getElementById('home-empty');
-  const sub = document.getElementById('home-sub');
-  sub.textContent = plants.length ? `${plants.length} Pflanze${plants.length!==1?'n':''}` : '';
-  if (!plants.length) { list.innerHTML=''; empty.style.display='block'; return; }
-  empty.style.display = 'none';
-  renderSeasonStrip();
-
-  const needsWater = plants.filter(p => { const d=daysUntil(p); return d===null||d<=0; });
-  const ok         = plants.filter(p => { const d=daysUntil(p); return d!==null&&d>0; });
-
-  let html = '';
-  if (needsWater.length) { html += `<div class="section-label">Braucht Wasser</div>`; needsWater.forEach(p => html += rowHtml(p)); }
-  if (ok.length)          { html += `<div class="section-label">Versorgt</div>`;        ok.forEach(p => html += rowHtml(p)); }
-  list.innerHTML = html;
-}
-
-
-// ── Info Badge System ─────────────────────────────────────────────
-function lichtkls(l) {
-  if (!l) return 'ib-hell';
-  if (l==='sonne') return 'ib-sonne';
-  if (l==='halb')  return 'ib-halb';
-  return 'ib-hell';
-}
-function giesskls(g) {
-  if (!g) return 'ib-gmit';
-  if (g<=7)  return 'ib-goft';
-  if (g<=14) return 'ib-gmit';
-  return 'ib-gsel';
-}
-function luftkls(l) {
-  if (!l) return 'ib-lnorm';
-  if (l==='hoch')    return 'ib-lhoch';
-  if (l==='hoch-ns') return 'ib-lhochns';
-  if (l==='mit')     return 'ib-lmit';
-  return 'ib-lnorm';
-}
-function duengkls(d) {
-  if (!d) return 'ib-dmit';
-  if (d<=2)  return 'ib-doft';
-  if (d<=4)  return 'ib-dmit';
-  return 'ib-dsel';
-}
-const LICHT_LABEL = { sonne:'Direkte Sonne', hell:'Helles Zimmer', halb:'Halbschattig' };
-const LICHT_DESC  = { sonne:'Südfenster, direkt am Glas', hell:'Ost/West-Fenster oder mind. 1–2 m vom Südfenster — keine direkte Sonne', halb:'Nordfenster oder weiter vom Fenster entfernt' };
-const LUFT_LABEL  = {}; LUFT_LABEL['hoch']='Hoch >60%'; LUFT_LABEL['hoch-ns']='Hoch, kein Besprühen'; LUFT_LABEL['mit']='Mittel 40–60%'; LUFT_LABEL['norm']='Normal (40–50%)';
-const DUENG_LABEL = d => d<=2 ? `alle ${d} Wo.` : d<=4 ? `alle ${d} Wo.` : `alle ${d} Wo.`;
+// Badge helpers
+function lichtkls(l){if(!l)return 'ib-hell';if(l==='sonne')return 'ib-sonne';if(l==='halb')return 'ib-halb';return 'ib-hell';}
+function giesskls(g){if(!g)return 'ib-gmit';if(g<=7)return 'ib-goft';if(g<=14)return 'ib-gmit';return 'ib-gsel';}
+function luftkls(l){if(!l)return 'ib-lnorm';if(l==='hoch')return 'ib-lhoch';if(l==='hoch-ns')return 'ib-lhochns';if(l==='mit')return 'ib-lmit';return 'ib-lnorm';}
+function duengkls(d){if(!d)return 'ib-dmit';if(d<=2)return 'ib-doft';if(d<=4)return 'ib-dmit';return 'ib-dsel';}
 
 function infoBadges(p) {
-  const ll  = LICHT_LABEL[p.licht||'hell'] || 'Helles Zimmer';
-  const gl  = 'alle ' + (p.interval||7) + 'd';
-  const luL = LUFT_LABEL[p.luft||'norm'] || 'Normal';
-  const duL = p.duengeWo ? 'alle ' + p.duengeWo + ' Wo.' : '–';
-  return '<div class="info-badges">' +
-    '<span class="ibadge ' + lichtkls(p.licht) + '">' + ll + '</span>' +
-    '<span class="ibadge ' + giesskls(p.interval) + '">' + gl + '</span>' +
-    '<span class="ibadge ' + luftkls(p.luft) + '">' + luL + '</span>' +
-    '<span class="ibadge ' + duengkls(p.duengeWo) + '">' + duL + '</span>' +
+  var ll = LICHT_LABEL[p.licht||'hell']||'Helles Zimmer';
+  var gl = 'alle '+(p.interval||7)+'d';
+  var luL = LUFT_LABEL[p.luft||'norm']||'Normal';
+  var duL = p.duengeWo ? 'alle '+p.duengeWo+' Wo.' : '–';
+  return '<div class="info-badges">'+
+    '<span class="ibadge '+lichtkls(p.licht)+'">'+ll+'</span>'+
+    '<span class="ibadge '+giesskls(p.interval)+'">'+gl+'</span>'+
+    '<span class="ibadge '+luftkls(p.luft)+'">'+luL+'</span>'+
+    '<span class="ibadge '+duengkls(p.duengeWo)+'">'+duL+'</span>'+
   '</div>';
 }
 
 function detailInfoGrid(p) {
-  const licht = p.licht || 'hell';
-  const luft  = p.luft  || 'norm';
-
-  const lBg  = {sonne:'#f0c830', hell:'#f7e88a', halb:'#fdf6d0'}[licht] || '#f7e88a';
-  const lClr = {sonne:'#6a4e08', hell:'#7a5e08', halb:'#8a7020'}[licht] || '#7a5e08';
-  const lLbl = LICHT_LABEL[licht] || 'Helles Zimmer';
-  const lDesc= LICHT_DESC[licht]  || '';
-
-  const ivl  = p.interval || 7;
-  const gBg  = ivl<=7 ? '#378add' : ivl<=14 ? '#85b7eb' : '#e6f1fb';
-  const gClr = ivl<=7 ? '#fff'    : ivl<=14 ? '#0c447c' : '#185fa5';
-  const gSub = ivl<=7 ? 'regelmäßig' : ivl<=14 ? 'mäßig' : 'selten';
-
-  const luBg  = {hoch:'#1d9e75','hoch-ns':'#5dcaa5', mit:'#9fe1cb', norm:'#e1f5ee'}[luft] || '#e1f5ee';
-  const luClr = {hoch:'#fff',   'hoch-ns':'#085041', mit:'#0f6e56', norm:'#0f6e56'}[luft] || '#0f6e56';
-  const luLbl = LUFT_LABEL[luft] || 'Normal';
-  const luSub = {
-    hoch:    'täglich besprühen',
-    'hoch-ns': 'Luftbefeuchter oder Schale — Blätter NICHT besprühen!',
-    mit:     'gelegentlich besprühen (50–60%)',
-    norm:    'normale Raumluft (40–50%)'
-  }[luft] || '';
-
-  const dw   = p.duengeWo || 4;
-  const dBg  = dw<=2 ? '#27500a' : dw<=4 ? '#3b6d11' : '#c0dd97';
-  const dClr = dw<=2 ? '#eaf3de' : dw<=4 ? '#eaf3de' : '#27500a';
-  const dLbl = dw ? 'alle ' + dw + ' Wochen' : '–';
-
-  return '<div class="detail-info-grid">' +
-    '<div class="detail-info-cell" style="background:' + lBg + ';color:' + lClr + '">' +
-      '<div class="detail-info-label">Licht</div>' +
-      '<div class="detail-info-value">' + lLbl + '</div>' +
-      '<div class="detail-info-sub">' + lDesc + '</div>' +
-    '</div>' +
-    '<div class="detail-info-cell" style="background:' + gBg + ';color:' + gClr + '">' +
-      '<div class="detail-info-label">Gießen</div>' +
-      '<div class="detail-info-value">alle ' + ivl + ' Tage</div>' +
-      '<div class="detail-info-sub">' + gSub + '</div>' +
-    '</div>' +
-    '<div class="detail-info-cell" style="background:' + luBg + ';color:' + luClr + '">' +
-      '<div class="detail-info-label">Luftfeuchte</div>' +
-      '<div class="detail-info-value">' + luLbl + '</div>' +
-      '<div class="detail-info-sub">' + luSub + '</div>' +
-    '</div>' +
-    '<div class="detail-info-cell" style="background:' + dBg + ';color:' + dClr + '">' +
-      '<div class="detail-info-label">Düngen</div>' +
-      '<div class="detail-info-value">' + dLbl + '</div>' +
-      '<div class="detail-info-sub">März–September</div>' +
-    '</div>' +
+  var licht=p.licht||'hell', luft=p.luft||'norm';
+  var lBg={sonne:'#f0c830',hell:'#f7e88a',halb:'#fdf6d0'}[licht]||'#f7e88a';
+  var lClr={sonne:'#6a4e08',hell:'#7a5e08',halb:'#8a7020'}[licht]||'#7a5e08';
+  var ivl=p.interval||7;
+  var gBg=ivl<=7?'#378add':ivl<=14?'#85b7eb':'#e6f1fb';
+  var gClr=ivl<=7?'#fff':ivl<=14?'#0c447c':'#185fa5';
+  var gSub=ivl<=7?'regelmäßig':ivl<=14?'mäßig':'selten';
+  var luBg={'hoch':'#1d9e75','hoch-ns':'#5dcaa5',mit:'#9fe1cb',norm:'#e1f5ee'}[luft]||'#e1f5ee';
+  var luClr={'hoch':'#fff','hoch-ns':'#085041',mit:'#0f6e56',norm:'#0f6e56'}[luft]||'#0f6e56';
+  var luSub={'hoch':'täglich besprühen','hoch-ns':'Luftbefeuchter/Schale — Blätter NICHT besprühen!',mit:'gelegentlich besprühen (50–60%)',norm:'normale Raumluft (40–50%)'}[luft]||'';
+  var dw=p.duengeWo||4;
+  var dBg=dw<=2?'#27500a':dw<=4?'#3b6d11':'#c0dd97';
+  var dClr=dw<=2?'#eaf3de':dw<=4?'#eaf3de':'#27500a';
+  return '<div class="detail-info-grid">'+
+    '<div class="detail-info-cell" style="background:'+lBg+';color:'+lClr+'"><div class="detail-info-label">Licht</div><div class="detail-info-value">'+(LICHT_LABEL[licht]||'Helles Zimmer')+'</div><div class="detail-info-sub">'+(LICHT_DESC[licht]||'')+'</div></div>'+
+    '<div class="detail-info-cell" style="background:'+gBg+';color:'+gClr+'"><div class="detail-info-label">Gießen</div><div class="detail-info-value">alle '+ivl+' Tage</div><div class="detail-info-sub">'+gSub+'</div></div>'+
+    '<div class="detail-info-cell" style="background:'+luBg+';color:'+luClr+'"><div class="detail-info-label">Luftfeuchte</div><div class="detail-info-value">'+(LUFT_LABEL[luft]||'Normal')+'</div><div class="detail-info-sub">'+luSub+'</div></div>'+
+    '<div class="detail-info-cell" style="background:'+dBg+';color:'+dClr+'"><div class="detail-info-label">Düngen</div><div class="detail-info-value">alle '+dw+' Wochen</div><div class="detail-info-sub">März–September</div></div>'+
   '</div>';
 }
 
+// ── DIESE WOCHE ───────────────────────────────────────────────────
+function renderWeek() {
+  var now = new Date();
+  var m = now.getMonth()+1;
+  var tag = WOCHENTAGE[now.getDay()];
+  var datum = tag+', '+now.getDate()+'. '+MONATE_LANG[m-1];
+  document.getElementById('week-eyebrow').textContent = 'Diese Woche';
+  document.getElementById('week-date').textContent = datum;
 
-function careBadge(color) {
-  const labels = {'#f8efe8':'Sehr einfach','#ffd1b8':'Einfach','#fd9349':'Mittel','#fe4b53':'Anspruchsvoll','#3f71d6':'Heikel'};
-  const textColors = {'#d8e8c8':'#3a5028','#b8c8a0':'#2a4018','#98a880':'#1a3010','#7a9060':'#fff','#5a7040':'#fff'};
-  const label = labels[color] || 'Mittel';
-  const tc = textColors[color] || '#fff';
-  return `<span style="display:inline-block;background:${color};color:${tc};font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-top:4px">${label}</span>`;
+  var needsWater = plants.filter(function(p){var d=daysUntil(p);return d===null||d<=0;});
+  var thisWeek   = plants.filter(function(p){var d=daysUntil(p);return d!==null&&d>0&&d<=7;});
+  var duegeActive= [3,4,5,6,7,8,9,10].includes(m);
+  var needsDueng = duegeActive ? plants.filter(function(p){return p.duengeWo&&duengenFaellig(p);}) : [];
+
+  var total = needsWater.length + thisWeek.length;
+  document.getElementById('week-sub').textContent = total+' Pflanze'+(total!==1?'n':'')+' brauchen Wasser'+
+    (needsDueng.length ? ' · '+needsDueng.length+' zum Düngen':'');
+
+  // Urgent card
+  var urgentHtml = '';
+  if(needsWater.length>0){
+    var names = needsWater.slice(0,2).map(function(p){return p.name;}).join(', ')+(needsWater.length>2?' +'+( needsWater.length-2):'');
+    urgentHtml = '<div class="urgent-card">'+
+      '<div class="uc-eyebrow">Dringend</div>'+
+      '<div class="uc-title">'+needsWater.length+' Pflanze'+(needsWater.length!==1?'n':'')+' brauchen jetzt Wasser</div>'+
+      '<div class="uc-sub">'+names+'</div>'+
+      '<div class="uc-btn" onclick="doAllWater()">Alle als gegossen markieren</div>'+
+    '</div>';
+  }
+  document.getElementById('week-urgent').innerHTML = urgentHtml;
+
+  // Actions
+  var actions = '';
+  if(needsWater.length||thisWeek.length) actions += weekAction(needsWater.length+thisWeek.length,'#85b7eb','#0c447c','Pflanzen gießen',needsWater.length+'  überfällig · '+thisWeek.length+' diese Woche','showPage(\'plants\',document.querySelectorAll(\'nav button\')[1])');
+  if(needsDueng.length) actions += weekAction(needsDueng.length,'#c8ddb8','#27500a','Pflanzen düngen',needsDueng.slice(0,2).map(function(p){return p.name;}).join(', ')+(needsDueng.length>2?' +mehr':''),'showPage(\'plants\',document.querySelectorAll(\'nav button\')[1])');
+
+  // Ruhephasen
+  plants.forEach(function(p){
+    var rp = RUHEPHASEN[p.id]; if(!rp) return;
+    var aufwachen = !rp.ruheMon.includes(m)&&rp.ruheMon.includes(m===1?12:m-1);
+    if(aufwachen) actions += weekAction(1,'#f0e0d0','#7a4828',p.name+' aufwecken',rp.aufwachText,'showPage(\'season\',document.querySelectorAll(\'nav button\')[2])');
+  });
+
+  if(!plants.length) actions = '<div class="empty"><h3>Willkommen!</h3><p>Füge deine erste Pflanze unter „Pflanzen" hinzu.</p></div>';
+
+  document.getElementById('week-actions').innerHTML = (actions?'<div class="sec-label">Diese Woche erledigen</div>':'')+actions;
+
+  // Season strip
+  document.getElementById('week-season').innerHTML = '<div class="season-strip" style="margin:14px 20px 0">'+
+    '<div class="ss-label">'+JAHRESZEITEN[m]+' — '+MONATE_LANG[m-1]+'</div>'+
+    '<div class="ss-text">'+(SAISON_TIPPS[m]||'')+'</div>'+
+  '</div>';
 }
 
-function rowHtml(p) {
-  const bg = p.color || '#ffd1b8';
-  const [stxt, scls] = statusFor(p);
-  const thumbSrc = (p.photos && p.photos[0]) || p.photo || null;
-  const thumb = thumbSrc
-    ? `<img src="${thumbSrc}">`
-    : `<span style="font-size:26px">${p.emoji||'🪴'}</span>`;
-  return `<div class="plant-row" onclick="openDetail('${p.id}')">
-    <div class="plant-thumb" style="background:${p.photo?'transparent':bg}">${thumb}</div>
-    <div class="plant-row-info">
-      <h3>${p.name}</h3>
-      <p>${p.species||'&nbsp;'}</p>
-      ${infoBadges(p)}
-    </div>
-    <div class="plant-row-right">
-      <span class="status-pill ${scls}">${stxt}</span>
-      <button class="water-btn-sm" onclick="event.stopPropagation();quickWater('${p.id}')">Gegossen</button>
-    </div>
-  </div>`;
+function weekAction(num, bgColor, txtColor, title, sub, onclick) {
+  return '<div class="week-action" onclick="'+onclick+'">'+
+    '<div class="wa-num" style="background:'+bgColor+';color:'+txtColor+'">'+num+'</div>'+
+    '<div class="wa-info"><div class="wa-title">'+title+'</div><div class="wa-sub">'+sub+'</div></div>'+
+    '<div class="wa-check"></div>'+
+  '</div>';
 }
 
-// ── REMINDERS ────────────────────────────────────────────────────
-function renderReminders() {
-  const list = document.getElementById('remind-list');
-  if (!plants.length) { list.innerHTML = '<div class="empty"><h3>Keine Pflanzen</h3><p>Füge zuerst Pflanzen hinzu.</p></div>'; return; }
-  const sorted = [...plants].sort((a,b) => (daysUntil(a)??-999) - (daysUntil(b)??-999));
-  const curMon = new Date().getMonth()+1;
-  const duegeActive = [3,4,5,6,7,8,9,10].includes(curMon);
-  list.innerHTML = sorted.map(p => {
-    const bg = p.color || '#b8c8a0';
-    const [stxt, scls] = statusFor(p);
-    const thumbSrc = (p.photos && p.photos[0]) || p.photo || null;
-    const thumb = thumbSrc ? '<img src="' + thumbSrc + '">' : '<span>' + (p.emoji||'🪴') + '</span>';
-    const dFaellig = duegeActive && p.duengeWo && duengenFaellig(p);
-    const dLeft = duengenDaysLeft(p);
-    const dSub = !p.duengeWo ? '' : dFaellig ? 'Düngen fällig!' : 'Düngen in ' + dLeft + 'd';
-    const dBtn = p.duengeWo ? '<button class="dueng-btn' + (dFaellig?' due':'') + '" onclick="quickDuengen('' + p.id + '')">Gedüngt</button>' : '';
-    return '<div class="remind-row-inner">' +
-      '<div class="remind-thumb" style="background:' + bg + '">' + thumb + '</div>' +
-      '<div class="remind-info"><h4>' + p.name + '</h4>' +
-        '<p>Alle ' + (p.interval||7) + ' Tage · zuletzt ' + fmtD(p.lastWatered) + '</p>' +
-        (duegeActive && dSub ? '<p style="font-size:11px;color:' + (dFaellig?'#3b6d11':'var(--ink3)') + ';margin-top:1px;font-weight:' + (dFaellig?'600':'400') + '">' + dSub + '</p>' : '') +
-      '</div>' +
-      '<div class="remind-btns">' +
-        '<span class="status-pill ' + scls + '">' + stxt + '</span>' +
-        '<button class="water-btn-sm" onclick="quickWater('' + p.id + '')">Gegossen</button>' +
-        dBtn +
-      '</div>' +
+function doAllWater() {
+  var now = new Date().toISOString();
+  plants.forEach(function(p){
+    var d=daysUntil(p);
+    if(d===null||d<=0){
+      p.lastWatered=now;
+      wlog.unshift({plantId:p.id,name:p.name,emoji:p.emoji||'🪴',date:now});
+    }
+  });
+  if(wlog.length>300) wlog.length=300;
+  save(); renderWeek();
+  if(navigator.vibrate) navigator.vibrate([30,20,30]);
+}
+
+// ── PFLANZEN ─────────────────────────────────────────────────────
+function renderPlants() {
+  var list = document.getElementById('plant-list');
+  var empty = document.getElementById('plants-empty');
+  var sub = document.getElementById('plants-sub');
+  sub.textContent = plants.length ? plants.length+' Pflanze'+(plants.length!==1?'n':'') : '';
+  if(!plants.length){list.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  var over = plants.filter(function(p){var d=daysUntil(p);return d===null||d<=0;});
+  var ok   = plants.filter(function(p){var d=daysUntil(p);return d!==null&&d>0;});
+  var html = '';
+  if(over.length) html += '<div class="sec-label">Braucht Wasser</div>'+over.map(plantRowHtml).join('');
+  if(ok.length)   html += '<div class="sec-label">Versorgt</div>'+ok.map(plantRowHtml).join('');
+  list.innerHTML = html;
+}
+
+function plantRowHtml(p) {
+  var bg = p.color||'#b8c8a0';
+  var st = statusFor(p);
+  return '<div class="plant-row" onclick="openDetail(\''+p.id+'\')">'+
+    '<div class="plant-thumb" style="background:'+(((p.photos&&p.photos[0])||p.photo)?'transparent':bg)+'">'+thumbOf(p)+'</div>'+
+    '<div class="plant-row-info">'+
+      '<h3>'+p.name+'</h3>'+
+      '<p>'+(p.species||'&nbsp;')+'</p>'+
+      infoBadges(p)+
+    '</div>'+
+    '<div class="plant-row-right">'+
+      '<span class="status-pill '+st[1]+'">'+st[0]+'</span>'+
+      '<button class="water-btn-sm" onclick="event.stopPropagation();quickWater(this.dataset.id)" data-id="'+p.id+'">Gegossen</button>'+
+    '</div>'+
+  '</div>';
+}
+
+function quickWater(id) {
+  var p=plants.find(function(x){return x.id===id;}); if(!p) return;
+  p.lastWatered=new Date().toISOString();
+  wlog.unshift({plantId:id,name:p.name,emoji:p.emoji||'🪴',date:p.lastWatered});
+  if(wlog.length>300) wlog.pop();
+  save(); renderWeek(); renderPlants();
+  if(navigator.vibrate) navigator.vibrate(30);
+}
+
+// Düngen
+function duengenFaellig(p){if(!p.lastDuenged||!p.duengeWo)return true;return Date.now()>=(new Date(p.lastDuenged).getTime()+p.duengeWo*7*86400000);}
+function duengenDaysLeft(p){if(!p.lastDuenged||!p.duengeWo)return 0;return Math.ceil((new Date(p.lastDuenged).getTime()+p.duengeWo*7*86400000-Date.now())/86400000);}
+function quickDuengen(id){var p=plants.find(function(x){return x.id===id;});if(!p)return;p.lastDuenged=new Date().toISOString();save();renderWeek();}
+
+// ── SAISONALES ────────────────────────────────────────────────────
+function renderSeason() {
+  var m = new Date().getMonth()+1;
+  var jz = JAHRESZEITEN[m];
+  document.getElementById('season-title').textContent = jz;
+  document.getElementById('season-sub').textContent = MONATE_LANG[m-1];
+
+  document.getElementById('season-banner').innerHTML =
+    '<div class="season-strip" style="margin:14px 20px 0">'+
+    '<div class="ss-label">Saison-Tipp</div>'+
+    '<div class="ss-text">'+(SAISON_TIPPS[m]||'')+'</div></div>';
+
+  var tasks = MONAT_AUFGABEN[m]||[];
+  var tasksHtml = tasks.map(function(t){
+    return '<div class="month-task-row">'+
+      '<div class="mt-dot"></div>'+
+      '<div class="mt-info"><div class="mt-title">'+t.t+'</div><div class="mt-sub">'+t.s+'</div></div>'+
+      '<div class="mt-badge'+(t.u?' urgent':'')+'">'+( t.u?'Jetzt':'Info')+'</div>'+
     '</div>';
   }).join('');
+  document.getElementById('season-tasks').innerHTML = '<div class="sec-label">Diesen Monat</div>'+tasksHtml;
+
+  var alerts = [];
+  plants.forEach(function(p){
+    var rp=RUHEPHASEN[p.id]; if(!rp) return;
+    var inRuhe=rp.ruheMon.includes(m);
+    var aufwachen=!rp.ruheMon.includes(m)&&rp.ruheMon.includes(m===1?12:m-1);
+    if(inRuhe||aufwachen){
+      var bg=p.color||'#b8c8a0';
+      alerts.push('<div class="plant-alert-row">'+
+        '<div class="pa-thumb" style="background:'+((((p.photos&&p.photos[0])||p.photo))?'transparent':bg)+'">'+thumbSm(p)+'</div>'+
+        '<div style="flex:1"><div class="pa-name">'+p.name+'</div><div class="pa-action">'+(aufwachen?rp.aufwachText:rp.ruheText)+'</div></div>'+
+        '<div class="pa-pill" style="background:'+(aufwachen?'#c87848':'#f0e0d0')+';color:'+(aufwachen?'#fff':'#7a4828')+'">'+( aufwachen?'Aufwachen':'Ruhe')+'</div>'+
+      '</div>');
+    }
+  });
+  document.getElementById('season-plants').innerHTML =
+    '<div class="sec-label">Deine Pflanzen</div>'+
+    (alerts.length?alerts.join(''):'<div class="empty" style="padding:30px 20px"><p>Keine besonderen Aktionen diesen Monat.</p></div>');
 }
 
-// ── LOG ──────────────────────────────────────────────────────────
-function renderLog() {
-  const feed = document.getElementById('log-feed');
-  const empty = document.getElementById('log-empty');
-  if (!wlog.length) { feed.innerHTML=''; empty.style.display='block'; return; }
-  empty.style.display = 'none';
-  renderSeasonStrip();
-  feed.innerHTML = wlog.slice(0,60).map(l => {
-    const p = plants.find(x=>x.id===l.plantId);
-    const bg = p ? (p.color||'#ffd1b8') : '#ffd1b8';
-    const thumb = p&&p.photo ? `<img src="${p.photo}">` : `<span>${l.emoji||'🪴'}</span>`;
-    return `<div class="log-feed-row">
-      <div class="log-feed-thumb" style="background:${bg}">${thumb}</div>
-      <div class="log-feed-info"><h4>${l.name}</h4><p>Gegossen</p></div>
-      <div class="log-feed-time">${fmtD(l.date)}<br>${fmtT(l.date)}</div>
-    </div>`;
-  }).join('');
-}
-
-// ── QUICK WATER ──────────────────────────────────────────────────
-function quickWater(id) {
-  const p = plants.find(x=>x.id===id); if (!p) return;
-  p.lastWatered = new Date().toISOString();
-  wlog.unshift({plantId:id, name:p.name, emoji:p.emoji||'🪴', date:p.lastWatered});
-  if (wlog.length > 300) wlog.pop();
-  save(); renderHome(); renderReminders(); renderLog();
-  if (navigator.vibrate) navigator.vibrate(30);
-}
-
-// ── DETAIL ───────────────────────────────────────────────────────
+// ── DETAIL ────────────────────────────────────────────────────────
 function openDetail(id) {
-  curId = id;
-  const p = plants.find(x=>x.id===id); if (!p) return;
-  const bg = p.color||'#ffd1b8';
-
-  // Hero
-  const hero = document.getElementById('d-hero');
-  hero.style.background = bg;
-  const heroPhoto = (p.photos && p.photos[0]) || p.photo || null;
-  if (heroPhoto) {
-    hero.innerHTML = `<div class="detail-topnav"><button class="detail-nav-btn" onclick="closeDetail()">Zurück</button><button class="detail-nav-btn" onclick="openEdit()">Bearbeiten</button></div><img src="${heroPhoto}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">`;
-  } else {
-    hero.innerHTML = `<div class="detail-topnav"><button class="detail-nav-btn" onclick="closeDetail()">Zurück</button><button class="detail-nav-btn" onclick="openEdit()">Bearbeiten</button></div><span class="detail-hero-emoji">${p.emoji||'🪴'}</span>`;
-  }
-
-  document.getElementById('d-name').textContent = p.name;
-  document.getElementById('d-species').textContent = p.species || '';
-  // Pflegeaufwand-Badge ausgeblendet — wird durch Info-Grid ersetzt
-  document.getElementById('d-color-dot').parentElement.style.display = 'none';
-
-  const ago = daysAgo(p.lastWatered);
-  const nxt = daysUntil(p);
-  document.getElementById('d-ago').textContent = ago!==null?ago:'–';
-  document.getElementById('d-int').textContent = p.interval||7;
-  document.getElementById('d-next').textContent = nxt===null?'–':nxt<0?`${Math.abs(nxt)}d!`:nxt===0?'Heute':nxt;
-
-  // Care accordion
-  const careItems = [
-    ['Standort & Licht', p.standort, ''],
-    ['Erde',             p.erde,     ''],
-    ['Gießen & Luftfeuchtigkeit', p.giessen, ''],
-    ['Düngen',           p.duengen,  ''],
-    ['Schädlinge & Krankheiten', p.schaedlinge, ''],
-    p.notes   ? ['Notizen',    p.notes,  '']         : null,
-    p.poison  ? ['Giftigkeit', p.poison, 'poison-text'] : null,
-  ].filter(x=>x&&x[1]);
-
-  document.getElementById('d-info-grid').innerHTML = detailInfoGrid(p);
-  document.getElementById('care-accordion').innerHTML = careItems.map((x,i) => `
-    <div class="care-item">
-      <div class="care-header" onclick="toggleCare(${i})">
-        <h4>${x[0]}</h4>
-        <span class="care-arrow${i===0?' open':''}" id="ca-${i}">${i===0?'×':'+'}</span>
-      </div>
-      <div class="care-body${i===0?' open':''} ${x[2]}" id="cb-${i}">${x[1]}</div>
-    </div>`).join('');
-
-  // Log
-  const plog = wlog.filter(l=>l.plantId===id).slice(0,6);
-  document.getElementById('d-log').innerHTML = plog.length
-    ? plog.map(l=>`<div class="log-entry-row"><div class="log-entry-dot" style="background:${bg}"></div><span class="log-entry-date">${fmtD(l.date)}</span><span class="log-entry-time">${fmtT(l.date)}</span></div>`).join('')
-    : '<p style="font-size:13px;color:var(--ink3);padding:8px 20px 16px">Noch nicht gegossen</p>';
-
+  curId=id;
+  var p=plants.find(function(x){return x.id===id;}); if(!p) return;
+  var bg=p.color||'#b8c8a0';
+  var heroPhoto=(p.photos&&p.photos[0])||p.photo||null;
+  var hero=document.getElementById('d-hero');
+  hero.style.background=bg;
+  hero.innerHTML='<div class="detail-topnav"><button class="detail-nav-btn" onclick="closeDetail()">Zurück</button><button class="detail-nav-btn" onclick="openEdit()">Bearbeiten</button></div>'+(heroPhoto?'<img src="'+heroPhoto+'" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">':'<span class="detail-hero-emoji">'+(p.emoji||'🪴')+'</span>');
+  document.getElementById('d-name').textContent=p.name;
+  document.getElementById('d-species').textContent=p.species||'';
+  var ago=daysAgo(p.lastWatered), nxt=daysUntil(p);
+  document.getElementById('d-ago').textContent=ago!==null?ago:'–';
+  document.getElementById('d-int').textContent=p.interval||7;
+  document.getElementById('d-next').textContent=nxt===null?'–':nxt<0?Math.abs(nxt)+'d!':nxt===0?'Heute':nxt;
+  document.getElementById('d-info-grid').innerHTML=detailInfoGrid(p);
+  var careItems=[
+    ['Standort & Licht',p.standort,''],['Erde',p.erde,''],['Gießen & Luftfeuchtigkeit',p.giessen,''],
+    ['Düngen',p.duengen,''],['Schädlinge & Krankheiten',p.schaedlinge,''],
+    p.notes?['Notizen',p.notes,'']:null,p.poison?['Giftigkeit',p.poison,'poison-text']:null
+  ].filter(function(x){return x&&x[1];});
+  document.getElementById('care-accordion').innerHTML=careItems.map(function(x,i){
+    return '<div class="care-item"><div class="care-header" onclick="toggleCare('+i+')"><h4>'+x[0]+'</h4><span class="care-arrow'+(i===0?' open':'')+'" id="ca-'+i+'">'+(i===0?'×':'+')+'</span></div><div class="care-body'+(i===0?' open':'')+' '+x[2]+'" id="cb-'+i+'">'+x[1]+'</div></div>';
+  }).join('');
+  var plog=wlog.filter(function(l){return l.plantId===id;}).slice(0,6);
+  document.getElementById('d-log').innerHTML=plog.length?plog.map(function(l){return '<div class="log-entry-row"><div class="log-entry-dot" style="background:'+bg+'"></div><span>'+fmtD(l.date)+'</span><span class="log-entry-time">'+fmtT(l.date)+'</span></div>';}).join(''):'<p style="font-size:13px;color:var(--ink3);padding:8px 20px 16px">Noch nicht gegossen</p>';
   document.getElementById('detail').classList.add('open');
-  document.getElementById('detail').scrollTop = 0;
+  document.getElementById('detail').scrollTop=0;
+}
+function toggleCare(i){var b=document.getElementById('cb-'+i),a=document.getElementById('ca-'+i),o=b.classList.toggle('open');a.textContent=o?'×':'+';a.classList.toggle('open',o);}
+function closeDetail(){document.getElementById('detail').classList.remove('open');curId=null;}
+function waterCurrent(){if(curId){quickWater(curId);openDetail(curId);}}
+function deletePlant(){
+  if(!curId||!confirm('Pflanze wirklich löschen?'))return;
+  plants=plants.filter(function(p){return p.id!==curId;});
+  wlog=wlog.filter(function(l){return l.plantId!==curId;});
+  save();closeDetail();renderWeek();renderPlants();
 }
 
-function toggleCare(i) {
-  const body = document.getElementById('cb-'+i);
-  const arr  = document.getElementById('ca-'+i);
-  const open = body.classList.toggle('open');
-  arr.textContent = open ? '×' : '+';
-  arr.classList.toggle('open', open);
+// ── MODAL ─────────────────────────────────────────────────────────
+function buildPickers(){
+  var eg=document.getElementById('emoji-grid');
+  if(eg)eg.innerHTML=EMOJIS.map(function(e){return '<div class="e-opt'+(e===selEmoji?' sel':'')+'" onclick="selEmoji=\''+e+'\';buildPickers()">'+e+'</div>';}).join('');
 }
-
-function closeDetail() { document.getElementById('detail').classList.remove('open'); curId=null; }
-function waterCurrent() { if (curId) { quickWater(curId); openDetail(curId); } }
-function deletePlant() {
-  if (!curId || !confirm('Pflanze wirklich löschen?')) return;
-  plants = plants.filter(p=>p.id!==curId);
-  wlog   = wlog.filter(l=>l.plantId!==curId);
-  save(); closeDetail(); renderHome(); renderReminders(); renderLog();
-}
-
-// ── MODAL ────────────────────────────────────────────────────────
-function buildBadgePickers() {
-  ['licht-picker','giess-picker','luft-picker','dueng-picker'].forEach(id => {
-    const container = document.getElementById(id);
-    if (!container) return;
-    container.querySelectorAll('.badge-pick').forEach(el => {
-      const map = {licht:selLicht, giess:selGiess, luft:selLuft, dueng:selDueng};
-      const key = id.replace('-picker','');
-      el.classList.toggle('sel', el.dataset.val === map[key]);
+function buildBadgePickers(){
+  ['licht-picker','giess-picker','luft-picker','dueng-picker'].forEach(function(id){
+    var c=document.getElementById(id); if(!c)return;
+    c.querySelectorAll('.badge-pick').forEach(function(el){
+      var map={licht:selLicht,giess:selGiess,luft:selLuft,dueng:selDueng};
+      el.classList.toggle('sel',el.dataset.val===map[id.replace('-picker','')]);
     });
   });
 }
-
-function buildPickers() {
-  const eg = document.getElementById('emoji-grid');
-  if (eg) eg.innerHTML = EMOJIS.map(e =>
-    `<div class="e-opt${e===selEmoji?' sel':''}" onclick="selEmoji='${e}';buildPickers()">${e}</div>`
-  ).join('');
-}
-
-function openAdd() {
-  editId=null; photoData=[null,null,null];
-  selEmoji='🪴'; selColor=COLORS[1];
-  selLicht='hell'; selGiess='mit'; selLuft='norm'; selDueng='mit';
-  document.getElementById('modal-title').textContent = 'Neue Pflanze';
-  [0,1,2].forEach(i=>{ document.getElementById('photo-prev-'+i).style.display='none'; document.getElementById('photo-lbl-'+i).style.display=''; });
-  ['name','species','standort','erde','giessen','duengen','schaedlinge','notes','poison'].forEach(f=>{const el=document.getElementById('f-'+f);if(el)el.value='';});
-  document.getElementById('f-interval').value = 7;
-  buildPickers(); buildBadgePickers();
+function openAdd(){
+  editId=null;photoData=[null,null,null];selEmoji='🪴';selColor=COLORS[1];
+  selLicht='hell';selGiess='mit';selLuft='norm';selDueng='mit';
+  document.getElementById('modal-title').textContent='Neue Pflanze';
+  [0,1,2].forEach(function(i){document.getElementById('photo-prev-'+i).style.display='none';document.getElementById('photo-lbl-'+i).style.display='';});
+  ['name','species','standort','erde','giessen','duengen','schaedlinge','notes','poison'].forEach(function(f){var el=document.getElementById('f-'+f);if(el)el.value='';});
+  document.getElementById('f-interval').value=7;
+  buildPickers();buildBadgePickers();
   document.getElementById('modal-bg').classList.add('open');
 }
-
-function openEdit() {
-  const p = plants.find(x=>x.id===curId); if(!p) return;
+function openEdit(){
+  var p=plants.find(function(x){return x.id===curId;}); if(!p)return;
   editId=curId;
-  const photos = p.photos || (p.photo ? [p.photo,null,null] : [null,null,null]);
-  photoData = [...photos];
-  selEmoji=p.emoji||'🪴'; selColor=p.color||'#b8c8a0';
-  selLicht=p.licht||'hell'; selGiess=p.giessKat||'mit'; selLuft=p.luft||'norm'; selDueng=p.duengKat||'mit';
-  document.getElementById('modal-title').textContent = 'Bearbeiten';
-  document.getElementById('f-name').value=p.name||'';
-  document.getElementById('f-species').value=p.species||'';
-  document.getElementById('f-interval').value=p.interval||7;
-  document.getElementById('f-standort').value=p.standort||'';
-  document.getElementById('f-erde').value=p.erde||'';
-  document.getElementById('f-giessen').value=p.giessen||'';
-  document.getElementById('f-duengen').value=p.duengen||'';
-  document.getElementById('f-schaedlinge').value=p.schaedlinge||'';
-  document.getElementById('f-notes').value=p.notes||'';
-  document.getElementById('f-poison').value=p.poison||'';
-  [0,1,2].forEach(i=>{
-    const prev=document.getElementById('photo-prev-'+i);
-    const lbl=document.getElementById('photo-lbl-'+i);
-    if(photoData[i]){prev.src=photoData[i];prev.style.display='block';lbl.style.display='none';}
-    else{prev.style.display='none';lbl.style.display='';}
-  });
-  buildPickers(); buildBadgePickers();
+  var photos=p.photos||(p.photo?[p.photo,null,null]:[null,null,null]);
+  photoData=[photos[0]||null,photos[1]||null,photos[2]||null];selEmoji=p.emoji||'🪴';selColor=p.color||'#b8c8a0';
+  selLicht=p.licht||'hell';selGiess=p.giessKat||'mit';selLuft=p.luft||'norm';selDueng=p.duengKat||'mit';
+  document.getElementById('modal-title').textContent='Bearbeiten';
+  document.getElementById('f-name').value=p.name||'';document.getElementById('f-species').value=p.species||'';
+  document.getElementById('f-interval').value=p.interval||7;document.getElementById('f-standort').value=p.standort||'';
+  document.getElementById('f-erde').value=p.erde||'';document.getElementById('f-giessen').value=p.giessen||'';
+  document.getElementById('f-duengen').value=p.duengen||'';document.getElementById('f-schaedlinge').value=p.schaedlinge||'';
+  document.getElementById('f-notes').value=p.notes||'';document.getElementById('f-poison').value=p.poison||'';
+  [0,1,2].forEach(function(i){var prev=document.getElementById('photo-prev-'+i),lbl=document.getElementById('photo-lbl-'+i);if(photoData[i]){prev.src=photoData[i];prev.style.display='block';lbl.style.display='none';}else{prev.style.display='none';lbl.style.display='';}});
+  buildPickers();buildBadgePickers();
   document.getElementById('modal-bg').classList.add('open');
 }
+function closeModal(){document.getElementById('modal-bg').classList.remove('open');}
+function handleBgClick(e){if(e.target===document.getElementById('modal-bg'))closeModal();}
 
-function closeModal() { document.getElementById('modal-bg').classList.remove('open'); }
-function handleBgClick(e) { if(e.target===document.getElementById('modal-bg'))closeModal(); }
-
-
-function compressPhoto(dataUrl, cb) {
-  if (!dataUrl) { cb(null); return; }
-  const img = new Image();
-  img.onload = () => {
-    const canvas = document.createElement('canvas');
-    const MAX = 600;
-    let w = img.width, h = img.height;
-    if (w > h) { if (w > MAX) { h = h*MAX/w; w = MAX; } }
-    else        { if (h > MAX) { w = w*MAX/h; h = MAX; } }
-    canvas.width = w; canvas.height = h;
-    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-    cb(canvas.toDataURL('image/jpeg', 0.72));
-  };
-  img.src = dataUrl;
+function compressPhoto(dataUrl,cb){
+  if(!dataUrl){cb(null);return;}
+  var img=new Image();
+  img.onload=function(){var c=document.createElement('canvas'),MAX=600,w=img.width,h=img.height;if(w>h){if(w>MAX){h=h*MAX/w;w=MAX;}}else{if(h>MAX){w=w*MAX/h;h=MAX;}}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);cb(c.toDataURL('image/jpeg',0.72));};img.src=dataUrl;
 }
 
-function savePlant() {
-  const name = document.getElementById('f-name').value.trim();
-  if (!name) { document.getElementById('f-name').focus(); return; }
-  const giessKatMap = {oft:6, mit:10, sel:20};
-  const duengKatMap = {oft:2, mit:4, sel:7};
-  const baseData = {
-    name, species:document.getElementById('f-species').value.trim(),
-    interval:parseInt(document.getElementById('f-interval').value)||giessKatMap[selGiess]||7,
-    emoji:selEmoji, color:selColor,
-    licht:selLicht, giessKat:selGiess, luft:selLuft, duengKat:selDueng,
-    duengeWo:duengKatMap[selDueng]||4,
-    standort:document.getElementById('f-standort').value.trim(),
-    erde:document.getElementById('f-erde').value.trim(),
-    giessen:document.getElementById('f-giessen').value.trim(),
-    duengen:document.getElementById('f-duengen').value.trim(),
-    schaedlinge:document.getElementById('f-schaedlinge').value.trim(),
-    notes:document.getElementById('f-notes').value.trim(),
-    poison:document.getElementById('f-poison').value.trim(),
-  };
-  // Compress all 3 photos then save
-  let done = 0;
-  const compressed = [null, null, null];
-  [0,1,2].forEach(i => {
-    compressPhoto(photoData[i], result => {
-      compressed[i] = result;
-      done++;
-      if (done === 3) {
-        const d = {...baseData, photo:compressed[0]||null, photos:[...compressed]};
-        if (editId) { const idx=plants.findIndex(p=>p.id===editId); plants[idx]={...plants[idx],...d}; }
-        else { plants.push({id:Date.now().toString(), lastWatered:null, ...d}); }
-        save(); closeModal(); renderHome(); renderReminders(); renderLog();
-        if (editId) openDetail(editId);
-      }
-    });
-  });
+function savePlant(){
+  var name=document.getElementById('f-name').value.trim(); if(!name){document.getElementById('f-name').focus();return;}
+  var gKatMap={oft:6,mit:10,sel:20},dKatMap={oft:2,mit:4,sel:7};
+  var base={name:name,species:document.getElementById('f-species').value.trim(),
+    interval:parseInt(document.getElementById('f-interval').value)||gKatMap[selGiess]||7,
+    emoji:selEmoji,color:selColor,licht:selLicht,giessKat:selGiess,luft:selLuft,duengKat:selDueng,
+    duengeWo:dKatMap[selDueng]||4,
+    standort:document.getElementById('f-standort').value.trim(),erde:document.getElementById('f-erde').value.trim(),
+    giessen:document.getElementById('f-giessen').value.trim(),duengen:document.getElementById('f-duengen').value.trim(),
+    schaedlinge:document.getElementById('f-schaedlinge').value.trim(),notes:document.getElementById('f-notes').value.trim(),
+    poison:document.getElementById('f-poison').value.trim()};
+  var done=0,compressed=[null,null,null];
+  [0,1,2].forEach(function(i){compressPhoto(photoData[i],function(r){compressed[i]=r;done++;
+    if(done===3){var d={}; for(var k in base){d[k]=base[k];} d.photo=compressed[0]||null; d.photos=[compressed[0],compressed[1],compressed[2]];
+      if(editId){var idx=plants.findIndex(function(p){return p.id===editId;});for(var k in d){plants[idx][k]=d[k];}}
+      else{var np={}; for(var k in d){np[k]=d[k];} np.id=Date.now().toString(); np.lastWatered=null; plants.push(np);}
+      save();closeModal();renderWeek();renderPlants();if(editId)openDetail(editId);}});});
 }
 
-// Photo — 3 Slots
-[0,1,2].forEach(i=>{
-  document.getElementById('photo-input-'+i).addEventListener('change', e=>{
-    const f=e.target.files[0]; if(!f) return;
-    const r=new FileReader();
-    r.onload=ev=>{
-      photoData[i]=ev.target.result;
-      const prev=document.getElementById('photo-prev-'+i);
-      prev.src=photoData[i]; prev.style.display='block';
-      document.getElementById('photo-lbl-'+i).style.display='none';
-    };
-    r.readAsDataURL(f);
+[0,1,2].forEach(function(i){
+  document.getElementById('photo-input-'+i).addEventListener('change',function(e){
+    var f=e.target.files[0]; if(!f)return;
+    var r=new FileReader();r.onload=function(ev){photoData[i]=ev.target.result;var prev=document.getElementById('photo-prev-'+i);prev.src=photoData[i];prev.style.display='block';document.getElementById('photo-lbl-'+i).style.display='none';};r.readAsDataURL(f);
   });
 });
 
-// Nav
-function showPage(name, btn) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+function showPage(name,btn){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
   document.getElementById('page-'+name).classList.add('active');
-  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
-  if(name==='remind') renderReminders();
-  if(name==='log') renderLog();
-  if(name==='month') renderMonthPage();
+  if(name==='week') renderWeek();
+  if(name==='plants') renderPlants();
+  if(name==='season') renderSeason();
 }
 
-// ── Vorinstallierte Pflanzen ──────────────────────────────────────
 const PRESET_PLANTS = [
   {
     id: 'preset-begonia-albopicta', licht: 'hell', luft: 'hoch-ns', duengeWo: 2,
@@ -1685,7 +1280,14 @@ PRESET_PLANTS.forEach(preset => {
 save();
 
 
-renderHome();
+const SYNC_FIELDS = ['licht','luft','duengeWo','standort','erde','giessen','duengen','schaedlinge','notes','poison','name','species','color','interval','emoji'];
+PRESET_PLANTS.forEach(function(preset) {
+  var existing = plants.find(function(p){return p.id===preset.id;});
+  if(!existing){plants.push(preset);}
+  else{SYNC_FIELDS.forEach(function(f){existing[f]=preset[f];});}
+});
+save();
+renderWeek();
 </script>
 </body>
 </html>
