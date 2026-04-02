@@ -24,7 +24,7 @@ html, body { height: 100%; background: var(--bg); font-family: var(--font); colo
 
 nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: var(--bg); border-top: 1.5px solid var(--rule); display: flex; padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
 nav button { flex: 1; border: none; background: none; padding: 20px 4px 18px; font-size: 13px; font-weight: 500; color: var(--ink3); cursor: pointer; font-family: var(--font); letter-spacing: .5px; text-transform: uppercase; border-top: 2px solid transparent; }
-nav button.active { color: var(--accent); border-top-color: var(--accent); }
+nav button.active { color: #c87848; border-top-color: #c87848; }
 
 .page { display: none; }
 .page.active { display: block; }
@@ -34,8 +34,8 @@ nav button.active { color: var(--accent); border-top-color: var(--accent); }
 .eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink3); margin-bottom: 5px; }
 h1 { font-size: 34px; font-weight: 400; letter-spacing: -1px; line-height: 1; }
 .sub { font-size: 13px; color: var(--ink3); margin-top: 4px; }
-.add-btn { border: 1.5px solid var(--ink); background: transparent; border-radius: 30px; padding: 8px 18px; font-size: 12px; font-weight: 500; letter-spacing: .4px; text-transform: uppercase; cursor: pointer; font-family: var(--font); align-self: flex-start; }
-.add-btn:active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.add-btn { border: 1.5px solid #c87848; color: #c87848; background: transparent; border-radius: 30px; padding: 8px 18px; font-size: 12px; font-weight: 500; letter-spacing: .4px; text-transform: uppercase; cursor: pointer; font-family: var(--font); align-self: flex-start; }
+.add-btn:active { background: #c87848; color: #fff; border-color: var(--accent); }
 .sec { font-size: 11px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink3); padding: 16px 20px 8px; }
 
 /* Diese Woche */
@@ -116,7 +116,7 @@ h1 { font-size: 34px; font-weight: 400; letter-spacing: -1px; line-height: 1; }
 .ilbl { font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; opacity: .75; margin-bottom: 3px; }
 .ival { font-size: 14px; font-weight: 500; line-height: 1.3; }
 .isub { font-size: 11px; opacity: .7; margin-top: 2px; line-height: 1.4; }
-.wbig { display: block; width: calc(100% - 40px); margin: 16px 20px; border: none; background: var(--accent); color: #fff; border-radius: var(--rxl); padding: 15px; font-size: 13px; font-weight: 500; letter-spacing: .3px; cursor: pointer; font-family: var(--font); text-transform: uppercase; }
+.wbig { display: block; width: calc(100% - 40px); margin: 16px 20px; border: none; background: #c87848; color: #fff; border-radius: var(--rxl); padding: 15px; font-size: 13px; font-weight: 500; letter-spacing: .3px; cursor: pointer; font-family: var(--font); text-transform: uppercase; }
 .wbig:active { opacity: .8; }
 .citem { border-bottom: 1.5px solid var(--rule); }
 .chead { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
@@ -162,6 +162,16 @@ h1 { font-size: 34px; font-weight: 400; letter-spacing: -1px; line-height: 1; }
 .empty { padding: 60px 24px; text-align: center; }
 .empty h3 { font-size: 22px; font-weight: 400; margin-bottom: 8px; }
 .empty p { font-size: 14px; color: var(--ink3); line-height: 1.6; }
+
+.sub-plant{display:flex;align-items:center;gap:10px;padding:7px 14px 7px 20px;border-bottom:1px solid rgba(90,64,48,.08);background:var(--bg);cursor:pointer}
+.sub-plant:active{background:var(--rule)}
+.sp-thumb{width:28px;height:28px;border-radius:8px;background:#b8c8a0;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;overflow:hidden}
+.sp-thumb img{width:100%;height:100%;object-fit:cover;border-radius:8px}
+.sp-name{font-size:12px;font-weight:500;color:var(--ink);flex:1}
+.sp-chk{width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(90,64,48,.2);flex-shrink:0}
+.sp-chk.done{background:#5a7a48;border-color:#5a7a48}
+.acc-arrow{font-size:12px;flex-shrink:0;display:inline-block;transition:transform .2s}
+.acc-arrow.open{transform:rotate(90deg)}
 </style>
 </head>
 <body>
@@ -202,22 +212,10 @@ h1 { font-size: 34px; font-weight: 400; letter-spacing: -1px; line-height: 1; }
   <div id="p-empty" class="empty" style="display:none"><h3>Noch keine Pflanzen</h3><p>Tippe auf „+ Hinzufügen".</p></div>
 </div>
 
-<div class="page" id="page-season">
-  <div class="topbar">
-    <div class="eyebrow" id="s-eye">Aktuell</div>
-    <h1 id="s-title">Frühling</h1>
-    <div class="sub" id="s-sub" style="display:none"></div>
-  </div>
-  <div id="s-banner"></div>
-  <div id="s-tasks"></div>
-  <div id="s-plants"></div>
-</div>
-
 </div>
 <nav>
   <button class="active" onclick="showPage('week', this)">Diese Woche</button>
   <button onclick="showPage('plants', this)">Pflanzen</button>
-  <button onclick="showPage('season', this)">Saisonales</button>
 </nav>
 </div>
 
@@ -230,14 +228,9 @@ h1 { font-size: 34px; font-weight: 400; letter-spacing: -1px; line-height: 1; }
   </div>
   <div style="background:var(--bg);border-bottom:1.5px solid var(--rule)">
     <div class="dhead"><h2 id="d-name"></h2><p class="dspecies" id="d-species"></p></div>
-    <div class="stats">
-      <div class="stat"><div class="stat-n" id="d-ago">–</div><div class="stat-l">Tage seit Guss</div></div>
-      <div class="stat"><div class="stat-n" id="d-int">–</div><div class="stat-l">Intervall</div></div>
-      <div class="stat"><div class="stat-n" id="d-next">–</div><div class="stat-l">Nächster Guss</div></div>
-    </div>
+
   </div>
   <div id="d-igrid"></div>
-  <button class="wbig" onclick="waterCurrent()">Jetzt gegossen</button>
   <div id="d-care"></div>
   <div class="dlog-lbl">Gießverlauf</div>
   <div id="d-log"></div>
@@ -254,11 +247,9 @@ h1 { font-size: 34px; font-weight: 400; letter-spacing: -1px; line-height: 1; }
         <div style="display:flex;gap:8px">
           <div class="pzone" id="pz0" onclick="document.getElementById('pi0').click()" style="flex:1"><img class="prev" id="pp0"><span class="pzone-lbl" id="pl0">+ Foto</span></div>
           <div class="pzone" id="pz1" onclick="document.getElementById('pi1').click()" style="flex:1"><img class="prev" id="pp1"><span class="pzone-lbl" id="pl1">+ Foto</span></div>
-          <div class="pzone" id="pz2" onclick="document.getElementById('pi2').click()" style="flex:1"><img class="prev" id="pp2"><span class="pzone-lbl" id="pl2">+ Foto</span></div>
         </div>
         <input type="file" id="pi0" accept="image/*" style="display:none">
         <input type="file" id="pi1" accept="image/*" style="display:none">
-        <input type="file" id="pi2" accept="image/*" style="display:none">
       </div>
       <div class="fg"><label>Symbol (falls kein Foto)</label><div class="egrid" id="egrid"></div></div>
       <div class="fg"><label>Licht</label><div style="display:flex;gap:6px;flex-wrap:wrap" id="lp">
@@ -303,6 +294,22 @@ h1 { font-size: 34px; font-weight: 400; letter-spacing: -1px; line-height: 1; }
 </div>
 
 <script>
+function getWeekKey(){var now=new Date(),jan1=new Date(now.getFullYear(),0,1);return now.getFullYear()+'-W'+Math.ceil(((now-jan1)/86400000+jan1.getDay()+1)/7);}
+function toggleAcc(id){var b=document.getElementById('acc-body-'+id),a=document.getElementById('acc-arrow-'+id);if(!b)return;var open=b.style.display==='none'||b.style.display==='';b.style.display=open?'block':'none';if(a){if(open)a.classList.add('open');else a.classList.remove('open');}}
+function duengenFaellig(p){if(!p.lastDuenged||!p.duengeWo)return true;return Date.now()>=(new Date(p.lastDuenged).getTime()+p.duengeWo*7*86400000);}
+function plantSubRow(p,category){
+  var hasPic=(p.photos&&p.photos[0])||p.photo, src=hasPic?((p.photos&&p.photos[0])||p.photo):null;
+  var bg=p.color||'#b8c8a0', dKey='done_'+getWeekKey()+'_'+category+'_'+p.id;
+  var done=localStorage.getItem(dKey)==='1';
+  var ti=src?'<img src="'+src+'" style="width:100%;height:100%;object-fit:cover;border-radius:8px">':'<span style="font-size:13px">'+(p.emoji||'🪴')+'</span>';
+  return '<div class="sub-plant" data-dkey="'+dKey+'" data-pid="'+p.id+'"><div class="sp-thumb" style="background:'+(src?'transparent':bg)+'">'+ti+'</div><div class="sp-name">'+p.name+'</div><div class="sp-chk'+(done?' done':'')+'"></div></div>';
+}
+function buildWeekAcc(id,title,sub,plist,category){
+  var sc=id==='giessen'?'#378add':'#3b6d11', bHtml='';
+  for(var i=0;i<plist.length;i++) bHtml+=plantSubRow(plist[i],category);
+  return '<div><div class="week-check" data-accid="'+id+'" style="display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1.5px solid var(--rule);border-left:3px solid '+sc+';cursor:pointer"><div style="flex:1"><div style="font-size:15px;font-weight:500;color:var(--ink)">'+title+'</div><div style="font-size:12px;color:var(--ink3);margin-top:2px">'+sub+'</div></div><span class="acc-arrow" id="acc-arrow-'+id+'" style="color:'+sc+'">&#9658;</span></div><div id="acc-body-'+id+'" style="display:none;background:var(--bg)">'+bHtml+'</div></div>';
+}
+
 // ── Daten ────────────────────────────────────────────────────────
 var EMOJIS = ['🌿','🌵','🌺','🌸','🌼','🍃','🪴','🌱','🌾','🎋','🌴','🍀','🌳','🌲','🌻','🎍'];
 var WOCHENTAGE = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
@@ -363,7 +370,7 @@ var selLicht = 'hell';
 var selGiess = 'mit';
 var selLuft = 'norm';
 var selDueng = 'mit';
-var photoData = [null, null, null];
+var photoData = [null, null];
 
 try { plants = JSON.parse(localStorage.getItem('pl_v4') || '[]'); } catch(e) { plants = []; }
 try { wlog   = JSON.parse(localStorage.getItem('wl_v4') || '[]'); } catch(e) { wlog = []; }
@@ -455,75 +462,50 @@ function infoGrid(p) {
     '<div class="icell" style="background:' + lBg + ';color:' + lClr + '"><div class="ilbl">Licht</div><div class="ival">' + (LL[licht] || 'Helles Zimmer') + '</div><div class="isub">' + (LD[licht] || '') + '</div></div>' +
     '<div class="icell" style="background:' + gBg + ';color:' + gClr + '"><div class="ilbl">Gießen</div><div class="ival">alle ' + ivl + ' Tage</div><div class="isub">' + gSub + '</div></div>' +
     '<div class="icell" style="background:' + luBg + ';color:' + luClr + '"><div class="ilbl">Luftfeuchte</div><div class="ival">' + (LU[luft] || 'Normal') + '</div><div class="isub">' + luSub + '</div></div>' +
-    '<div class="icell" style="background:' + dBg + ';color:' + dClr + '"><div class="ilbl">D&uuml;ngen</div><div class="ival">alle ' + dw + ' Wochen</div><div class="isub">März–September</div></div>' +
+    '<div class="icell" style="background:' + dBg + ';color:' + dClr + '"><div class="ilbl">Düngen</div><div class="ival">alle ' + dw + ' Wochen</div><div class="isub">März–September</div></div>' +
     '</div>';
 }
 
 // ── DIESE WOCHE ───────────────────────────────────────────────────
-function renderWeek() {
-  var now = new Date();
-  var m = now.getMonth() + 1;
-  document.getElementById('w-date').textContent = WOCHENTAGE[now.getDay()] + ', ' + now.getDate() + '. ' + MONATE[m - 1];
-
-  var over = [];
-  var soon = [];
-  for (var i = 0; i < plants.length; i++) {
-    var d = daysUntil(plants[i]);
-    if (d === null || d <= 0) over.push(plants[i]);
-    else if (d <= 7) soon.push(plants[i]);
-  }
-  var total = over.length + soon.length;
-  document.getElementById('w-sub').textContent = '';
-
-  // Dringend-Karte
-  var urgHtml = '';
-  if (over.length > 0) {
-    var names = '';
-    for (var j = 0; j < Math.min(2, over.length); j++) names += (j > 0 ? ', ' : '') + over[j].name;
-    if (over.length > 2) names += ' +' + (over.length - 2);
-    urgHtml = '<div class="urgent-card">' +
-      
-      '<div class="urgent-h">' + over.length + ' Pflanze' + (over.length !== 1 ? 'n' : '') + ' brauchen jetzt Wasser</div>' +
-      '<div class="urgent-s">' + names + '</div>' +
-      '<div class="urgent-btn" onclick="doAllWater()">Alle als gegossen markieren</div>' +
-      '</div>';
-  }
-  document.getElementById('w-urgent').innerHTML = urgHtml;
-
-  // Aktionen
-  var actHtml = '';
-  if (total > 0) {
-    actHtml += '<div class="wrow" onclick="showPage(\'plants\', document.querySelectorAll(\'nav button\')[1])">' +
-      '<div class="wnum" style="background:#85b7eb;color:#0c447c">' + total + '</div>' +
-      '<div class="winfo"><div class="wtitle">Pflanzen gießen</div><div class="wsub">' + over.length + ' überfällig · ' + soon.length + ' diese Woche fällig</div></div>' +
-      '</div>';
-  }
-
-  // Ruhephasen-Aufwachen
-  for (var k = 0; k < plants.length; k++) {
-    var rp = RUHEPHASEN[plants[k].id];
-    if (!rp) continue;
-    var aufwachen = true;
-    for (var ri = 0; ri < rp.r.length; ri++) { if (rp.r[ri] === m) { aufwachen = false; break; } }
-    var warRuhe = false;
-    var prevM = m === 1 ? 12 : m - 1;
-    for (var ri2 = 0; ri2 < rp.r.length; ri2++) { if (rp.r[ri2] === prevM) { warRuhe = true; break; } }
-    if (aufwachen && warRuhe) {
-      actHtml += '<div class="wrow" onclick="showPage(\'season\', document.querySelectorAll(\'nav button\')[2])">' +
-        '<div class="wnum" style="background:#f0e0d0;color:#7a4828">1</div>' +
-        '<div class="winfo"><div class="wtitle">' + plants[k].name + ' aufwecken</div><div class="wsub">' + rp.at + '</div></div>' +
-        '</div>';
+function renderWeek(){
+  var now=new Date(), m=now.getMonth()+1;
+  document.getElementById('w-date').textContent=WOCHENTAGE[now.getDay()]+', '+now.getDate()+'. '+MONATE[m-1];
+  document.getElementById('w-sub').textContent='';
+  document.getElementById('w-urgent').innerHTML='';
+  var actHtml='';
+  if(!plants.length){
+    actHtml='<div class="empty"><h3>Willkommen!</h3><p>Füge deine erste Pflanze hinzu.</p></div>';
+  } else {
+    var gp=[];
+    for(var gi=0;gi<plants.length;gi++){var gd=daysUntil(plants[gi]);if(gd===null||gd<=7)gp.push(plants[gi]);}
+    gp.sort(function(a,b){return (daysUntil(a)||0)-(daysUntil(b)||0);});
+    if(gp.length){
+      var oc=0; for(var oi=0;oi<gp.length;oi++){var od=daysUntil(gp[oi]);if(od===null||od<=0)oc++;}
+      var gs=gp.length+' Pflanze'+(gp.length!==1?'n':''); if(oc) gs+=' · '+oc+' überfällig';
+      actHtml+=buildWeekAcc('giessen','Gießen',gs,gp,'giessen');
+    }
+    if(m>=3&&m<=10){
+      var dp=[];
+      for(var di=0;di<plants.length;di++){if(plants[di].duengeWo&&duengenFaellig(plants[di]))dp.push(plants[di]);}
+      if(dp.length) actHtml+=buildWeekAcc('duengen','Düngen',dp.length+' Pflanze'+(dp.length!==1?'n':'')+' fällig',dp,'duengen');
+    }
+    for(var rk=0;rk<plants.length;rk++){
+      var rp=RUHEPHASEN[plants[rk].id]; if(!rp) continue;
+      var inR=false; for(var ri=0;ri<rp.r.length;ri++){if(rp.r[ri]===m){inR=true;break;}}
+      var pM=m===1?12:m-1, wR=false; for(var ri2=0;ri2<rp.r.length;ri2++){if(rp.r[ri2]===pM){wR=true;break;}}
+      if(!inR&&wR){
+        var rT=((plants[rk].photos&&plants[rk].photos[0])||plants[rk].photo)?'<img src="'+((plants[rk].photos&&plants[rk].photos[0])||plants[rk].photo)+'" style="width:100%;height:100%;object-fit:cover;border-radius:8px">':'<span style="font-size:14px">'+(plants[rk].emoji||'🪴')+'</span>';
+        actHtml+='<div style="margin:8px 20px;background:#f0e0d0;border-radius:10px;padding:10px 12px;border:1px solid #d8c0a8;cursor:pointer" data-pid="'+plants[rk].id+'"><div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:8px;background:#b8c8a0;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden">'+rT+'</div><div style="flex:1"><div style="font-size:13px;font-weight:500;color:#5a2e10">'+plants[rk].name+'</div><div style="font-size:11px;color:#7a4828;margin-top:2px">'+rp.at+'</div></div><div style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:10px;background:#c87848;color:#fff;white-space:nowrap;flex-shrink:0">Jetzt</div></div></div>';
+      }
     }
   }
-
-  if (!plants.length) actHtml = '<div class="empty"><h3>Willkommen!</h3><p>Füge deine erste Pflanze unter „Pflanzen" hinzu.</p></div>';
-
-  document.getElementById('w-actions').innerHTML = (actHtml ? '<div class="sec">Diese Woche erledigen</div>' : '') + actHtml;
-
-  // Saison-Strip
-  document.getElementById('w-season').innerHTML = '<div class="sstrip" style="margin:14px 20px 0;cursor:pointer" onclick="showPage(\'season\', document.querySelectorAll(\'nav button\')[2])">' +
-    '<div class="sstrip-lbl">' + JAHRESZEITEN[m] + ' — ' + MONATE[m - 1] + '</div>' +
-    '<div class="sstrip-txt">' + (SAISON[m] || '') + '</div>';
+  document.getElementById('w-actions').innerHTML='<div class="sec">To-dos</div>'+actHtml;
+  var af=AUFGABEN[m]||[], sh='<div class="sec">Saisonales — '+MONATE[m-1]+'</div><div style="margin:0 20px 14px;background:#c87848;border-radius:16px;padding:14px 16px">';
+  sh+='<div style="font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:6px">'+JAHRESZEITEN[m]+'</div>';
+  sh+='<div style="font-size:16px;font-weight:400;color:#fff;line-height:1.5;margin-bottom:10px">'+(SAISON[m]||'')+'</div>';
+  for(var ai=0;ai<af.length;ai++) sh+='<div style="display:flex;gap:8px;margin-top:6px"><div style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5);flex-shrink:0;margin-top:5px"></div><div><div style="font-size:13px;font-weight:500;color:#fff">'+af[ai].t+'</div><div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:1px">'+af[ai].s+'</div></div></div>';
+  sh+='</div>';
+  document.getElementById('w-season').innerHTML=sh;
 }
 
 function doAllWater() {
@@ -545,8 +527,6 @@ function doAllWater() {
 function renderPlants() {
   var list = document.getElementById('plant-list');
   var empty = document.getElementById('p-empty');
-  var sub = document.getElementById('p-sub');
-  sub.textContent = plants.length ? plants.length + ' Pflanze' + (plants.length !== 1 ? 'n' : '') : '';
   if (!plants.length) { list.innerHTML = ''; empty.style.display = 'block'; return; }
   empty.style.display = 'none';
   var over = [];
@@ -556,22 +536,39 @@ function renderPlants() {
     if (d === null || d <= 0) over.push(plants[i]);
     else ok.push(plants[i]);
   }
-  var html = '';
-  if (over.length) { html += '<div class="sec">' + plants.length + ' Pflanze' + (plants.length !== 1 ? 'n' : '') + '</div>'; for (var i = 0; i < over.length; i++) html += plantRow(over[i]); }
-  if (ok.length)   { html += (over.length ? '' : '<div class="sec">' + plants.length + ' Pflanze' + (plants.length !== 1 ? 'n' : '') + '</div>'); for (var i = 0; i < ok.length; i++) html += plantRow(ok[i]); }
+  var html='<div class="sec">'+plants.length+' Pflanze'+(plants.length!==1?'n':'')+'</div>';
+  for(var i=0;i<over.length;i++) html+=plantRow(over[i]);
+  for(var i=0;i<ok.length;i++) html+=plantRow(ok[i]);
   list.innerHTML = html;
 }
 
 function plantRow(p) {
-  var bg = p.color || '#b8c8a0';
-  var hasPic = (p.photos && p.photos[0]) || p.photo;
-  var st = statusFor(p);
-  return '<div class="prow" onclick="openDetail(\'' + p.id + '\')">' +
-    '<div class="pthumb" style="background:' + (hasPic ? 'transparent' : bg) + '">' + thumbOf(p, true) + '</div>' +
-    '<div class="pinfo"><h3>' + p.name + '</h3><p>' + (p.species || '&nbsp;') + '</p>' + badges(p) + '</div>' +
-    '<div class="pright"><span class="spill ' + st[1] + '">' + st[0] + '</span>' +
-    '<button class="wbtn" onclick="event.stopPropagation();qWater(this)" data-id="' + p.id + '">Gegossen</button></div>' +
-    '</div>';
+  var bg=p.color||'#b8c8a0', hasPic=(p.photos&&p.photos[0])||p.photo;
+  var licht=p.licht||'hell', luft=p.luft||'norm', ivl=p.interval||7, dw=p.duengeWo||4;
+  var lBg={sonne:'#f0c830',hell:'#f7e88a',halb:'#fdf6d0'}[licht]||'#f7e88a';
+  var lClr={sonne:'#6a4e08',hell:'#7a5e08',halb:'#8a7020'}[licht]||'#7a5e08';
+  var lBrd=licht==='halb'?'border:1px solid #ede8a0;':'';
+  var gBg=ivl<=7?'#378add':ivl<=14?'#85b7eb':'#e6f1fb';
+  var gClr=ivl<=7?'#fff':ivl<=14?'#0c447c':'#185fa5';
+  var gBrd=ivl>14?'border:1px solid #b5d4f4;':'';
+  var luBg={'hoch':'#1d9e75','hoch-ns':'#5dcaa5','mit':'#9fe1cb','norm':'#e1f5ee'}[luft]||'#e1f5ee';
+  var luClr={'hoch':'#fff','hoch-ns':'#085041','mit':'#0f6e56','norm':'#0f6e56'}[luft]||'#0f6e56';
+  var luBrd=(luft==='mit'||luft==='norm')?'border:1px solid #9fe1cb;':'';
+  var dBg=dw<=2?'#27500a':dw<=4?'#3b6d11':'#c0dd97';
+  var dClr=dw<=2?'#eaf3de':dw<=4?'#eaf3de':'#27500a';
+  var dBrd=dw>4?'border:1px solid #a8c880;':'';
+  var bs='font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px;white-space:nowrap;display:block;text-align:right;';
+  var ts=(p.photos&&p.photos[0])||p.photo||null;
+  var th=ts?'<img src="'+ts+'">':'<span style="font-size:26px">'+(p.emoji||'🪴')+'</span>';
+  return '<div class="prow" data-pid="'+p.id+'">' +
+    '<div class="pthumb" style="background:'+(ts?'transparent':bg)+'">'+th+'</div>' +
+    '<div class="pinfo"><h3>'+p.name+'</h3><p>'+(p.species||'&nbsp;')+'</p></div>' +
+    '<div style="display:flex;flex-direction:column;gap:3px;align-items:flex-end;flex-shrink:0">' +
+      '<span style="'+bs+lBrd+'background:'+lBg+';color:'+lClr+'">'+(LL[licht]||'Hell')+'</span>' +
+      '<span style="'+bs+gBrd+'background:'+gBg+';color:'+gClr+'">alle '+ivl+'d</span>' +
+      '<span style="'+bs+luBrd+'background:'+luBg+';color:'+luClr+'">'+(LU[luft]||'Normal')+'</span>' +
+      '<span style="'+bs+dBrd+'background:'+dBg+';color:'+dClr+'">alle '+dw+' Wo.</span>' +
+    '</div></div>';
 }
 
 function qWater(btn) {
@@ -587,45 +584,8 @@ function qWater(btn) {
 }
 
 // ── SAISONALES ────────────────────────────────────────────────────
-function renderSeason() {
-  var m = new Date().getMonth() + 1;
-  document.getElementById('s-title').textContent = JAHRESZEITEN[m];
-  document.getElementById('s-sub').textContent = '';
-  document.getElementById('s-eye').textContent = 'Aktuell';
-  document.getElementById('s-banner').innerHTML = '<div class="sstrip" style="margin:14px 20px 0"><div class="sstrip-lbl">Saison-Tipp</div><div class="sstrip-txt">' + (SAISON[m] || '') + '</div></div>';
+function renderSeason() {}
 
-  var tasks = AUFGABEN[m] || [];
-  var th = '<div class="sec">Diesen Monat — ' + MONATE[m-1] + '</div>';
-  for (var i = 0; i < tasks.length; i++) {
-    th += '<div class="mtask"><div class="mtdot"></div><div class="mtinfo"><div class="mttitle">' + tasks[i].t + '</div><div class="mtsub">' + tasks[i].s + '</div></div><div class="mtbadge' + (tasks[i].u ? ' hot' : '') + '">' + (tasks[i].u ? 'Jetzt' : 'Info') + '</div></div>';
-  }
-  document.getElementById('s-tasks').innerHTML = th;
-
-  var alerts = '';
-  for (var j = 0; j < plants.length; j++) {
-    var rp = RUHEPHASEN[plants[j].id];
-    if (!rp) continue;
-    var inRuhe = false;
-    for (var ri = 0; ri < rp.r.length; ri++) { if (rp.r[ri] === m) { inRuhe = true; break; } }
-    var prevM = m === 1 ? 12 : m - 1;
-    var warRuhe = false;
-    for (var ri2 = 0; ri2 < rp.r.length; ri2++) { if (rp.r[ri2] === prevM) { warRuhe = true; break; } }
-    var aufwachen = !inRuhe && warRuhe;
-    if (inRuhe || aufwachen) {
-      var bg = plants[j].color || '#b8c8a0';
-      var hasPic = (plants[j].photos && plants[j].photos[0]) || plants[j].photo;
-      alerts += '<div class="palert">' +
-        '<div class="palth" style="background:' + (hasPic ? 'transparent' : bg) + '">' + thumbOf(plants[j], false) + '</div>' +
-        '<div style="flex:1"><div class="palname">' + plants[j].name + '</div><div class="palact">' + (aufwachen ? rp.at : rp.rt) + '</div></div>' +
-        '<div class="palpill" style="background:' + (aufwachen ? '#c87848' : '#f0e0d0') + ';color:' + (aufwachen ? '#fff' : '#7a4828') + '">' + (aufwachen ? 'Aufwachen' : 'Ruhe') + '</div>' +
-        '</div>';
-    }
-  }
-  document.getElementById('s-plants').innerHTML = '<div class="sec">Deine Pflanzen</div>' +
-    (alerts || '<div class="empty" style="padding:30px 20px"><p>Keine besonderen Aktionen diesen Monat.</p></div>');
-}
-
-// ── DETAIL ────────────────────────────────────────────────────────
 function openDetail(id) {
   curId = id;
   var p = null;
@@ -639,11 +599,6 @@ function openDetail(id) {
   hero.innerHTML = navHtml + (heroSrc ? '<img src="' + heroSrc + '">' : '<span class="dhero-emoji">' + (p.emoji || '🪴') + '</span>');
   document.getElementById('d-name').textContent = p.name;
   document.getElementById('d-species').textContent = p.species || '';
-  var ago = daysAgo(p.lastWatered);
-  var nxt = daysUntil(p);
-  document.getElementById('d-ago').textContent = ago !== null ? ago : '–';
-  document.getElementById('d-int').textContent = p.interval || 7;
-  document.getElementById('d-next').textContent = nxt === null ? '–' : nxt < 0 ? Math.abs(nxt) + 'd!' : nxt === 0 ? 'Heute' : nxt;
   document.getElementById('d-igrid').innerHTML = infoGrid(p);
   var careItems = [
     ['Standort & Licht', p.standort, ''],
@@ -722,14 +677,14 @@ document.addEventListener('click', function(e) {
 });
 
 function openAdd() {
-  editId = null; photoData = [null, null, null];
+  editId = null; photoData = [null, null];
   selEmoji = '🪴'; selColor = '#b8c8a0';
   selLicht = 'hell'; selGiess = 'mit'; selLuft = 'norm'; selDueng = 'mit';
   document.getElementById('m-title').textContent = 'Neue Pflanze';
   var fields = ['fn','fsp','fst','fer','fgi','fdu','fsc','fpo','fno'];
   for (var i = 0; i < fields.length; i++) { var el = document.getElementById(fields[i]); if (el) el.value = ''; }
   document.getElementById('fi').value = 7;
-  for (var j = 0; j < 3; j++) {
+  for (var j = 0; j < 2; j++) {
     document.getElementById('pp' + j).style.display = 'none';
     document.getElementById('pl' + j).style.display = '';
   }
@@ -742,8 +697,8 @@ function openEdit() {
   for (var i = 0; i < plants.length; i++) { if (plants[i].id === curId) { p = plants[i]; break; } }
   if (!p) return;
   editId = curId;
-  var photos = p.photos || [p.photo || null, null, null];
-  photoData = [photos[0] || null, photos[1] || null, photos[2] || null];
+  var photos = p.photos || [p.photo || null, null];
+  photoData = [photos[0] || null, photos[1] || null];
   selEmoji = p.emoji || '🪴'; selColor = p.color || '#b8c8a0';
   selLicht = p.licht || 'hell'; selGiess = p.giessKat || 'mit'; selLuft = p.luft || 'norm'; selDueng = p.duengKat || 'mit';
   document.getElementById('m-title').textContent = 'Bearbeiten';
@@ -757,7 +712,7 @@ function openEdit() {
   document.getElementById('fsc').value = p.schaedlinge || '';
   document.getElementById('fpo').value = p.poison || '';
   document.getElementById('fno').value = p.notes || '';
-  for (var j = 0; j < 3; j++) {
+  for (var j = 0; j < 2; j++) {
     var prev = document.getElementById('pp' + j);
     var lbl  = document.getElementById('pl' + j);
     if (photoData[j]) { prev.src = photoData[j]; prev.style.display = 'block'; lbl.style.display = 'none'; }
@@ -794,13 +749,13 @@ function savePlant() {
   var dMap = {oft: 2, mit: 4,  sel: 7};
   var ivl = parseInt(document.getElementById('fi').value, 10) || gMap[selGiess] || 7;
   var done = 0;
-  var comp = [null, null, null];
+  var comp = [null, null];
   for (var i = 0; i < 3; i++) {
     (function(idx) {
       compressPhoto(photoData[idx], function(r) {
         comp[idx] = r;
         done++;
-        if (done === 3) {
+        if (done === 2) {
           var d = {};
           d.name       = name;
           d.species    = document.getElementById('fsp').value.trim();
@@ -841,7 +796,7 @@ function savePlant() {
   }
 }
 
-for (var _pi = 0; _pi < 3; _pi++) {
+for (var _pi = 0; _pi < 2; _pi++) {
   (function(i) {
     document.getElementById('pi' + i).addEventListener('change', function(e) {
       var f = e.target.files[0]; if (!f) return;
@@ -857,6 +812,19 @@ for (var _pi = 0; _pi < 3; _pi++) {
   })(_pi);
 }
 
+document.addEventListener('click', function(ev) {
+  var el=ev.target;
+  var aEl=el; while(aEl&&!aEl.getAttribute('data-accid'))aEl=aEl.parentElement;
+  if(aEl&&aEl.getAttribute('data-accid')){toggleAcc(aEl.getAttribute('data-accid'));return;}
+  var spEl=el; while(spEl&&!spEl.getAttribute('data-dkey'))spEl=spEl.parentElement;
+  if(spEl&&spEl.getAttribute('data-dkey')){var dk=spEl.getAttribute('data-dkey'),done=localStorage.getItem(dk)==='1';localStorage.setItem(dk,done?'0':'1');var chk=spEl.querySelector('.sp-chk');if(chk){if(!done)chk.classList.add('done');else chk.classList.remove('done');}return;}
+  var pEl=el; while(pEl&&!pEl.getAttribute('data-pid'))pEl=pEl.parentElement;
+  if(pEl&&pEl.getAttribute('data-pid')){openDetail(pEl.getAttribute('data-pid'));return;}
+  var eEl=el; while(eEl&&eEl.getAttribute('data-emoji')===null)eEl=eEl.parentElement;
+  if(eEl&&eEl.getAttribute('data-emoji')!==null){selEmoji=EMOJIS[parseInt(eEl.getAttribute('data-emoji'))];buildPickers();return;}
+  var ciEl=el; while(ciEl&&ciEl.getAttribute('data-ci')===null)ciEl=ciEl.parentElement;
+  if(ciEl&&ciEl.getAttribute('data-ci')!==null){toggleCare(parseInt(ciEl.getAttribute('data-ci')));return;}
+});
 function showPage(name, btn) {
   var pages = document.querySelectorAll('.page');
   for (var i = 0; i < pages.length; i++) pages[i].classList.remove('active');
@@ -866,7 +834,6 @@ function showPage(name, btn) {
   btn.classList.add('active');
   if (name === 'week')   renderWeek();
   if (name === 'plants') renderPlants();
-  if (name === 'season') renderSeason();
 }
 
 
