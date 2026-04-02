@@ -392,7 +392,7 @@ function save() {
     localStorage.setItem('pl_v4', JSON.stringify(plants));
     localStorage.setItem('wl_v4', JSON.stringify(wlog));
   } catch(e) {
-    alert('Speichern fehlgeschlagen — bitte ein Foto entfernen.');
+    alert('Speichern fehlgeschlagen. Speicher voll — bitte bei einer anderen Pflanze das Foto entfernen und dann nochmal versuchen.');
   }
 }
 
@@ -735,14 +735,14 @@ function compressPhoto(dataUrl, cb) {
   var img = new Image();
   img.onload = function() {
     var canvas = document.createElement('canvas');
-    var MAX = 600;
+    var MAX = 400;
     var w = img.width;
     var h = img.height;
     if (w > h) { if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; } }
     else        { if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; } }
     canvas.width = w; canvas.height = h;
     canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-    cb(canvas.toDataURL('image/jpeg', 0.72));
+    cb(canvas.toDataURL('image/jpeg', 0.60));
   };
   img.src = dataUrl;
 }
@@ -755,7 +755,7 @@ function savePlant() {
   var ivl = parseInt(document.getElementById('fi').value, 10) || gMap[selGiess] || 7;
   var done = 0;
   var comp = [null];
-  for (var i = 0; i < 3; i++) {
+  for (var i = 0; i < 1; i++) {
     (function(idx) {
       compressPhoto(photoData[idx], function(r) {
         comp[idx] = r;
@@ -780,7 +780,7 @@ function savePlant() {
           d.poison     = document.getElementById('fpo').value.trim();
           d.notes      = document.getElementById('fno').value.trim();
           d.photo      = comp[0] || null;
-          d.photos     = [comp[0] || null, comp[1] || null, comp[2] || null];
+          d.photos     = [comp[0] || null];
           if (editId) {
             for (var j = 0; j < plants.length; j++) {
               if (plants[j].id === editId) {
