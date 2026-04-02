@@ -167,7 +167,7 @@ h1 { font-size: 34px; font-weight: 400; letter-spacing: -1px; line-height: 1; }
 .sub-plant:active{background:var(--rule)}
 .sp-thumb{width:28px;height:28px;border-radius:8px;background:#b8c8a0;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;overflow:hidden}
 .sp-thumb img{width:100%;height:100%;object-fit:cover;border-radius:8px}
-.sp-name{font-size:12px;font-weight:500;color:var(--ink);flex:1}
+.sp-name{font-size:14px;font-weight:500;color:var(--ink);flex:1}
 .sp-chk{width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(90,64,48,.2);flex-shrink:0}
 .sp-chk.done{background:#5a7a48;border-color:#5a7a48}
 .acc-arrow{font-size:12px;flex-shrink:0;display:inline-block;transition:transform .2s}
@@ -196,7 +196,6 @@ h1 { font-size: 34px; font-weight: 400; letter-spacing: -1px; line-height: 1; }
       <div>
         <div class="eyebrow">Übersicht</div>
         <h1>Pflanzen</h1>
-        <div class="sub" id="p-sub"></div>
       </div>
       <button class="add-btn" onclick="openAdd()">+ Hinzufügen</button>
     </div>
@@ -205,7 +204,7 @@ h1 { font-size: 34px; font-weight: 400; letter-spacing: -1px; line-height: 1; }
     <div class="legend-lbl">Pflege</div>
     <div class="lcat"><span class="lcat-lbl">Licht</span><div class="ldots"><div class="ld" style="background:#f0c830"></div><div class="ld" style="background:#f7e88a"></div><div class="ld" style="background:#fdf6d0;border:1px solid #ede8a0"></div></div><span class="lhint">viel → wenig</span></div>
     <div class="lcat"><span class="lcat-lbl">Gießen</span><div class="ldots"><div class="ld" style="background:#378add"></div><div class="ld" style="background:#85b7eb"></div><div class="ld" style="background:#e6f1fb;border:1px solid #b5d4f4"></div></div><span class="lhint">oft → selten</span></div>
-    <div class="lcat"><span class="lcat-lbl">Luftfeuchte</span><div class="ldots"><div class="ld" style="background:#1d9e75"></div><div class="ld" style="background:#5dcaa5"></div><div class="ld" style="background:#e1f5ee;border:1px solid #9fe1cb"></div></div><span class="lhint">hoch → trocken</span></div>
+    <div class="lcat"><span class="lcat-lbl">Luftfeuchte</span><div class="ldots"><div class="ld" style="background:#1d9e75"></div><div class="ld" style="background:#5dcaa5"></div><div class="ld" style="background:#e1f5ee;border:1px solid #9fe1cb"></div></div><span class="lhint">hoch → normal</span></div>
     <div class="lcat"><span class="lcat-lbl">Düngen</span><div class="ldots"><div class="ld" style="background:#27500a"></div><div class="ld" style="background:#3b6d11"></div><div class="ld" style="background:#c0dd97;border:1px solid #a8c880"></div></div><span class="lhint">oft → selten</span></div>
   </div>
   <div id="plant-list"></div>
@@ -248,6 +247,7 @@ h1 { font-size: 34px; font-weight: 400; letter-spacing: -1px; line-height: 1; }
           <div class="pzone" id="pz0" onclick="document.getElementById('pi0').click()" style="flex:1"><img class="prev" id="pp0"><span class="pzone-lbl" id="pl0">+ Foto</span></div>
         </div>
         <input type="file" id="pi0" accept="image/*" style="display:none">
+        <input type="file" id="pi2" accept="image/*" style="display:none">
       </div>
       <div class="fg"><label>Symbol (falls kein Foto)</label><div class="egrid" id="egrid"></div></div>
       <div class="fg"><label>Licht</label><div style="display:flex;gap:6px;flex-wrap:wrap" id="lp">
@@ -296,16 +296,22 @@ function getWeekKey(){var now=new Date(),jan1=new Date(now.getFullYear(),0,1);re
 function toggleAcc(id){var b=document.getElementById('acc-body-'+id),a=document.getElementById('acc-arrow-'+id);if(!b)return;var open=b.style.display==='none'||b.style.display==='';b.style.display=open?'block':'none';if(a){if(open)a.classList.add('open');else a.classList.remove('open');}}
 function duengenFaellig(p){if(!p.lastDuenged||!p.duengeWo)return true;return Date.now()>=(new Date(p.lastDuenged).getTime()+p.duengeWo*7*86400000);}
 function plantSubRow(p,category){
-  var hasPic=(p.photos&&p.photos[0])||p.photo, src=hasPic?((p.photos&&p.photos[0])||p.photo):null;
-  var bg=p.color||'#b8c8a0', dKey='done_'+getWeekKey()+'_'+category+'_'+p.id;
+  var hasPic=(p.photos&&p.photos[0])||p.photo,src=hasPic?((p.photos&&p.photos[0])||p.photo):null;
+  var bg=p.color||'#b8c8a0',dKey='done_'+getWeekKey()+'_'+category+'_'+p.id;
   var done=localStorage.getItem(dKey)==='1';
   var ti=src?'<img src="'+src+'" style="width:100%;height:100%;object-fit:cover;border-radius:8px">':'<span style="font-size:13px">'+(p.emoji||'🪴')+'</span>';
-  return '<div class="sub-plant" data-dkey="'+dKey+'" data-pid="'+p.id+'"><div class="sp-thumb" style="background:'+(src?'transparent':bg)+'">'+ti+'</div><div class="sp-name">'+p.name+'</div><div class="sp-chk'+(done?' done':'')+'"></div></div>';
+  var nameHtml=done?'<s style="opacity:.5">'+p.name+'</s>':p.name;
+  return '<div class="sub-plant" data-dkey="'+dKey+'" data-pid="'+p.id+'"><div class="sp-thumb" style="background:'+(src?'transparent':bg)+'">'+ti+'</div><div class="sp-name">'+nameHtml+'</div><div class="sp-chk'+(done?' done':'')+'"></div></div>';
 }
 function buildWeekAcc(id,title,sub,plist,category){
-  var sc=id==='giessen'?'#378add':'#3b6d11', bHtml='';
-  for(var i=0;i<plist.length;i++) bHtml+=plantSubRow(plist[i],category);
-  return '<div style="margin:8px 20px 0"><div class="week-check" data-accid="'+id+'" style="display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:10px;border-left:3px solid '+sc+';background:rgba(255,255,255,.15);cursor:pointer"><div style="flex:1"><div style="font-size:15px;font-weight:500;color:var(--ink)">'+title+'</div><div style="font-size:12px;color:var(--ink3);margin-top:2px">'+sub+'</div></div><span class="acc-arrow" id="acc-arrow-'+id+'" style="color:'+sc+'">&#9658;</span></div><div id="acc-body-'+id+'" style="display:none;background:var(--bg)">'+bHtml+'</div></div>';
+  var sc=id==='giessen'?'#378add':'#3b6d11',bHtml='',remaining=0;
+  for(var i=0;i<plist.length;i++){
+    var dk='done_'+getWeekKey()+'_'+category+'_'+plist[i].id;
+    if(localStorage.getItem(dk)!=='1') remaining++;
+    bHtml+=plantSubRow(plist[i],category);
+  }
+  var subText=remaining===0?'Alle erledigt ✓':remaining+' von '+plist.length+' übrig';
+  return '<div style="margin:8px 20px 0"><div class="week-check" data-accid="'+id+'" style="display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:10px;border-left:3px solid '+sc+';background:rgba(255,255,255,.15);cursor:pointer"><div style="flex:1"><div style="font-size:15px;font-weight:500;color:var(--ink)">'+title+'</div><div style="font-size:13px;color:var(--ink3);margin-top:2px">'+subText+'</div></div><span class="acc-arrow" id="acc-arrow-'+id+'" style="color:'+sc+'">&#9658;</span></div><div id="acc-body-'+id+'" style="display:none;background:var(--bg)">'+bHtml+'</div></div>';
 }
 
 // ── Daten ────────────────────────────────────────────────────────
@@ -317,10 +323,10 @@ var JAHRESZEITEN = {1:'Winter',2:'Winter',3:'Frühling',4:'Frühling',5:'Frühli
 var LL = {sonne:'Direkte Sonne', hell:'Helles Zimmer', halb:'Halbschattig'};
 var LD = {sonne:'Südfenster, direkt am Glas', hell:'Ost/West-Fenster oder mind. 1–2 m vom Südfenster — keine direkte Sonne', halb:'Nordfenster oder weiter vom Fenster entfernt'};
 var LU = {};
-LU['hoch'] = 'Hoch >60%';
+LU['hoch'] = 'Hoch';
 LU['hoch-ns'] = 'Hoch, kein Besprühen';
-LU['mit'] = 'Mittel 40–60%';
-LU['norm'] = 'Normal (40–50%)';
+LU['mit'] = 'Moderat';
+LU['norm'] = 'Trockentoleranz';
 
 var SAISON = {
   1: 'Wenig gießen, nicht düngen. Schädlinge kontrollieren, Heizungsluft beachten.',
@@ -466,7 +472,7 @@ function infoGrid(p) {
 
 // ── DIESE WOCHE ───────────────────────────────────────────────────
 function renderWeek(){
-  var now=new Date(), m=now.getMonth()+1;
+  var now=new Date(),m=now.getMonth()+1;
   document.getElementById('w-date').textContent=WOCHENTAGE[now.getDay()]+', '+now.getDate()+'. '+MONATE[m-1];
   document.getElementById('w-sub').textContent='';
   document.getElementById('w-urgent').innerHTML='';
@@ -477,31 +483,27 @@ function renderWeek(){
     var gp=[];
     for(var gi=0;gi<plants.length;gi++){var gd=daysUntil(plants[gi]);if(gd===null||gd<=7)gp.push(plants[gi]);}
     gp.sort(function(a,b){return (daysUntil(a)||0)-(daysUntil(b)||0);});
-    if(gp.length){
-      var oc=0; for(var oi=0;oi<gp.length;oi++){var od=daysUntil(gp[oi]);if(od===null||od<=0)oc++;}
-      var gs=gp.length+' Pflanze'+(gp.length!==1?'n':''); if(oc) gs+=' · '+oc+' überfällig';
-      actHtml+=buildWeekAcc('giessen','Gießen',gs,gp,'giessen');
-    }
+    if(gp.length) actHtml+=buildWeekAcc('giessen','Gießen','',gp,'giessen');
     if(m>=3&&m<=10){
       var dp=[];
       for(var di=0;di<plants.length;di++){if(plants[di].duengeWo&&duengenFaellig(plants[di]))dp.push(plants[di]);}
-      if(dp.length) actHtml+=buildWeekAcc('duengen','Düngen',dp.length+' Pflanze'+(dp.length!==1?'n':'')+' fällig',dp,'duengen');
+      if(dp.length) actHtml+=buildWeekAcc('duengen','Düngen','',dp,'duengen');
     }
     for(var rk=0;rk<plants.length;rk++){
-      var rp=RUHEPHASEN[plants[rk].id]; if(!rp) continue;
-      var inR=false; for(var ri=0;ri<rp.r.length;ri++){if(rp.r[ri]===m){inR=true;break;}}
-      var pM=m===1?12:m-1, wR=false; for(var ri2=0;ri2<rp.r.length;ri2++){if(rp.r[ri2]===pM){wR=true;break;}}
+      var rp=RUHEPHASEN[plants[rk].id];if(!rp)continue;
+      var inR=false;for(var ri=0;ri<rp.r.length;ri++){if(rp.r[ri]===m){inR=true;break;}}
+      var pM=m===1?12:m-1,wR=false;for(var ri2=0;ri2<rp.r.length;ri2++){if(rp.r[ri2]===pM){wR=true;break;}}
       if(!inR&&wR){
         var rT=((plants[rk].photos&&plants[rk].photos[0])||plants[rk].photo)?'<img src="'+((plants[rk].photos&&plants[rk].photos[0])||plants[rk].photo)+'" style="width:100%;height:100%;object-fit:cover;border-radius:8px">':'<span style="font-size:14px">'+(plants[rk].emoji||'🪴')+'</span>';
-        actHtml+='<div style="margin:8px 20px;background:#f0e0d0;border-radius:10px;padding:10px 12px;border:1px solid #d8c0a8;cursor:pointer" data-pid="'+plants[rk].id+'"><div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:8px;background:#b8c8a0;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden">'+rT+'</div><div style="flex:1"><div style="font-size:13px;font-weight:500;color:#5a2e10">'+plants[rk].name+'</div><div style="font-size:11px;color:#7a4828;margin-top:2px">'+rp.at+'</div></div><div style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:10px;background:#c87848;color:#fff;white-space:nowrap;flex-shrink:0">Jetzt</div></div></div>';
+        actHtml+='<div style="margin:8px 20px;background:#f0e0d0;border-radius:10px;padding:10px 12px;border:1px solid #d8c0a8;cursor:pointer" data-pid="'+plants[rk].id+'"><div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:8px;background:#b8c8a0;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden">'+rT+'</div><div style="flex:1"><div style="font-size:15px;font-weight:500;color:#5a2e10">'+plants[rk].name+'</div><div style="font-size:13px;color:#7a4828;margin-top:3px">'+rp.at+'</div></div><div style="font-size:12px;font-weight:600;padding:4px 11px;border-radius:10px;background:#c87848;color:#fff;white-space:nowrap;flex-shrink:0">Jetzt</div></div></div>';
       }
     }
   }
   document.getElementById('w-actions').innerHTML='<div class="sec">To-dos</div>'+actHtml;
-  var af=AUFGABEN[m]||[], sh='<div class="sec">Saisonales — '+MONATE[m-1]+'</div><div style="margin:0 20px 14px;background:#c87848;border-radius:16px;padding:14px 16px">';
-  sh+='<div style="font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:6px">'+JAHRESZEITEN[m]+'</div>';
+  var af=AUFGABEN[m]||[],sh='<div class="sec">Saisonales — '+MONATE[m-1]+'</div><div style="margin:0 20px 14px;background:#c87848;border-radius:16px;padding:14px 16px">';
+  sh+='<div style="font-size:12px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.75);margin-bottom:6px">'+JAHRESZEITEN[m]+'</div>';
   sh+='<div style="font-size:16px;font-weight:400;color:#fff;line-height:1.5;margin-bottom:10px">'+(SAISON[m]||'')+'</div>';
-  for(var ai=0;ai<af.length;ai++) sh+='<div style="display:flex;gap:8px;margin-top:6px"><div style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5);flex-shrink:0;margin-top:5px"></div><div><div style="font-size:13px;font-weight:500;color:#fff">'+af[ai].t+'</div><div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:1px">'+af[ai].s+'</div></div></div>';
+  for(var ai=0;ai<af.length;ai++) sh+='<div style="display:flex;gap:8px;margin-top:6px"><div style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5);flex-shrink:0;margin-top:5px"></div><div><div style="font-size:14px;font-weight:500;color:#fff">'+af[ai].t+'</div><div style="font-size:13px;color:rgba(255,255,255,.85);margin-top:1px">'+af[ai].s+'</div></div></div>';
   sh+='</div>';
   document.getElementById('w-season').innerHTML=sh;
 }
@@ -541,8 +543,8 @@ function renderPlants() {
 }
 
 function plantRow(p) {
-  var bg=p.color||'#b8c8a0', hasPic=(p.photos&&p.photos[0])||p.photo;
-  var licht=p.licht||'hell', luft=p.luft||'norm', ivl=p.interval||7, dw=p.duengeWo||4;
+  var bg=p.color||'#b8c8a0',hasPic=(p.photos&&p.photos[0])||p.photo;
+  var licht=p.licht||'hell',luft=p.luft||'norm',ivl=p.interval||7,dw=p.duengeWo||4;
   var lBg={sonne:'#f0c830',hell:'#f7e88a',halb:'#fdf6d0'}[licht]||'#f7e88a';
   var lClr={sonne:'#6a4e08',hell:'#7a5e08',halb:'#8a7020'}[licht]||'#7a5e08';
   var lBrd=licht==='halb'?'border:1px solid #ede8a0;':'';
@@ -585,6 +587,11 @@ function qWater(btn) {
 function renderSeason() {}
 
 function openDetail(id) {
+  // Lade Detailtexte falls noch nicht vorhanden
+  if (PLANT_DETAILS[id]) {
+    var dt = PLANT_DETAILS[id];
+    for (var _k in dt) { if (!(_k in {})) { for (var _pi2=0;_pi2<plants.length;_pi2++) { if(plants[_pi2].id===id) { if(!plants[_pi2][_k]) plants[_pi2][_k]=dt[_k]; } } } }
+  }
   curId = id;
   var p = null;
   for (var i = 0; i < plants.length; i++) { if (plants[i].id === id) { p = plants[i]; break; } }
@@ -812,15 +819,47 @@ for (var _pi = 0; _pi < 1; _pi++) {
 
 document.addEventListener('click', function(ev) {
   var el=ev.target;
-  var aEl=el; while(aEl&&!aEl.getAttribute('data-accid'))aEl=aEl.parentElement;
+  var aEl=el;while(aEl&&!aEl.getAttribute('data-accid'))aEl=aEl.parentElement;
   if(aEl&&aEl.getAttribute('data-accid')){toggleAcc(aEl.getAttribute('data-accid'));return;}
-  var spEl=el; while(spEl&&!spEl.getAttribute('data-dkey'))spEl=spEl.parentElement;
-  if(spEl&&spEl.getAttribute('data-dkey')){var dk=spEl.getAttribute('data-dkey'),done=localStorage.getItem(dk)==='1';localStorage.setItem(dk,done?'0':'1');var chk=spEl.querySelector('.sp-chk');if(chk){if(!done)chk.classList.add('done');else chk.classList.remove('done');}return;}
-  var pEl=el; while(pEl&&!pEl.getAttribute('data-pid'))pEl=pEl.parentElement;
+  var spEl=el;while(spEl&&!spEl.getAttribute('data-dkey'))spEl=spEl.parentElement;
+  if(spEl&&spEl.getAttribute('data-dkey')){
+    var dk=spEl.getAttribute('data-dkey'),done=localStorage.getItem(dk)==='1';
+    localStorage.setItem(dk,done?'0':'1');
+    // Haken togglen
+    var chk=spEl.querySelector('.sp-chk');
+    if(chk){if(!done)chk.classList.add('done');else chk.classList.remove('done');}
+    // Name durchstreichen
+    var nm=spEl.querySelector('.sp-name');
+    if(nm){
+      if(!done){nm.innerHTML='<s style="opacity:.5">'+nm.textContent+'</s>';}
+      else{nm.textContent=nm.textContent;}
+    }
+    // Zähler im Akkordeon-Header aktualisieren
+    var accBody=spEl.parentElement;
+    if(accBody){
+      var accId=accBody.id.replace('acc-body-','');
+      var allRows=accBody.querySelectorAll('.sub-plant');
+      var remaining=0;
+      for(var ri=0;ri<allRows.length;ri++){
+        var rowDk=allRows[ri].getAttribute('data-dkey');
+        if(localStorage.getItem(rowDk)!=='1') remaining++;
+      }
+      var subDiv=document.getElementById('acc-arrow-'+accId);
+      if(subDiv&&subDiv.parentElement){
+        var infoDiv=subDiv.parentElement.querySelector('div');
+        if(infoDiv){
+          var subEl=infoDiv.querySelectorAll('div')[1];
+          if(subEl) subEl.textContent=remaining===0?'Alle erledigt ✓':remaining+' von '+allRows.length+' übrig';
+        }
+      }
+    }
+    return;
+  }
+  var pEl=el;while(pEl&&!pEl.getAttribute('data-pid'))pEl=pEl.parentElement;
   if(pEl&&pEl.getAttribute('data-pid')){openDetail(pEl.getAttribute('data-pid'));return;}
-  var eEl=el; while(eEl&&eEl.getAttribute('data-emoji')===null)eEl=eEl.parentElement;
+  var eEl=el;while(eEl&&eEl.getAttribute('data-emoji')===null)eEl=eEl.parentElement;
   if(eEl&&eEl.getAttribute('data-emoji')!==null){selEmoji=EMOJIS[parseInt(eEl.getAttribute('data-emoji'))];buildPickers();return;}
-  var ciEl=el; while(ciEl&&ciEl.getAttribute('data-ci')===null)ciEl=ciEl.parentElement;
+  var ciEl=el;while(ciEl&&ciEl.getAttribute('data-ci')===null)ciEl=ciEl.parentElement;
   if(ciEl&&ciEl.getAttribute('data-ci')!==null){toggleCare(parseInt(ciEl.getAttribute('data-ci')));return;}
 });
 function showPage(name, btn) {
@@ -844,15 +883,7 @@ const PRESET_PLANTS = [
     color: '#b8c8a0',
     interval: 7,
     lastWatered: null,
-    photo: null,
-    standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Südfenster: mind. 1–2 m Abstand mit Lichtschutz\n• Temperatur 18–22 °C, Minimum 15 °C\n• Kein Zug, keine Kälte\n• Standort möglichst nicht wechseln',
-    erde: '• Locker, humusreich, leicht sauer (pH 6–6,5)\n• Mix: Blumenerde + Perlite + etwas Sand\n• Drainagelöcher im Topf sind Pflicht\n• Kein Staunässe im Untersatz',
-    giessen: '• Gießen wenn obere 2–3 cm trocken sind (Fingertest)\n• Sommer: ca. 1× pro Woche\n• Winter: deutlich weniger\n• Von unten gießen oder um die Basis — Blätter nie benetzen!\n• Nasse Blätter begünstigen Pilzkrankheiten\n• Luftfeuchtigkeit 50–70 % halten\n• Um die Pflanze sprühen, nicht auf die Blätter\n• Tipp: Wasserschale mit Kieselsteinen unter dem Topf',
-    duengen: '• März–September: alle 14 Tage Flüssigdünger\n• Immer halbe Dosis verwenden\n• Kaliumreicher Blühpflanzendünger fördert die Blüten\n• Herbst/Winter: nicht düngen',
-    schaedlinge: '• Blattläuse (Triebspitzen, Blattunterseiten) → Neemöl\n• Spinnmilben (bei trockener Luft) → Luftfeuchtigkeit erhöhen\n• Wollläuse (weiße Wattebäusche) → Alkohol + Wattestäbchen\n• Echter Mehltau (weißer Belag) → entsteht bei Zugluft/Kälte\n• Grauschimmel (Botrytis) → nasse Blätter unbedingt vermeiden',
-    notes: 'Umtopfen (Babypflanze):\n• Erst umtopfen wenn Wurzeln aus den Löchern wachsen\n• Neuen Topf nur 1–2 cm größer wählen\n• Bester Zeitpunkt: Frühjahr (März–April)\n• Frische Blumenerde + Perlite verwenden\n• Nach dem Umtopfen an einem schattigen Platz erholen lassen\n• Wächst schnell — jährliches Umtopfen ist normal\n\nSchneiden:\n• Triebe im Frühjahr zurückschneiden → buschigerer Wuchs\n• Verblühte Blüten direkt abschneiden → fördert neue Blüten',
-    poison: '• Giftig für Menschen und Tiere (Hunde, Katzen, Kleinkinder)\n• Giftigste Teile: Wurzeln und Knollen\n• Auch Blätter und Stängel nicht ungefährlich\n• Enthält Calciumoxalat-Kristalle → Reizungen an Mund und Haut\n• Handschuhe beim Umtopfen empfohlen',
-  },
+    photo: null},
   {
     id: 'preset-begonia-maculata', licht: 'hell', luft: 'hoch-ns', duengeWo: 2,
     name: 'Forellenbegonie',
@@ -861,32 +892,16 @@ const PRESET_PLANTS = [
     color: '#b8c8a0',
     interval: 6,
     lastWatered: null,
-    photo: 'data:image/jpeg;base64,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',
-    standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Morgen- oder Abendsonne ist ok\n• Südfenster: mind. 1 m Abstand vom Glas\n• Temperatur 18–22 °C, nicht dauerhaft unter 10 °C\n• Kein Zug, nicht neben die Heizung stellen',
-    erde: '• Locker, humusreich, gut durchlässig\n• Mix: Blumenerde + Perlite + etwas Sand\n• Alternativ: Zimmerpflanzen- oder Kräutererde\n• Drainagelöcher im Topf sind Pflicht\n• Staunässe unbedingt vermeiden — Wurzeln sind fein und empfindlich',
-    giessen: '• Erde darf zu max. 80 % antrocknen zwischen den Wassergaben\n• Fingertest: erst gießen wenn obere 2–3 cm trocken sind\n• Sommer: alle 5–7 Tage\n• Winter: alle 7–10 Tage, deutlich reduzieren\n• Weiches Wasser bevorzugt — Regenwasser oder abgestandenes Leitungswasser\n• Nicht direkt auf die Blätter gießen\n• Luftfeuchtigkeit erhöhen: Schale mit Wasser neben den Topf\n• Blätter gelegentlich mit feinem Sprühnebel besprühen (Luft um die Pflanze, nicht auf Blätter)\n• Im Winter: Luftbefeuchter hilft gegen trockene Heizungsluft',
-    duengen: '• März–September: alle 2–4 Wochen Flüssigdünger\n• Im ersten Jahr nach Kauf kann auf Dünger verzichtet werden\n• Vor und während der Blüte: alle 2 Wochen\n• Nach der Blüte: 1× monatlich\n• Nicht überdüngen — braune Blattränder sind ein Warnsignal\n• Herbst/Winter: nicht düngen',
-    schaedlinge: '• Wollläuse (weiße Wattebäusche) → Alkohol + Wattestäbchen\n• Blattläuse (klebrige Rückstände, verformte Triebe) → Neemöl\n• Echter Mehltau (weißer pudrig-kreisförmiger Belag) → befallene Teile entfernen + Fungizid\n• Grauschimmel / Botrytis (braune Flecken, meist untere Blätter) → befallene Blätter sofort entfernen\n• Vorbeugung: gute Luftzirkulation, Blätter nicht nass werden lassen',
-    notes: 'Umtopfen (Babypflanze):\n• Erst umtopfen wenn Wurzeln aus den Löchern wachsen\n• Neuen Topf nur 1–2 cm größer wählen — kein zu großer Topf!\n• Bester Zeitpunkt: Frühjahr oder Frühsommer\n• Frische Blumenerde + Perlite verwenden\n• Wurzeln sind sehr fein — vorsichtig vorgehen!\n• Wächst schnell → als Babypflanze evtl. 2× pro Jahr umtopfen\n• Ältere Pflanzen: 1× jährlich\n\nSchneiden:\n• Rückschnitt jederzeit möglich — immer oberhalb eines Stängelknotens\n• Triebe kürzen → Pflanze wird buschiger\n• Verblühte Blüten direkt abschneiden → fördert neue Blüten',
-    poison: '• Giftig für Hunde, Katzen, Vögel und Kleintiere (Hamster, Kaninchen)\n• Auch für Menschen nicht ungefährlich\n• Blätter und Stängel enthalten giftige Substanzen\n• Handschuhe beim Umtopfen empfohlen',
-  },
+    photo: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBAUEBAYFBQUGBgYHCQ4JCQgICRINDQoOFRIWFhUSFBQXGiEcFxgfGRQUHScdHyIjJSUlFhwpLCgkKyEkJST/2wBDAQYGBgkICREJCREkGBQYJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCT/wAARCAGQAZADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3PFLRRQAUUUUAFGaXFGKAEzRS4oxQAZozSUUAOopKKAFFBpKWgBKUd6SlxwaAPP8AxvdzXGsrbowENsm1hjOWbBP8qpaFrKaXqsTTMTCThnPbjB/T862YpbeXxvcBirlbto2yMgEp8vHfniuc8cJ/ZOveXHGEjnRZ1UDnDZBH4MDXPLuck20+Y0vH1zbXE6SW8scga0Ku68qp3jbz3zurD+FHg6HVlutV1GETWqMbaGI5AeRchm+nb8ayLnVmu7V1jXIWRVcM33Ocg/QjvXQ/DT4keHrDw0ml6hexWd1bvKyRuCDcKzFhs/vNzjHc4pRabuxQcZSuy0ouPCPiO5jsGMsNuwYo38ULfwE/QHH0FemROksaSIco6hlPqpGQfyIryWz1J9bv9R1CQ7Dcy7tn92NV4U+46fWvUtHVl0ixV/vC2jJHp8orSm7s2pNdC3RRRWpsGKDUVzcwWcLT3M8UESfeklcIq/Vjx+FedXPxek1TWBo/hXRpL+Z2MYvLhjHCgGdz4xnaByM4zjFS2Js6y/v5rt5Fgm8u2TKhl+9IfXPYdh61i3F9Hb2zpEDg8KehP/1/SrxiiNmLbeB8o+UnnA74HXJGaxNaiew02W7+yXcltFh5JfLJwPX1+vHpistXqddFR3ZnXOojzmckhYky/PUE5/OorK4mu5liiimlkbDeWiFmx1PA/AVZ0vwdqGt2xvZpF061nIcbk3SsgGAQnbJz19BXbaDo0WkRtBZRNHArESSyHfPcNgZJPRVB7U1Fs6KmIjFWicpB4d8QvcB/sG1G6+bMowQOM46VvWPgwF/O1S484kACCEERr9SeWrpFGDgncOv/AOqpcdutaKKOSdeUjOh0TTLbaI9PthsOQSmSD681dOAvAA/l+VJLIsSlnPyjsOSfp71TlmLeUrhkmkYbIwSduOSTj2osY8ze5dJ+XpRmmq6uMrnGSPyp3amIbRgf5FKBzRQAmOc4GfpSHg8U6kxmgBtFB60UAJmkNOxSUANpaMUGgBDSUppKYBikzS0lAFmiiiiwBRRRTAM0ZoooAKUUlKvQ0AJTgKSlosAg6mlNH40tFgEFFLgUh7dc+g6/56UgF6c1n65q0Wi2D3EjoJOkSMcbm7e+B3rkvFnjO9luLjT9B3BLXDXd1GpYLzgqp7AZ5bv2ri3+3aneraRie6uJGC4Yl3bnBwSenOeOKxlV6IxnVtohuv6pd6frMGq2dzm5jYMXAzuwd2CO+Tke1bujRn4pao97fTfZYba2UJHafeVtxHBOe+SeOwFYXiTwxrGmQeZqOnzJBgZmUh0H1YdMfQVzfwj8ZDwh4w/s/UJUSxuy1s8jf8s+dyNu9M9f972rON72ZjFNu0iDxlY6r4V1y80yeVZCERRIgx58RJZX/Qg/TFaXwX8O6VrN/rGs6ssc1rplsHEUv3dzhjvP+6AQPrmum/aJtoIoNF1LKC4LS2xXPzSJtDg+4Bzz/tV4fY6nqStc6XYagLWDU0WG5Vn2RyIpLBXP90c/Wi1pBypSPaPBmmLaeAtR8TNebY8uLePYMNzgZPqc4AHpXs+ly+fp1pNgDzII246fdFfMOhWV1e/DwX7arcES6qlnYaZnKSSEDe23swyOa+odNsjp2nWtmWLG3hjiLHuVUAn881rTRtS0JiKKd0qvf31tpdnLe3k6Q20KlpJHPCjt9fTHcmtG7G17bnH+PPAeoeK9RtL+11WCA2Uf7i3niLx+Zk5fHQHBxkg4xVX4ffD3UfDdg8Gq3lsJDM8qm1y7fNgHcxHJwoA9K5/X/i7qR1i2s9JktY45wpHyb3jBPAcn+IgcqBgV0vhn4jfadZk8P6yFivY5DCJQPld+DtOOAcdxxWaqRbMlOLZ2VtY21nloYVVzjLnlj+J5rH8X3QW1hst43ztnDHqFIAz+JFb0snlxlyCxHYdWOcAVjJp5vNfuL+58p44I1hgQHeFPUk57/StGjU1CUW2IhKuI1wNpBHA/+t+lMaVYY5XLAKo3sx91yT+lObALEcMozn/H1rNltGv7qXT5T/owSOSZwxBZSDhMfReT6UDLthcNdRJIUZfMTcC3Xb2JHYnrj0xVwKScAEkngAVT8+ZmH2e2j8plyXdsZGewAzjHrWFc2V9qc80et381rD5hWO3sHKpj+HfIRuyev5igEbUEi3Uz3Al3qG2RqOgAP8z61zepeJxp/wAQLLRJctDfWyfMo5STLED6EVoadZDTJJraxlSO1jYmESKWCKcHqDyOe4q6NDsU1JNWWFXvghTz2OS2ep9M4GAfTipdx6GmqhRxRQjiRQy5wRwPSlNUSJSGlpDQAUUUmDRYANNp3saaetABxTTQaMGgBKWg0UwA02loNACUlLRQBYooopgFFFFABRRRQAdaeo4pF6UtACYpccUYooAKKKMUAIeBmuD8e+KbmCZ9HsZWtgF/0m5RsMvfy17jjBLdecCu3vLuGwtZLq4kEcUQ3Ox/l9TXmOm+HZ/FGo3N+0uIp5zM7sDiMEkhfc9vSsKrdrIyqSeyMLTr660qCR7K+ntTICpWLqU+nPQHPrya2/Cd3a6f4htjJIsVvGTCpxjaWXGT7cg1l+IfDC22o31lb6hIsqRxruUBlKMN3Kn7pwecGuTku5rGSQ/8JHayMigmNoi2T0K4GcgfqDWEbrc5tU9T6UEKSqYZYwySARuh5BB7EelfIfiWxhn1S8gG1fKmeJHXncFkKrn2xwa6tPjP4l0qzl06FlZTlIpOvl5H8O4ZH07dq4karJGJvs0Ln7Sojfe+OCcnJHYnmtZyvsazlcy7ia5MkRuppXaI+Uu5jIqL/dH93p0qpc26wQyLM00V4jqDDJEw/d4JJJONpzjAxyOe1dLpU2oapr1rqAMKxWTo/mMpMQKngYHLEn/9ddjZpaa34t0zWdaiTUo450jeKaILG0BbbjjqRu3ZJPK4pLcS3Ln7P/w/vLvV4PE95byx6dZ7jbeZwJpsYBCnsBn5u/HpX0X075zSJCkKLFGioiDaqou1VA4wAOAPalx2710JaHTFWQ13WNC7uqIoLMzHAUDvmvnnxr49ufE9wt/FMo02Gd1trYttIUD/AFrL/Fn17ZHFeq/F7U30v4famYmZZLry7NNp5bzGAYD/AIAGrm/gjpun6h4dutRktYZZnunt2R0BCIoBK4PTO7NY1LyfKjKpeT5UeNxTPJctOr7pxKpj9WPQfnmvVfFXw7Hh3wvHqcd5Kb6F1kuA3K724O0jkEetcB4gWHwr49uIo41MOnagSsYXOIw6so/I/pXp3xJ8daPrGkDStIv0uTdMs0ssR+WOMZIBz/ETzj2rCFop3MFFRTubXh7xp9s8DwXc77tQH+i7ScszjBDH8Dk+hrqrKXNk8xjMTktI0TDDIcDIPpjFeU/DDS7fUtShSZkMMIeVoj/y05BUN7dzjrgV6/8AZIxvKO6sxBYs27kDHQ/5IrqpSurnTSleKZWlLS3awKCS4wxHZTzn+lVYtUt45bhmmVXubtoY1HUoi4JA9OD+dUINcl02PXpJozPc2dyLa2hgBZ5RtyuF69SSe1V/CnhFSkerXsbpcyAm3VHYGNSeWPP3j6dgfWqvqdCSsdLDFF5QEcLwjqP4TUV00ltFJPNcptXkBo85PYdeTnHSpJIhE4jad3c/Ns2fMT+GB+dV2ltJbgiWNJiOFZpA/wA3oMcZ+gqiLE0VuZ7UOdscxUcopARvoffrmiGRh+7eP970wP4j/wDq5qzEd0anZsHYYxxTx/ke3/66BDI4xDEsanhQAKcaPrRRYBKQ04mmk0ALmmijNFABTTS009aQxMGnHiik5piENJTqQ0AJzRRSGgAAooooAsUUUUwCgUuKAKAA0lKaBQAq9KXNAFLgelABSUtHFACYo4PBxz69PxpT0rn/ABlrKaXpLQrMI7m8zDER1APDN+AyPqaTdkDdkcv4i1CfW9TaTe5sY/lgjP3X5wZCO5JBwfTFNXxFc6LZmGCWKMSNiPEO99xH8PPJ471k3etx/ZoI7S3jh8hdjc5Vhnjd3z7dB6msq41WV5M9ZR/H2T2z0FcrnqcUpu+hBBo2oeMdae0l1CfzJzveCN8Ej+JpHx24+UdOlelaN8M/Cvh2zM1xY2kzxJumuLo5VcdScnCjHU159PruqeEbaHUrUSrLMpMQkgzFOhOCTnqB65BFcR4x+IOueIohBq+omSAOuLaBBHExxkZXv0PXI6VUWluaQtuxvie/0CTWNRl0+GKHS1mkFsiRHM4J+UYP4lfaso6W/wBnS6vLaSO3lkeOCHgK7x4L7jnJKgjIHHI70stlFZwpNcmSS9wrMsyECBe2wEc+m4dTx0rf+Feh2ninx1aWt7H5tmiPPJA5ysiqMhCPQsVyB6VO7sLrYzo7+3hM6RrGtvG29PKTDOAu0DPZR19zk133iLUoZvB2i6bYWkiyWFgFYgYYykAgIB1GeSfeuf8AiFotrpXijWbCxRYrS2mi2RqchN6gkD6E9PevTfhp4Yzdx6lPH/o1moWEEcNKByw9cfkCcdqIp3sTC/NY7bwrro8Q6Jb3zEeeygTqOz9/wrW75PHr7VzdtYx+GtXlEKOtpdsZ0jA+Vc/fRfUg/Nj0NdIrb0DKQwIyCOhroj2OxHgvx88USy+KdP0HzBHa2EC3kv8AtTSAgE/7q9B71y/wt+K8fgNNSs57Ce+tbp1khWOQKySDjnPUEYz3rtfEUun6V+0JDJrQt2sb21jQfaEBjG+IqhOeMBgRntmvIfF+k2mleJtTi024geyS+nSBYpAxVAwI6fw/MQD3xWE73uc8rp3Ll9qk2va/eardKqSXk73BC8hOegJ9AAK7n4a+Dj4uvZXlEsOmW+HeWMYMjHoin17n2FWfgF4Th1R7vxJfQrLBC5trZGXKu45ZsdwvAHua6H40ePJtGgg8O6Fdtb6jMfMuZLZgjW8WOACMbWY+mDgVmqdvekSoLeRV1OOD4eeObAWU7TQ7Q8kUrZkVGJBViOpP3vXivW5pSYVaBgfMICOOeCM5H1HSvlW01A/ard2JZjuJYsSxbuSepP1P417V4K1LWNansrIlVttIjWfOfmlzkIhz1PUD0zVUZ6tGlFpux2dtpttBIzxwKJZ2LO4Hzu394t1Jx/Ks/UfDmn317PNJHOs8oR5Z0uXjVVxg8A4BOM9Pc1txsssSup+XrgjBHPIPpg8VVvLMXtyeOGXaGOdpUHDZ7HrgV12OhM5HVr/Ur2+t9E8PxSW9mGT7RcMhCuueeTzt49cnr04PaR2sVtGRAkaquNm1QO/A4/pU4i2t9xuemDkdOD/n0FIsYJ3sp4I2KeduO/1qVFpg2SnqfrSUtFUSJikp1JjFADSKTFOpDQA00mM040dBigBtIaUUlIYgpaSjtTEHekpaTFACUjUpoIoASiiigCxRilxQaYC0UUlABSiilWgAFLRRQAUmKWjFABz2GT0A968c8Z68dV1e7ihnZkjnEcfA6JlQB9TuJ9eK9S8Q6oNG0a8vckNFGwQDrvPC/jk143YaBI7xzxyzRzFMyhwApcHhl7kY6npk1hWfRGFeXREmj+HtT1i4wtmzkKBsyAiDPG5j/M03xZZah4Y8uC5sVVZ1/dMj70bHXp0OcZ78ivXLWKx8MaGjXVxHbW0Ue+W5nYKpJGWJJ69e2a8O+JnxTTxXexW2gwf6BYlwbucYE8jjGVX+6B0zyevAqHBJXI9kkrs5Xxp4g8S6ncxaTrk6MbEeTFbRBAsK4BJO3uVx1p3w+0m313xrpEd7iW3+2RwhUO5ZcfMcnuDj8s1h21tHJIlnCDHNcAmS4J5SMZJbPq3b61oaPrV34f8AEEWp6YEhmtSfK8yMOqgrjG3vwegqVKw1JHeftBsLzxfp9vHzMlhGhb+FC0rMAR6Yx16CuO8C+IW8JeILTXEg8+O1+SUM2F2uCMEj8+n8NWPEUGt3+iX/AIn1KL7SLu6jtxezNtlEg+baig4C7Rt54A6VV+GPgqb4geKUsDM8VlCBc3kqZ3CMcBVP95jkAnoM1Vru6FZyd0dp4WsX+J3j2W4nDfZmkF7eqM7UTcNq57FtoUe2TX0LHGkSKkaKiLwqqMBR2GKpaJoGleHLIWWj6fBY24O7ZEuNx9SerH3NaGK6IxsdEIcpS1fTItX0+Wzkdoi4ykqH5o3HKsPofzHFcKfihaeFVvNM8QW8yajZjYkUWCLmQ87UPYHIYE8Yz6V6P0FfPvxU1M6r42ubuAQRLomyzjdx80z7w0g6fMcsOP7oNRN8uoqkuVXOb+J/ii88T6hpmsX9jZWqxh4Fa3dn/dk7lVyeDg5GQO9cXq2ppLYQ6fE8Qg84TfKgLI2NuM+gUn5emcfWu/8AiHqA19U1FdNs7BPLLPDbAgOMcO2ehOcAD05rg9Z1c6tZaXF9mtkbT4jE5hUKZAT94n9PrXO5Ns5lO51Ph/4kaz4Z8NPoHh+aOC3inkaO8e3Bnwx5PJKgnHoSM4zXNCO4ubhp57oyT3DGSaSVizuxPJJPU1Ziu9KuLrTII9LksVRFS7eCd5mf5gGkVW4BAB+UY5zjpXuQ+D3gjV9LS60a/njRhuW7+1CVCQOC4fG3HUgbTScXJA05dTxzTbVIWgnhwGiHmb2H3mDg5I/SrOp/E3xB4R1YXmk3yrd3bM12J4xJHMucrkHpjJ6YxXWag8Vr4ej0y40WFr+0nz/a0OCske48ttBzkevGBnrmuBk8Ea1408V3kOj2aOlvGju80oSNMjhSx9Tngc45qYRamOlo9D1TwX+0Xo+tzx23iWxbRrk4H2qAs9vIf9sDLL9Tke9exWtzBd20dxbTRT28igxyxMGRh6gjg18Y/wBkP4d1fUdI1bT4Y71UEIMhZjASwbfGVIySOAx4xXWeD7zWfD0UiaZrN5aFyMxIwVcjpj+prp9pbc0dZR3PqbIP0pa8X0Xx74vguds9yb8YJInQElRyeRjt/KvRPCvjay8R/uHAtb5QCYGOd465U9/p1qo1EyoVoyOkpKXsO1FWaiUhNLSGgBKDRQaYDaQ06igBlGOadRQAzFIadTTQAtJmig0AIaSlooAaaSnUlAFrNNpeMUlMB1FJS5oASnLTactAC0UUUAFFFHHfpQByXxEZnsLG23hVmusspGd21SQPz61zMcdzFp1xdQRq4t0aV2dhtiX3Y49DjnJrofiJKBLo6BwHEk0u3uVCYP4ZIrzrxDbT6mqQu3lQcb1XrLwcfz/Cueb1OWo/e1Of1B7rxzcW9hp9rNcRA+ZuyWYkjICjooHc9F+tYviLQz4euIdPukW1ZBh7Y8FR1zk9j1zX0d4K8L2fhXQ4YILeKKeaNZLmT+8xGev90Z/Q187/ABZ17/hIvGl9NaZeIsttGUXJKINmfqTnHsR6VEo9SnHuVvCXhzWvFd1dnQbRbudE8yQeYECRdFXLdyQSPWqNvGsM8onG9m3AbW2lZB06jJxg5Fe/fBTTDo1pqmn3Fo9lqCXEDTxSdUBjAX6jg/nXldx4YbxHF4s8RWM8NtY6fNNcNG+d0m52wqnoMAD6g0OGiJnHQz7OPXPiHdaZ4G0mRHs4JXvZHxxbluGkkPovOF6nPFfSHgrwRpPgTRk0zS4uWw09w4HmXEmOWbHb0A4Fcf8AAHwumkeGbnWnjxcaxNvBIwRDH8qY+p3NXqHPfg966IRsjenGyFzQTSUVZoOQgOhPTcD+ua8Fv/Bl94nsPFLafdxi/wBP1GWZ4GzulOWbbnt8vQ+2K94wWBAzkjt1rwTxL4guvC/jzxdDok0aG8ZVlyu4ozIC23n72SeecZrGra2pjWtbU8w13xC2raZaW6EgQnzGIXbu45ytc+sh3OGBLEbV74Ycr+HUV066ZDDHdRSIw3ofLCoCC/GAeRtHJ5GTkdK5u/tZ7eZ87iAcI2PQ9/ciuaLOWLRNY2TXUV3cLdQQva7JPLkbDuC2MLxyRwSPSvQLDwp4jtdDttUu9GuJdPuEEourZxJlcfKXQc4z65rzSORvNUqxRWyDnpjOcV9C/Cj4p6dZ+GrbRtemMMtkhijnVCytFztDgA4I6emMVatsy0k3qV/BMsmvQymzgluGhA83C/dH0PPqPrmtjT9R0/wY+oXeosbLTxGWkTacRuh+VdvXJGf97A9a5eLW4NK8d32reF96WM5y0LoVVkK5b5D23fMAeazvjZqUt74Za8V1KTXsLz8ffTB2YHpkdPaqhZCptJ2RwWp+KY/E/ivWNcubNt+oN+4EkpH2UDAUso4Y7V5U8fN7V1fgXSJvE2uRWFrGka7HZ3Y5CIByT37jjvXOT/DrxP4d0eLXdY05beymZF3GdDJluVBTO4Ejt2FdF4L8RXHh6/8AtdvHbrdxo8QDjKOjDkH6etTJa6hU31PVNZ8BaRofh+5vJtSuUnhjLG4fARpPTZ3PYDOa8mTVZfMheDckcT+bvUkNnORzngjOKs67N4j8eahuiOo6zNA3zRwxEpH/ALqjCr/PismfQvEtmH+16JqsPOGzaOo6554xxRO/QmSvrFHtng34lHVEEV9GZypx5icP0/iHfr1BBrvLe5huo/MhkEi+o/rXifw3v7G1sZg6u80mVbZJ5eCTzv4yeMDArsbW7uIJA8Dsj8Hr8341tCWmptTq6anoHQUnasnStdS7jSO4ZY5SBgnhXz0xnoT6VrGtEdKdwpCKKDTATFNOfSnGk7UAJRSUUAJSHp0paDQA2ilpDQAUhoNJQAGkpaMUAWKKM0GmAUAUlOFACU4HikIoGaAHUUgpaACkGc8de1LSrzIvTrQwPMPEF6NX1u5uAxEcDGCMN08tf4gf9puT9KoapodxbWUWovBJFZsdzOzDuM/dJyAceneprKTbHLdboJkt7hUcSNjJ5YDHU4xz7Vi+L/Fl74jSZnOLSFWkVIAQMc5duc456n07Vyzscs7Xdyj408e6zr1o1m94LHTcATLajYZhgZBJyQOnGcDmuL0C1b+0F1AoTh0mjU9Pl+6fxyCR+Arb0/S4vE+vaVoSTBYrqQRTzxnBCgbnA9cjjPrXU2XhWK78a3WgWtyI4LDfmaQAlEVc5PPLcgemMmo1eotWrmJ4j+I+t6bdaheQzQQXuqx+RJJFHjy0UBcJk8cdD161g+CotZ8QTjwVp87Jp+pzJLdLgEKiLy5OM4Axx3OPWsme41LVr9bG2t1up78GyiRIgzEMwIK5+6TgHd2UnsK+j/hj8OLfwFpTPcOlzrN2oN3cL0X0iTuFHr1J5q6cXJ3ZcIuT1OvsLG30yyt7GziWG1to1ihjA+6gGAPyqftSUcdK6jpHA89aw/EXiu20NktRsmvZV3LEWwqL/eY9cegHJ61Z1jXrXRbWSaTM0iLkQoeT9T/CM14frWrz34vdUkkIeeYfP1EYxlc+3XA9BWc52MatXlWh0eteNbsxzS32ozbI4jMYIDtjK4JPC4yBjGDz3zzXj8TXE1wLm4P+ulYzTEEpuK7mUE9SMjvnGK67wVdR+KfGA0TUVLm4trho97A5KxfKCMe+foBWBc+Ibu58IaR4amijhTTp5JmfGH8xhjDduMt9eK556q7MHdq7NGa/sb+Mw2sTqdm6TzH38hfmwQBwSPwrmtWhjnWSHyQSn7wjO0jjp+ddf8O/Cc3jDVZLaNkhtbVBNPIVzx0Ax3JxxXMfEzSZPB3iu80eSZrgosbrPjaZVcZBIHAPUGojF7mag9zj5LS6e3FwYZPssjFEm2nYXUAlc9MjI4re8LaklnOhmXzC3yuG6Y6H3z0/KpfBGheJfFoudF0lJLi3tyb42xkCoHxsLjPUkfL71R+ymG+LOrwujHgjBUg4/wC+h0ol3Kmj6Jufhra2WmQ6hpVw924jEjbgMujANuT8+np9K8/+IemmfwRqDMyBbfZIDu7qw+XHUfe4Ndj8NfiQE8PRWN8hma3JiWTdt2DnCt7DtjnGa5j4nzWs2ivpkbpbPeT28dxcynESI0n3+OQOBla1VnqgtG6cTx+58XazqUsT6lf3t+YciI3MzSeWMc7cng+/WrsHiXyoNnlyLuXAO3gY7U3xT4Xu/COuXWkXjQPLFgxvG2Ypo25WRT2BHSvSfCfwUtvEvgqw17Q9eD6hcRHzYJowIlkGQ0e4fMrDpk5607XNHHmND4Z/GjQNG0C20aTSpoZoydzwEE3Jxu3FSMs2Ooz2ror79ovwza2yvZWmqXkrgkIAIwo9SSTjtXhOq+HJ9Lurq0nt5Le7tXMc8XdWHXpjJ757g1nW0bplmjJjYZLL0x0+YdhxS52tA9pZWO1v/iEb/U7/AFSC3e0u7u48wQRBfIVcAc/xl+OvSvRPhzrMviV2s7m6tbecKHjWRuZuTuCgdSDjvXg5k8p1Ybcg7uD1rpfC3iGHT7gL5izBjkoFLe/4H6Gs1J3Mb2dz6QudLn02INMEkR2CFlyAD2yD1p+m6xLat5MgMkeeFHVfp6/SuJ0DxEmo2yzRyB48Z5kJCn+79a2UvYoz5kxG3ocngH2ro5joVQ79HWaNZIzuVuQR3pSK53QtXgilNnLMuWyVyu3Bz069Pf1rowRjJP8A+qtE7m6dxMU38KeeabimMbijFLikP1oAOfSko46UmKAEpKWg0AN70GlxSGgBKM0tIBxQBPiloFFMApcUlLmgBaMUgpQeKADpS0UUAFU9ZvzpmmT3S4LovyAj+I8D9T+lXKwPGsgXSEUkjdOhwDjOATSlsJ7HnVxZzXUf2OytZZ5ZPl/cR75DzksSOg/SvP8AXVE1yIpbf7PDbybRHOMO/J+96dCMc17C3izS/C+hxrZH7XqE6gyMF2gSYz82ccL6DuM15Newz67qpIDSlnILdmYnLnJ6VyTRyzsU7VNR0BLPWrdJraTzneG8EQCl0JztyMELkDFR6fNrms6k6aXLezX+oLIsi2p/eSBxllz/AHT3PTnHavQZPD2tfECDTvDloYbPSdJTy7m4XoZDyeO7lTgKM8nJr1fw34R0bwlZ/ZdJs0hBGJJW+aWY+rt3Pt09quNNsuNO5x3wt+FY8LuutaykL6oV2wQqQy2aEYIBHBYjjI6dK9KpKUdK6EraHQlYUfpWD4o8Qf2ZGLW25upVyGHSNfX6nt9K3GZUUuTgAEnPt1ryPxTrk/mvqJX948hWPPU7Tkcey1MpWM6s+VFnxJql3odgi6rGsX2vctu1wgChivBLZwCOoz361x3gLQ3+IVzrFgmoLZ2lmisp8rzDIzM2DjIwq7T06k+lbnxR+IfhPxP4Au4Y71RqgliMFqyHzI5dwzzjGNm7Jz0rzD4XeOv+EE8VrqFz5r6ZcobS9CAs4TOVcDuUPbrhjjtWe7MuVN6kfiC21zwX49ES3cWlavYyBorrzD5fKsVkUkHKsOACOScGqNo9zdSFrlg9xcEyuwGMliSxx25JFdL8efE2j+JvE1nNo15FeRQ2KpNPD9xm3llGe+AfoCap+GbWI+DpfFM848wah9gS2XlnJTcGBP8AEOhHoazqxCpHses/ARYlttcZDjbLHECxB4GT1/z0rxz4xeI7fxX8QdRvbA77WER2sTjnf5YwW+hJOPYZq0t/renaBdz6bdS2VhdkWsximCi4cgnZjqVx3H51yH2eLeyg/KIycZ5GB7fpSU9LEqd1Y7D4SeNj4I16a9mtnngmgaOVEYKXAIKHn0YfXB9qZr8DarqN1flUWS4lefCZwQxJxxx1PWvTPgpoL3NwbjX7Wzmnh060l04FVbyoHDLnHQnjkkEgmj4weE4tMvrPV9PgWCG6JhljiQKiSAZBwBwGGR9RROD5biqRfLc4TwjemNzCV+Qrja3Q47H6evetfxPeNrOgz6OIIp5XUpabVAkdi4IG7+IFuOema0vhxoOna7d6pptzJLBqLwebbPG2MsDjdjuRxx/drmfAllfeLfHdpbiJ1ttOnSa8ZAcBo2/1Y92ZfyBPpRTiyKcG2mcPeWMVrqLWbzXEog2xyNcoYnjkA+aNlYnhTxxwe1d74H1zXPB0DXemzxNZzAvJazoWhcf3iAQQw6blOcdc17/eeGNH1i4e91bSdOurqWNozIYFYqhHI3EZJx/EeewryvUvC994c0j+zU0m81CKymeE3kYD74eqBkX5gQDjI4O0k81pKDWqN5wlHVEfhOGx8Z/ECW48SWlteTzxO6R+XiIyKq4BXqcKOMn61W+MPw/07wz9m1zRoI7W0uZhDPbJ9yOQjcrr6AgHK9M4NZMCPaMghe4RkCzW9xH1wMY567gT3/HpT/GfjrUvEXh+HR9SeF2t51lefYUdxgj5l6bhnqBzUXVtTJTVrS3PNdQshcymRcx8dQc9+nvVW1ge3laRo98SnO7BKgcdR1IPII9zWskscuYiwDFWAz2PrXRaTLokGgajpOoaURfh/Ps9UgwswY8eXICcMvXp0HGO9QmSn3N27+JtxrNlbRRaNYWs9vzE1ouxWTGNgyclfYVJHq9xdIDLkL1+QHt2rgpbH5i8T/ZnYZynCke49K0LXU3s41hf77cDAyre6/1zj2pOTJb5j07TNamm0zyWjla2Lb/NEBZc46b+3A5FdNovjtbKSKzvi8kTABZcHcg6f8CFcz8M/GDWlkNOtIzNcSEl7XJL78nJUA/Nx1P044rsNU8Q/wBq2cun3ViUZvlId3DREHqAQDkVvB6HRDRXOvhmjuIllhdZI5BuV15DfSnmuU8L3y2LLafP5EnzoT0Unp+feur6jPrWyZ0J3EpDS0hpjEooNFAxp60lKetIeKBCZ4pD1paQ0AJS5pKXFAFjNJRiimAtGKSlzQAdKAaKBQA6ikpaBhXKeNA11dadYq4RW3SbicbeQu78ATXVc1yfjpEKW0rsFUh0LMOB0ODjPPBqZbEz2OG8S2X/AAk3iC30zRIxFCkZjDYClY1BLSHPILYPNZ+jWl1fagItP09Yry9dolCqSsaYxuLH+ELk5rX8Iafd63qtxHbSSW63EY+2zDGRDnhAeu5iP55r1TTdKstKiMdnAkQcfMerP9T/AErJQvqzCNPm1F0jSrfRNOt7C1B8qBAu5hhnPdj7k8n8Kuj09OlIP/r/AI0o4rex0pWFpskqQRtLIypGgLMxONoAyT+Qp1cv8TbxrHwRqTqXDSKkI2AljukGcAc/lSbsDMDU/iHb6vGRbMUs3RZEH3WuFyy5+gKnI9wa888VajI+5xJv2KrhQQfLA6jjqRn8av8Agrwg13Dc3Gr6MwMqAQSTu0TRjcSXCryTyPvYx75rWm+Eun3cQR9S1FeMOyyKFPuRtP6VzSlc5XSlNnEeEfhNfeP7S+1CG7s7OOOfyEMquxZhycbT2yMk59K5fxX4L8Q6FfQaTqEFnHNb28kkbRlIxJAr5L+ZkeY244HG6vd9O0vTvh3od2BrN2LNj50ouZ9oLAcnIAxwOg6nivDtY1l/Eur3OqSRGNJSNkTZOxAflVs57A56feNVzKxrOHJHUwLrw3fmO4NnHcarDAhlkuLS3cwR/LlsttGNozkdARVvR7HzY1Ic7AmQMk5wOeB3I79a9t8QfE7w/rHgG703TVewvJ7UWcemspXZv+Vtm0bWAUsc55xzXnsFja6ZZl0JLxqAoVcfMRg5weuB6dCazqvsc9aVtilqGhpBY2d1NeWrLcl2W3VirRqhw27+7kj8a55lAnl3KMFjwOMDqB/Ku30fwdq/iO1ub+HT57mK3GMIh9CQikD6Z9Ac965iSGO3efzVB8tCX5GdwX5h+dZbGaudV8GvGtv4W8URwajIUs72AWhdzkW5DbkIyeE3E5x6969Y+MetWUOjWmm799zcTJcoqN0jXPzZHXOcD1rH+Aen6PfeCLpZbS2nuHu3Fz5qKxK8bOeu3AOPfNYUfg59Y+LFx4ZvI5DpdmxuG+ZgfsoUGNAc5C5cj8DXSr8tjos3Cxx1xqUmk3iv5sltcqEcPG+G2OOuRyMj1xXtfwjsdPtfCVhcWNvHE95E88pUfekMjB8k8nBUD8Ko+Kfg9bSE6h4XFpbXaRygWV+hmtZd67Tkn5kbuDzyK6rwr4Xh8O+FtJ0W2uXM2mxY86RceaxJaTI9CSfpxVU6fKaUafLub3BZepyS36UhTy5o5VJDE7Dg8kHn+f5Vl2mrrPey2QjkWe3+Vxglc55IfGCMirsb3LyD5UODu3tn+IcYUdh9ea1N7HP+JfAqanIbjTDFbys5klhYlElfkBgwB2t+GD6V594v8A6lFMupR2clk0MSgvCfPjdzw2Rksox6jFe1oWJIfYcdwMZ+op/IPU/nUSgmYypRZ81+FtK0QeJLeHxZp1rPayxsmGP7uMnhHOMfLwQf7uRxVi58NL4b8ZS/2Nc+baW9xvtneUSEAAHardwNxHPJr3XU/CWg6wwe+0q0kkU5Eip5bKfUFcc1w/ifwBdaWv2vSEe9tUJZoSP3sPqcD76+3UdaylTaWhhOi0tDy+50uK51C5kZRGRIWKAYHPJx7e1bsHgIa94SutVtp1ury1lZrixOABGBwVYchsfNg8Hp1qa6S23R+SwbzEJZmOcEd8Y4z7+lZthLOnmRpLdW77GZzASCi9+V6j1zxzWSVtzmj7r1Oct5LzQ5ItT0dxthw0N2oyykdMjncp6Fe9eoD4taDr2jCPVLN7LUgMJLyYo3GDuSQcjn+A884rgBBcWsRW3ClGbgk/Nv44x09Oa6bWPhZren6XLqc/2WO5jjBcwSFgf+uq7QCOSNy8j3qk2tjaEn0OssNUSURssqNuGQyngj6Hp9K6/w9qhu43t5S3mQ926lfWvFfDmp3MNmAXaSSIBJYJiM5x/Ljg98V3Wkay0DRXdsUZlUHa/cHqD6A+v0rSE7mkKmp6RSHmq+mahDqllHdwBgj9VbqpB5U+4qya3OlO+ow0h6UppDQMQ8UhNLSGgQhpMUtFACYpaSloAmooopgFFFFABRRRQMXrS0gpaAE61xvxFkkuEtNPjhaf7WDGI0wZJMsOEz0PGPpXZ8etc+2bzxnGQhZLG2cb+yuwH680mJl7QNIXSbMqVh+0y4eYwrhc44VfVVAwD9a08nv3pP5UuKaHawtLn1xTaraleCztGYMolf5IwTjc3/ANYZP4UN2AhvdX8qQwW4WSVTtdjysZ9D6n27VmzQ/aWEsrNJIMgM3OPYf/WpkMQGOf09f8etMvWmjw0bAJ69x/8AWrBvmNacOYeYWU8ZPT8a5jxZ4wstDs50luAGiX5vlyVPsP4vYUupavJjyTIwdjkbycHHZSOM15L4ilbUdaNpuyli4LHJy7tjrngbR39TWb0N5wVGHOyve6rJ4q1dJNb+1rZcmK1tMNsfHy788H3I+7255rc0D4Yax4gLpYRW0EMZVJZ5nKRoSMkDAJc+3b1rOt4Ga3ypzIWKsqnkHPGPrXQ6b4g8V+HVGmaLdSQtM53RC3W4cNxlkXGQ3+FKLu9TxpVXUl7xy/jDwheeC/Fel6ZqF5bTrKnmo8DkAqxK8o3Kng8nOeDXQWmly3qSwWqgTq6jMo52t/F7bRgcdc1wvjVtW03W5LrV/t41Nisksl6GEsigna3IGVIBUbQAMmvRdD1m205BewCOaSdRtSXL7dy/IOPTJAA+tEkrk1Fqj2rwzp0PhbwjbQltq21s00je+0uTXyprcjz2JZzbGW4iiI8ogeXuJJWTgfPnr+Fen+PviXqV/oyeH0hWyXy1S9CP88uAMxnP3Vx971HFeW69Ks1omBtVp1RQeMgAkn6cjj0onJN2Q5zTaSJvB3jPVfA94LnTJgjbSlxbuoZJ1znn/EV6x8HvFc3jP4jeJdYvrdLe6l0+3VIYgTGkavjGTyTnHPf8K8s8S6ToFrpeh6ho17LcS3Fqft8cpy1vcKR0HYEZIHcAGtn4G+N7bwt4lm0m8Ajt9XeNY7jHEcy5Cbv9hg23PY4q4OzsbU3Z2Pp5vkbjjJ7etRTSpCjPuVdh3jPAUjknim3F1FHBI752qrMVPcDqPrXn3hzxZrHiDXBCUtmt8MfnjI25HU984xkVtKSTsdcVfU6zRi6XEs1xZNDJdN+73MA5j+ZiSp5AyTycZqfUL+PS7q0jO7Zet5SFCflfI4P+yf05qG00+50y4d7iUXn2hstcMuGZ8/LvUcYA4GOOmRV262Tz2p2h5otzozEfIx+Xd/nuKfQGXLdcKz5zubC46BRwAPyz9SaloCLGAijhRgfhxRxTJYUvX60lKBQIwPFng+08TwK4Zba/iy0N1sz1/hcdWU+nUV55P4M8SaZK7pp91vAZDLYssisGGDwCDgjqCK9jxQQPSocEzKdKMjxvTPCF+R9nl8PX80JXa8cqGEZx1L5HTj8qt6fqHibR1uvD+q208onh2WwnYFgpO3KychhyMgnuOa9X2g8YrI8S6INcsQiMEuImLxM5wpzwyt7H17YB7UuRJaE+x5VoeFajZXFhcTzKStxF+6kVTjzAG5RvTGPlJ5BHoTXoVj4n0LxZpDvqDJDqdvGylxGd+4D7pA7njKng9Rxik0m6jtL/AFDS/ENoXiudpmMy7mRgMZIxkjb/ABA9QK47U9IFtdPc2hdWiPl+awO14icBZAPboeuelZpcpj8J6L4R1ZLaX7BPDJbCYhkEisoDkf7XJDevrXY4wOevvXlkHiu51XSv7OvI4nlRFCmUESoB3Vh94dOeOnPNdr4W1mfUIJba7Urc2u1WyPvqRwee471rFnRTkmbmKQ0vakNWajaSg0HrQAYpDxQaKBCZoxR3paAJqKKKYAaBRQaACkzmilFAAOKUc0hyaBTGO7/iKq2Nr5AmZlxLLKzt6kbiFH5VZzS0gAUZoooAdz2rm9ZLS60i7gViiUhSOU3ZJYfXgGtu9voLGASSt14ULyzew/x7Vh75L24kmZQrH07ADAHvxWdR9BrckLbEyQBiqF7OcZ5A5wfapb2X7MhZ2xngD14rmNU1OVidreSV5+Vsg89x2rPY9ChS0uYHia7+yxT3S9AC3lgbt75AA2+pJAGKy9G8BXITF1NGk29p5mkfJIx0znrk4wMnjNaMUEus6vasd4tbXNy0pBCyMMqgB6Egkk9cYro5nMQ/dqqkLgM3AAAzx61Nupw5jWu1BFDWboppken2thYW0cbBzJBEA52jAyxPfOa0tG8SeD/AGitf3U5k1CSPzJVgjLyop4CDoEXjrkEk1wXjPxfDpqNZQkz3TMpm2vjaB2J9TXmuoeMNUurG70/zzFaXLK00EZwspVgRu9cdhx60J6nnU3rc3Pix4/i+IOrwXkNk1pbWkPkxq7Au4L7tzdh1+6OnrXX/ALPUS6trFjJJsEemxTSElgAXUYTI9BvJ/CvEpXeRVTPIA7Z7/wBK67wXdNZadKwwqmXlj8rA7fX0zRJ9TSb0uz0L4i31vrfi6+u7SZHhkbbH8uPlAALnHYkH3NcV4ntpEsYgygyRl5G5GFBwq544yc/lXqHwx+HH/CUg6tqsp+wcpH5L4eST644C/wCFea6qxi8R6xZxzfaI1lMSOQMSKrtgkdPyrNr7Rjyu/Mz27U/hX4d1P4exw6BaRS3a2gnsbxSS80hQMSxPUNyMHpmvPPgZ4Bj1zxU2vX6sbbR9kkcbDG+ds7dw9FwW+uPSnfDr4sa74WsIPDhsre9gjZhZtM7K8Q67MjgrnJHcc16r8JtN+yaJqbEAJc3hbO3AJ25bj0y361tG0ndHRFxclY6qeMGQbBtllJMaDoPWRh7Z+gzjqahttItbGFVgiCKGyeOTyeSe55qzM6WcqyESys3EpVSzKOoOB0A7KPrT4ru2uG8qOaJ3xkLuGSPXHWtrHVdkF9CsljJG4ZkwAwHBI3DkHsR1H0qGWW2061SWaYiF3C+ew3hWbgBif4D0Gen41au1IiWM5DMwHXBx1P6VXvLOO+eKCdA8GNzRleHZSCoI7467Twcd6YEOuatqFtp7nRLB9SuwoIH3Ux/eAJ+c+ijr61wei+LfG2s3F4dPKXSW7hZUntkTy2/ulchs8HpnH416ay4fd/C3OPT3+leK/FbVL/wh8Q4tQ0u9Nu99aJPINoxlSUbd7Nhc/Son3Mat1qdWfEXi25mT/iYWdsgIVvJscnJx94NkqPbGavaJ411GN2g1dIJ9rlRLAmwleoOM4b8MVynhbxPYXt/5HiK+gnF/ws/mNF5MpPdgejjoegIAqPxlZt8PNX026tmmu9KuHJNvKxY7VOWXj65B75IrPm6oxU3vc9hsr+11CLzLWZZlBwSOx9x1FWa4PwxqlleeJd+kTedZ3KyYC5A+4GAx7HIqfWPi14c0m6a1R57+VSVJt1Bj3DgjeeCQeOB+NaqWmpupq1ztCKa3H+elecWXxrs7qXB0O7RMhdyzozc+ox/Kuy0rxLpms7UtrjEpHEUg2v8A/XoUkxqaexLqmjWOsQiK9tlfb9xwcOn+6w5rl7zwC4kDxSpexq25oZWMTyAdt4JGfQkV25GOKaabimDhFnmGt6DYxKsUIurGbllhm5khP95GAw69iM1p+FdQvp9Tia/XEvki1ZwPvgZ2tuH0GM11+p6ZbataG1u0Zo85UqcMjf3lPr/PpWBqiXWlhi0UJR0Me+IkCXAG07eiuMduDU8tiFCzujp6Q02CZbiCOZScOob8xTjVmo2kxzmlbrSUAFIaDRQIO9GaPxooAmzRRijtTAM0Gkpe9ABRmkNFAxQaAQKO1JQAuaUNTaO9AD+Kr3t/b6fD5077QThcDLMfQClubhbS3lncHbEhc474rnleTUZBdy5Lfwgfw5H3R6ConKw0rjZ5Zry6M8i7T0VRyEXsPr6nvTrjVIdNtd57D075xk/jVfUdSgsoSrscAD7vO7noB3yfx64pNK8Hy6lMb3Xg3ltgxWOShUY6y46H/ZB+vNZxi9zoglFXkYsV1qPiOaSCxtbi4xlTNjbEvPzZJ4BH4mtjTvhvaLMLrXLj7Z5fzi3UkQpjqWPV8ehwOeldjDDFbxLDFGkUScKiqAoH07Vx3j/xGYov7Ds2Z7m4Aa5KnHkxehPYt6enPer5UtWKpiXbQo312l9eS3EKBUUCOKJVACRjpgDjHfA9arSaa0kb75WDEEZ74x+n4UujxMpLt1UDJPc9f84rprXQJ7k+bct5ET9EXlyOx9vpyam1zzXHndzC0r4eeG2sBqWq2dmtkiltsn3FA4Znc859sg18v+LbnTJdf1BtGjZdMEzi1zyTHuO0n6jke1eh/Hm3i0XxE+l6fqE7WskCTTWQnZkhmJIO5c4yQA2MCvKbWE3U5EhO0ZZiB1/+uamTWw9FoFvbyMryspIYYGR09f51714l8Gabo/w88KappcapHcWscdww482aVfMDse5yHX2GK8th0S9fSxrX2Xdp32kWjS7hxIACRtHI+U9T6Vta54q1OTwTpvhh5WFjZXLTJnrgZ2pnuo3MRn1qbq1hNqzTPTNE+Io0L4dx6JYwN/a7CSOOXaDHHuPLt3LAHp365rytIY/t8hj3MI44+SeTgnJP4V3Xwv8ACcXjeK7aeaWCytIstMFByWHyrz7Ak+1cPFC5e4nWOcwRsscsiRkhARhcnoMnoKxm3Yz95rU6fwvayWmojUI0jk89TaNuQEZYjAT0PHX/ABr6L06yj0izisUwVhXrwCxPLH35zn2xXg3h+40q08FpOtxGdZi1RRJA7cmHgqQOyjGd3rxX0DekSfKdwDvksOCoAzx6HpXRQVkb0IW1Grtbd03B2zlcHOffnOKhlt4p2AkRWwwwGA4A+vP5Vj6xqd1oEtvdR2s13bSs0dxHEBvBAJDjHXHTnrmrtnf3WrW4khtZbJWI+W4cCbBHYDO0+hOa2udI7TY7e3eSB5v38TFGEkuSVySpGT0we3TGDU6sNRWO5s5oZI0bKOvzLKwypBI6KORkc5+lSCZIo1gjhj45VA+VHPJPcfXvzWV4ftdS0mOeNorN1e4kuUSNmG0swO3njtnPuaoDI0b4t+EtYuZLRtR/s66RzG0F+vlfMDg4f7rdPUfSue+JngTVPHniawm0y4s4LS3s9j3Mz7lLM5YBQvJ+XnIPevM/GfhuTw/4xv7eWB0iknkubZm6SRO270xlSWBA68etb2neNfEWmaSlha6i0UMafu4wqgxjrjcQTj6dOKwdRLRnLOqk+WRleNPhzeeBrS0lkuYryK6dolaFWBDKpbBDdj/Sua/tPV/skVrK8jW8Q3xRvIdkee4U5Az7da9A0Twv4g+Is8t5c6pLKlswiM987PtLclUUe3J6Z71Z8cfDLQvCPhO61C61q/fUuPswYKqyyEjCCLGcYzk54xmsnG+q2MeVvWOxxOleKdX07SNRnsZBFLBEYZWzgpHIMEgDvjjPbNZdndtJAGKlcjaAmOMdh6en61yGqTT288pWRwQdrFX4b2OOMCt2y8ZX7aKmiXTwyWKzfaYsxL5kbngkP1APcd6EnYbjoe1fDa68FXOhCHWLe2W/8xsvdBzvX+HYR0wOCOuaVWh/tm4ksI50tGkzb+acMq59euM9O/rXE6HNDe2EYS8RZFJzAYTuA4w2fX+dddozlvlAVvnBVwm0kZ64qrkc/Q9N0DxD9s22V5hbsAlWHAmx6eh9q3D1rghYXksRu7eOVxGxIZR0Yc8epHX8K63Q9UGqWgLbRPGQsqjoT2b6Gtoy7nZCXRl881BdW4uYghO0qdysDyrdvw9asEYpuRVmhnaOHS08hxh4JGiIA4HOR+GDxV6lwqklQMt9739PypDQA1qSnHpTaADHNJRRQITvS0gNLQBNmjNJRTAKU8UlBoAKKKMigBe2aTvRn0oNAwpRwc1TvNUgsnEbiaWUjIjhiMjY98dPxqm2rXVwXjttOvVYDhpICgP4tgUXsMn1Zlli+y7t24gyAdQo5x+NZF3cR2u2CNHnnkxtiiGWc+g/x6CrlvpV9co32ySO03kcQuJJCO4LEYH4A1q2Wm2umowtYghbh3Y7nf8A3mPJ/lUctzRNRMXRNBnN4NV1ZAlwBm3tA4ZYOvztjhpPpwv410Y4puMDqT9ad2q7WIlK5h+MfFMXhTSvtTxia4lfyraJvuu2Mksf7oGCfXgd68306Ce83XV1IZp7hjLJKw+ZyR1Hp6D2ArV+JU0mpeJ7CwCboLKPOMEl5JfQdOFwBnuT6VvaL4LWxty2pXAI6yRh+EH91nP9PwrJu7scs25OxmJNHaWbNIQsaZLv2XvyfrXJeN/jLcHSzDomrAXUpxvhhAOzkM27Pynirnxl8XaSmlRaRod3HLqAlBlaybiJAOVZl4OewyTXhl1aXckTbQwLcN82fw9/rWcpW0RDfLomZ2oak91K8kpMjOSzF2JLE9SSec/XNTaTaSXrrDFE8ksx27EGSzH7qgdzjPFU5rYidbcjlnC59K734StFZeOtGlmA8tLpcZGRvJ2r/PrUrUZ2Pg7QLjT9OvtF1izuI7dblZJIJAy4Z128g8Aggc+hrkPiDp8llcwWqbBF5XBQ9skKWHY4zX0l43tVa1inChn+eIgHlxjOM+vUflXlPxLK/ETWtB0zw/DLdXqWgWeUKAiY+ZSWPZe5/wBrHNW4hyamToPiu40fwdN4b02KOA6ncHzbsN86QlQpVR2IUHJPrxUFrrC6f4b8S6ALYsNSuoyssbY8oxKMcH12jHoc1B4b0ee6tmkmjMUkUpUq4IBYNjyxkY4wTit+y0/Srjw7rM+ot5N5DERYjzMbnZySMfxDBGc9q523sJN3syt8LtCPiPWrSMx/ubQrLM2PvjPyqfyzz2WvTPFvxCGjePNA0Tyz9juJ/LuZsfMZXXESL7AsC3+8KzfhbaL4Y8ET63NEZJ9QmAgiJ++B8qL7biCT6AVmaz4YvfGsf2OG6EeprN9vjuw+zypFYEvnkjkjA+npW9P3UaxfKetmIFirgH+AAdfesDx14q0nwTosurao4BX5LeAAeZK5OAqKep7+2K8F8d698VfD0zaZrPiTVIonQlWTYnnLnBIkRRu6+vccc1hfDjwCPiL4lnsNT1R7doLNpllwZZZvmxjLnJwWBPtxWvMa8/Q+l/CPjjw34xty+gajBcCONd0J/dzRDph0PI5PXkEng1vL8rOccDn/AD+VfLS2+sfBD4hRXDx+aY05EQKx6haN94LnofY/dYDsa+itH8beHfEcVomnaxbyS364jgLbZumTlDypx68Z6ZqlLuNSDxZ4StPGGlfZp8RTxkyWtxt3GInjBHUqR1H49RXk+jQafoXiK90/xBp5vZbVSrQxy7gG6gryA4IJ7/XBFeweItcOlwxwWgEl7cfJCo529s/4epye1VLTwRpzWUqarbpd3E4O+RvvR55IRuqnPUjqfas5K70MqlNS1PGZtRu7a/vJtFSfTrOeQyLDBKVZIcgKGIPJxnBrA8RLJdIr3ktxPcjdKOS3Tuc85xxnPY1s+IEfRvE2p6VO0g8iTYGY/fQgENx03Aiu8tvBOip8N7rUtSIW6ubN7o3hbBgO07FXnGOBwc5JNZWbdjkSk20ePX2i+FL34XajqxvLaPxKmo7IU8w+ZJEMYjVM/dYEtuIxkV59aPsLQyY4OQT/AJ/GtSNkZ18xclkAHHNbOufDTWdK8HaZ43SWG4sLwCRvJB32u4kLvzwQcYyOh60076G0XfQ1PC17Fd3UFvYwXAuCFjMQcu0zkfNjjoT0rvbEXen3Ua3kF1GynnzFKkgcAYPp6+9eP+FdfvPDeqWmsaZIsNxbNna4yvTlSO4IyK9v1T4q2XjDw+iLp0lvcK6uCXDhcddvcDGc56CkkkYygtzprXUZngZYJ3TeMOmcc9//ANdJp97PpV2tztUImEZd2A6/3f8AD0rltM1OMzrG0pQlSsZJ4b6f55rpSokjU7lG9cAH/wCvVRdyoTbO/gnjuoI54m3RyKGU+op3WuK0PU5dIuishL2UzfOuf9U/98e2OortA4cBkKsrcqQcgj2NbpnZGVwIpDTjSGmUNNJilNJQAlITzSmkPNACUtJS0riJaKKKoAoopcUAIaKDSZoAUd6XFJSigYnTPbPX3pM8Y7UGigB2efwozQaQUAOowSOmaKaWVVLMcAAn8hz+mfyoYM8i8e3htvHtyyTKjQpasGHVD5fX2OefwrH8RXOreIpILe/1K5aONN8kZwAhP8OBgBsAEnnrVbUdWGq65e6xOuZbuTdEhX7kY4UfgAOakA8hppZJ0XzfnVnPGOvUep7muWT1POqTd9Dn76CGzjWBFZFAGFAwAfXJrI/syWON5/JbYOC5Hyg5wPYZrptUkayjWa7tZ1EybkkdCBIO5GRyO2a5bXdXuP7IjgTyIIFZgsMS4ZzncHck/MeSABgcdKzZMb9TnLe1m1HVRHZwvcSAMqLGCzMeeQByT/Suk8IabeS67FBaW7T3SSKyqh+YEMOP0Iz7VvfBm0k0PxBBrsq+Y8AdxGuN7ZUqcE9MA5z68Ul3qc+ieOrvUreFbSU3f2mOJcOFVyWXHHPPPpVbJM2voejeKvG8uuNBELWSzFq5fAfc0kmAM44wBhhtPJ/Gur8D+D7axiNw8cZnuWDXsv8AfKnIhUnpGrcntuyOa4LwWF8Z+Jjc43G2AuJWOCrzSMdgPHGCCxx6CvcERIY1jjBCqNq+wA/z+tbQV9Tpp9zy7WtTtYPDE1urCOdtSuZpEYbcvvIVj26nn2rG0XwrNrAfTltJ4ZZdjqzsFEEJ5DPxyGHQcduDXTeKrcJ4kijSwW7H2+K48k/dmyCVQjt83OR1xk8Cuxs4ZNF0u4u7+Rbm7Kvc3cqjaHYAnav+yBhQPTnqanku7sXKm7s5nxjBZ6PpehaNbN5aRSHy426lI4yMkf8AAia4XV/FFx4Y1bTr7S50luIWeKe1b7sqMBkHB+U9MGo9S1e8v7l7+5YvdXBB3ZxjPIVT2RBxjv8AjWj4b8ZaTpminQPGVsXslLNBdSW/mK6sd21wuSrgk4bv06jNQpXloYOfNIxPiT8RLPxZpFppw0h7e6hnE5+0fOEG1gQuOGDgk5PoK4XSvENzoeu2+qaUqR31r88I2YWeMKAyPj1UH8ferjyQ6z4h/s/SoTcWFzd+TZi5by2VmJ25bkjP/wCvmrPifwFrvhC4gn1O2jEUjMqTwy+ajN2BbA2n6jkA4NNNt3HeT1Oi13WYvifqdpc3lolhBZWhe3h3ljKHPzFmxjHt1p1zs1DUvtDGO3vrSzgt4ZIECGJEyUA56g8+nOPWuR0K6Wy827hUJCAwMIG4p0U7T+AIrsPAraTrdl4m13Vo7e6hghjtoLdjjdLsO3bg5zuIAxwefSne5N5Nno3w/Euuef4g1a4FxqRfydowqwgAcqvbcM4/H1rtBg9vyrg/hbG8Md6GAJligLY/vKNv8jXek81tDY64O6ueafGTwdbXumXHimK6W1u9Ot90yt9y5jB+Vc9mycA984NeSaZ4si1HQdS02+1G88gWrLaxK28LNkEKyk8Kefyr079ojVJB4YtNAh3btRlM05TkrDHjHHu5UfhXjGufCfxP4K0uLXb2K0NvvVXVJtzxFh8oYYGM8cg8Gs5x6oyqU76o52WISShuAq9V9q9MPjWaT4QjwmbNeQ0HnOQAluG3bQO7dgeg+tcfo2iHxFeQJatn7UV2lscMxwd3pj16V1Hi3wVe+C72PTLuVZ4pk86KZM7HCnBXB5DK358GsE2jm5mtTzS2tljkVZJHCvy54yp7HFdNY3DaKyTWcjo6oVDBuCpHIPbB9KqahBeC3igQF7WB3CYCgK78npyQcZ54GCBWdZ6gYv3M/EecKfT/AOtSbE/eOwh1pbxWcskMkR3DHVTnGQPxr1Lwr8YdJmgh07VLT7IEiC+eGDJJjjJB9eteK2Ftc6jfCOwgmurjBfy4U3OQOSQOvAGeM/SiWWNW2u5Dg42nqP8AP50Rlyii3B6Hvt7f2TXDyWEiG2Y5QKcj6D2rS8P62YJlheQfZpONp/5ZnPUe3Y15N4V1fbawx7ECg4Yg85PHIrrI9TEMikoNv3SR61tGdy41tT1w+nTH6U3NY/hrWBqdpsc4miUZz/Ep6H+lbBA7Vunc7oyuriZpKKKYxDTTTzSYpAxtFOpvrQImozRmkqgAdacab0pc5oABQaDSCgBaM0UlAxaKTmj8aAHZopKKAFpsq7o3X+8jD9DS0qkb16dRmhgz56tCt1B+8tXlijMcRYnADsCVXPcnaevStfRJbHQr1tU1azk1ACI/ZIYlBCyg5y2TjpwDzjrXPPBPpuoXFtOqZgmlSQuMkYc4Ue3U/lW5HpWu+K7R77TbV0sbfdumlcLuwMsFGfmI74rke5wSXvaHKfELxvqfizUIDdRpbwxLst7VQSEB+ZmJPU9Mkjp0FZ/g+zfV9TluWKvBaRuMkBlLMMZ571n+M7Vre+tolnWaW6X92rDYqA/xep+prvPDGkrouixIg+ec7pvoV6k9888DpSs2J7XOx+EehWF6L0XduspjICK54UMcE49ccZ964f4r2x03WtMnSMlTFLbsOeqScfU4YflXe+DZX0eWM2wjMjRMrqw+ViSCCf5/pWjqHgu28XXen2t+DttrhruQjh2GPmHtkkD8T6Vra6Nox5kU/gBoM9r4ZfWroKG1FhJGB/dAK5x/30ePWvVScAngAdaighjt4o4YY0jiRQkaIuFRQMAAD6VHd6tY6aY/td7bW5f7gkkClvoP61qlZHStEZOnwzXninVbmaHZDZSrBESf9ZIYwCf+Ag4H+8ab8QdQj03wVrEzOFZ7Z4IvVnk+RQPfJ/Sty2EHkKYCrRMNysjBg2epz3ye9eIfGfxTJqeuvo0TMbLSmQSKoyJLlhkkj/YUgD3JqKklGJM3yxOY0fV4p444WI32yhQCRkjua0r6eJUEEiuQyiTzsZBC9cjqDnqR25rf+G/xG8AeFPCOy8v4rHU1ZjextCzzTuCdpXAO8bcADI71yfiHxw3i7xbDKZIfD2n3UqWpurhMmGMLkO+OrHp6DgZ61z8uhxypW1MTWNPmsryO7gV4pbdlkWZMZV1+ZCvXIBwPevbtE+IfhbxroJtNcuNPs7idFju9PvZ1TJPQqTjKnqCOR+FeDeO7u3stbksvC2q3GradFEN9zKi4eU537SAAVHByOM+1YOpaXe2rouozRzSvCkwCTLIqiRcgfKMZx1HUVcZcuhrCXLodr460GHwP4iudLtr5ZbS5hE0MhdSyoTgI+O4OMHqRXOabdTaDKtvf2N3CSSIfOgaMEZzuy3ryPXFcg4aKdVg/1qOChj6lhyD+H9K6DX/GN/4y1G3udfaU2sQIS3tGVQuRyy7sjcT3PShscktz2zwZ8Qr7SbeXT59JtlnhRpZ5C3LAAMMgcAYIAxmvRn8WQz+GrfWbBVka5X91GzZCOAdwYj+7g9OvFfNPwx8F33jy6utOh1WOxSGH7QxkTdvOQvAHPf8AnXa+Cb7VvCutXvg/WlSdbNpGhjZsornaW2kc7WUqw9DmnGbQoTaRa1qC71qW+uL6ZtRuLtI44wVUMmGOEUdFG5hj2OSc10/xc0q/T4M3tpK6TXdrDbG5kHIIR13ke/Tn2zWBfRT2/wBmnSVsqyjcOMHqGPrghfrzWb49+J2oeJNJl0JFt7ZJGQTvbsxafnIUE8KMjJ654FKM+5UJ9zh/hRfmy1K43SZ27JowCOu7DD6cLXsPxmmstS0/Q7mGZHkeaTYFIz5bJk5Hs238a8mvPBs/h/RdN8QwPNDds8vmWjDCxW8Y+83cbpDt56da0NBu7DWbd7+SaOaSMBRbMWDljxwR02/eJPWk3oZVLpOxlPGWuVKt5bK4w4/hI6Y/KuZ8QrLJcXM90cvI5kYnuxPJNej6LoNvrPibSrS4mkjju7kJKw64weVB75H61reFvC1lYfFGytNQWO8W3nnjQPyplVCVYjpkYPB71EYtsypptnh2napPayxSw3UkU0Z3RTRSFWU57MOQe2a7LwR4U1Tx/qV1b2U0HnW8RnlkupiC2W2jsSSSTz+fWuv/AGivBVlZarpniCxhWBr/AHw3KxIAryINyvgdyuQT3xXnfhXX7zwR4jsdasSZDC2ySPO0TRN9+M/UfrVSik9TaUUpWZ2Ou+B/EvglfttzauIgeLiB/MjX/eI+6PrVnw94ge8uoxIgYE5Zt2AoxjOK9y0bxh4f8S6YL3TtTtJIHXLxvIqugxyrof8A9VeE+JV0W18dXn/COSWqWTFWTawEW4gbwhPVd3PHSnKCWqIq00tUet6JNDaiG9hcl9xBHYp6nt6/jXbghgCDkEAg+1eW+H7rzYQhzt7Z4r0TRZ/tWmwMT8yDy39mU4/lit4PQ6KMrqxdIpppxpDVm4lIetLSE5NAMM8UhORS9qb3oETUCil7UwEJ4pB1opRxQAtFIaKAFJ4pKKKBhRRQaAFoFJS5oAKQ4wcjI7j17f1oPNBBwQBkmgDwv4uMuleLb5YWBe+torg8fccgqSfrsz+NXr/4r+HdL8DW2kaI0rXTWq27h4CFts/6wnPVvvYA47muW+J2orf+N9WuUl3qsotoscDEahcA+md35Vwl6Fvney+0RxwhC7MzEbsn7gP948DHcVy83vM472ky54Zg1bx54nnubLT57pwhbyosZhgUYHJ/Djv2r1vTYU2RQshLKAMEYII4IwehHes79nC3t7bUNeiGTcm3gOMgswEjhsD0BAGBW140u4tO8S31wjs26U7ip77VB574weKprqgnBWujqdHtnmkMVvGJG6bQwUnGM7s9gD+ZFdjpunpp8RUMpkblmHA+g74H86xPAdheW+jC71CNo7m8bzDG33o4xwin3xkn6j0rZ1fUV0vTprogFlGEU/xOeAPz/lWy0R0QXLG5T8TeIf7FgSODyzdz52B+Qq/3iOp54A7mvBvFPia7mur2e5kkurlnVBd+YAiEEAjaByu3gLwAeecV6DDqpj1ZdRZ2uLtJRIRK/D8YwD0HXgdsVm+P7LTvEkz3NtDNEZYkDB4gmJ+Rk9icYGe5qJO5hOfNqmZ3gP4gv4V05ry4ilXTV3NcWz5CMR1kgLcbuuVHDEdjXnWs395qEzXD/unvJpLhnmcKT5jluffaVH4CvU/Euo6bd/s33qTBGaztRY+W5y0d0koUfRj973BNeXWviTy0trm0S2uH+zvC32mIOqhkCt8p6Edj2rCsnZCndJGdoHgXXfFF5Mui2E199nb5mjIRFyeMu2Bn+da2t6HrXhMx2viLTXtfNVjGpkBhkHQkBfl+oOa2vBvxW1DwLpcmmwWdlfwySGVFnZkZWIA5ZQcjjoRxVTxr441Tx/5Lag0Fvb2+Xjt4Vwis3DMSSSzYAH07VN42JfLbzOXnuLAWWWklFzuIAO0xheNoHfPr+FY9xcGaVI7cbpHIXI4JJ4wMcc/4e9V76ZfNeOM5ClshRjHPAFd38MfhRqPj+Ke8+1R6dYQZjE8kRfzJCvCqBjgcFm7Zx1pxi3qVGLOK3XEcKw3Jt825uJFCRqJQ5AUkuBkqDwBkjPaqWETZtJY7SWXbjYc9PftzWr4j0W60bWL/AEy4jVZbGQ28qryPvjp+h+hrMjhY4J6kgAf59aplS2Oh8J+JtS8IapDqWmSrHcRjYQ67ldW+8jDuCP8A6xrqF8TXeu+MLfXNQaI3NxPHHMkQMaMgAQDbk8DgjntXD29vLIM8kAZ54yPauz8I+HX1XXoIoW8qG1/064eZ8IsMY3HOfXjFRdt2Mk23Y9WvbSGRYI/NkkZ93nxuPlQhvkwQO4HIrh9R0lvEOqG0t7OFUtVVHMQyHYt1brliMj8PatUfEDQdRE0dtdz2UhhM0c01syrI2Oi+p9vTJrQ+HNxF4avStyHlLxs6siZ8yRsYwT2AJ596TSvY0tqUby0aBntns3gO9N8F0u11bI2k+ucc8844rzTxLd3epeP73U7RXD3F0WJtoyg4wrsF/u8Z5zXvGsRTeIrlpLnaNq4jKjOwZ6A/rn8sVzN74du3vorOOCJhcyJCsg7s3DZPUDH51Seth21sSeMvAGr6KqXttLDeWSFS06sUljbHDsOgGf4gcCsXRdRn0jX9N1c20s6Ws3mTKvVkYFWYZ7gljk96+gPLRY/KG10A8sBhkEAY59iK8t8U6PHoOoypEuyykj8yBCpYbc4KYPoTj6EVrKFtUTUpcvvRMf4zeINN8TWFhZ6dMLn7MXupZMFAuRsC4I69SfSvKNUsLKVwbYzPH93dLgsSF+9x2znHtjNeleINIivLSW4iVDKqorICTu6ck9sHJ96ral8OYI/h8fFcN3L9pj/0n7PhfL8vftOOM7u9ZSTkzJuUnc8straBGcu5WRWwwB5K+o9q9n+D0mk2Zv49Qt7SRpmRoLqVA+Fxho2yPl55HHPrXi1xLs1SKTJ2g/MGGdhB7jvXqHgaytLxjNK6RckRySsQi5G7GQeM46kYB4pR0eoJtPU9O1TStOsCLjSnhiLZDwxYKYI5IHO0np/KtDw24jkaMH5ZRkgf3h0P5cfhXI2cyqgCMwQfdBOfoRmuh0eSNZoZEY7i43Anpk46966E9Topy10OtzRmk9frRWp0geaQ8UopG60CEpD1opMc0ATg0ZopKYC0UmaKAFpKWkNABS0lGaBhmlptLmgAzS02lzQA4HFc9488SHwr4WvdSj2/aQBDbBuhlc4U/hyx9hXQcH9a8i+O0t5q13oHhywieaW4d7lY0BJkf7ij8BvPPFKTsiZPQ8tt1gvrcSebJPOpk3Rvjbt253Z6li2T+Iqpp/h68+2i3vYniupm82RCCrgEHAwcex9MV1PhbwRqV34kbw5coLZkci4BYYRV5GcHpj5sZz0FdJYeGiNb8xp5b68DsYX3cuoJUOcnhcfhXIot6nGk2yj4R0WfR9QllnRIPmSNXSXaBjO7BByeT1B5r1Lw/wCE7W+e21XUYFkaElraJgcEnH7x/U5HA6Yyec1X0DwtNEHmv2jB6QxQnKxejZI5YkdhgD16112nS+baq4+6Sdp6ZGfTsM5xXTGFlqdMKdlqWwcc9/WuU+IN35FpZRFT88jSHnug6D1PzfnXUPKsSPI7bUjBZm9AOpr5m8a+NNX8Q61cX8UhS1IKW8W/GyID5R14J6k96cnZBVdo2Nm81WKDUTHHeQ3QGGBilzzjJBPByM4IqG78eva38ENxbiK3kQ5K8l/p9Dwe/SuM0e9i07XtP1W6tRqFnbzCSe1ZuZUGTjnryd2O5GK9Q+J3hLQfFHgt/FnheSGMWQE7pCMLtJ5+T+CQZGRxnn0FZJXOaNM8a8eaomp6ncSRSL5ZZflRhgnpuI6E/XJGKz7Ofy9MhjORkbgcdv6nimyrdaoFtohLOQZJVgiBY7tmZCO5G1SfYDpWl4f8m/06FdoZ7dWWQAjA7hvxBrOotCpfCafhHwXrHjC/NjpNusjAb5JpG2xQL2LntnsBknBq98RvBuo/DtbW01C8tbhr0GSNrZiD8pwcqwBAGevQ12ngP4lW3gjw9e2MmmAkM06zKQoztGA46nGOMcnOOK8l8WeINV8Za7carqk5lnc4VeiwoPuoo7AfqeTmklG1wSja5iryxwAxPc19E+Avid4c8GfDDT4nl8/U41lzYxj5t5c4LnoqY289+cZrwfTrMMevK9gM445Na+m2UcYzK+2PaSm0hgW5Kn3GcYqVNx2F7RrYzfEt1PqXiN9RuZPOuLqd5ppOm5zg9Ow9Ae2K6L4X6DpPiTxvpmnaurvZXBk+VH2mRwpKqT2BxWJ4nW1ja0ihd5JUUlpNuFBPVR6/XvTfC11Na6jb3NvN9nuIJBNDIOdjryG98dx3qubqHNfVnf8AizwdB4D8ZR2VyJbvSmMd2hZcNLBv/eISOrLjBIxkYre+LHhyz0S1ju/C0wSz1azdjAjBla3V0Ztp6lSCpxnjp645rxl49m8b6hYXVzaC0mtLH7PIob/WyFtzN/sjgEDrzVbQNQuEljikdrm2jPywtggKeqr6A5OQPWlzJOxLmk9DGvdQS6+w28ahkMLlvnzhjkAn0GD9a9J+GVkdd0Np/MZbuCANtHSUKcfmAOcVleHvhfBP8PtT8SapPcWEkMbTWUR24WJPu7+pO48AZ9D3p/w71b+yhdrsaLy3aRV6ZU4yM9+GxRNWZttZs9PtcSIpXqBz6Ut1CIbu0kRWLrMjDnIDZ49xToYC0Av7PLqoG6NRzj1/x+lVTcXF7rVlbW6hw8gYMRjamckn6c8VUVsWjvn7g+tY/ifw9D4l0w2skhhmjbzYbgLuaJ/p3BHBHcVrnnJ9Tn8yaQHH866dzVq6szyS+guNMnexukKG2j2lVGcg5IZD3Bzx6D6Yrm9Q8QX9j4cudDi2vZ3EgnBUEsoUgsE54DEAkY5r1rxxokmq6ck1tF5txbEkoOC8RHzKPf8AiA9sd68rBi07UtNvyvnxpOsuDwHx6e34dRWE00cNWLhLQ8zfT5LiG8uImhRY03FXUZIJxhOPvfkevNdJ4F1NmBtXwJI0xxgFh1U/TqDVvxrDb3/iy5n0iPZa6hIphyuwbzgcjtk5puueCtX+HV9a3V2IXt2c+XLAxYbwPmiIIBzjOM8HHas1cjVnqnhbR4dY06aRrkpMJCAgAIUH7pYdcE5xU9nBLaahFayKUcSAEHuc9R7EciuZ0O/k06/ttXsMS28wAljDYDoR612ratbajd281uGOzbkOMN97v/Sto7HRSaaOn6se1FBOTmkzWx1AT2pD1o70UCEzRQeKbnmgCxSUtNpgFKDzRRQAGkpc0lAC0lFFABRRx60tAwNL2pKM5oAXoOled+Ob+80PxRHqtqIzKLAW0O6Led7s3I9MYz616JnPFcNqcd34s14/2ZD5cOnv5Q1CZf3KS9yin/WkZIHYHr0qZomaujm/Dng/W7jUrtZ4ZoRGUa7nchnlkYFiVGcF+c4PTv6V6NpWg2FjAvkIrbiGMh5d29Sx6/TtWjp9hHp9qkEbPJtJLSSffdz95mPck1I9vFJnMfJ64yM/lTUbBGNkZOrXN3FG8djBvBG6aR2AWJe5Pf14A688CtC1vrM28Rtnmlh8sbH8tm3LjAyQOvr701YbYyG1RECRKGeNRwxbkbvXjsaszuVhlKsQyxkgg9ODimX0MHx5qb2ngvXJbaO588WcojxA3JIxxx6E18vT3st/IjC4lI48xm2gZ/vKMcLt6Z/PtX19Ax8tDnd8q59+Bn+dfKvjjR5PDfjbULNISLZ5WltY1BKtFIx247nBzx2xis6iMK0epnpazOUijw7Bgol5VQe3J7+p6U1ob+2SUS29xGjKcEI21xnOfl4Prmuo0jT9NsvEFta+JWurKzEh+0qyEsG9CByF7Z9/aus8Y+Kfh/DodxYeHbC3u764QqlxFFIkcB7u0nBOOeB171mkYRR4VdyFJpJ4nIZjkbDgpz68fp64qXwvO1tqrxDDbkOFYZDYHp9Aa15b63stQilmtIrq1ikG5ZgBuGDk59uv5VyZ1aWPWhqaQxKxl3CIDCgHjaB9M/jS3Ra95WPYvCeh6B4k1Y2Os6jFZ6bDEb64DTLCZXz8sYJ6ADJOOemK4fXrPToNXvhoYmbTBcFLV5c7mj/hyfXqRnnGM81q2mlPqDzSLaPJLKjSKoUkKi9sY5wPT0qxpemm5u47Oco0eQXJIAC9eSDxnGOO3NYt9DDnSVj0X4KfDHT5tLg8S6xDHeNOxNpbyrlECsR5jD+IkjgHgDnvV39oG102x03S7xIIobuR3hYxoBuhC7sYHcN0PuaveHfHg0Hw9bRS2kc1vFvjikVzHuIYnbggjj1GBjFeU/FPxlP4suV8xU+bHlxrnEEfTAzyfUt0Nbactjbmjy2R5/dF57xc7gEXhc8jIz+frV/TlVY7u1+zQTCSJQsrZD25yCZE7c9OexrIV2kuWyRtK7gSegHH58flXoZ+G2vQeEIfGaWgewlQTlS4Z0hPSQqOSp4PcgHJqOXsS4voc7EJrmaNAoLk42kdTj6/r7V2ej6Ldx2VpqghlWz3EpKwyruDyOnHSuXtoC8izIAsmc7OcrjrjjqPbjBr06w8TXdv4XbQhFAtrMQ6MxLNFnklccHv16ZqEtdTBmLrPjjUbmyTwxNHGdOtBGxEYJebqy7mzwF64AySKx7RJob0+VFIYrkiYAjO4EYLYHGMj+tUxJPe3U90iBHvXWGHdjcFAxuAx7MQa7fTEsRra6XEhWYgyYI2hV28r1JBGOfrRLXQ3u2kjqPh54pW2kfTryQqAQquw7juR+NdJOkWneI7e6hAaF3+YKeFLAg8/jnFY+s+ALWwtY7+1uJg8ZButx+8p7r6bSRx3FSWZlKrbz43g7C3970I9DWkW0rM1i2tGd+Rj0OOMikzUVsW+zQlz82xc8Y5x6dqkzXUdAE1xPjfwlJcRyX+mWyyOdzTwIuWY/31Hc9cqOvXrXa0h+tJq5M4KSsz521izDvuTMS/Lj592GH8QJHPIHbIrrPFviu18W+E4LJ7VzfedE1wWGBEyjll9d38ic11fjDwAmuO15p00Vpdk7pEkB8qY+pxyre4Bz3rzPUbW48O3r2utw3FoGB2kAbXOOCjfdYZ/GudpxOGUJQ0LHh+5NmW08/cXLxA9l67T7jtXUR3AhmSLduUgFTjG0kV55a3shv45SpaRTg7RklcZOBnt+WK9D8Lix1CVo7iQKXi+SZW+VXByfwx0zSpsKTdz0DS7kXdhDNnJK4b/eHWrVY3hl820yDkI/UDjkVs10LY747BikzRmg00A00hA9KU9aTrTAmopM0UwFoPSkFKaAAdKaKWigA9qMYNLQelACd6WikoGLRSUtACSusUbyNu2qpJ2jJx7Duap291GEjtbKFIwqfKwKmONM89PUn7vXJOauhvmHODmqFmsX2ueZESN5I4mbaAN33sZx9aYySSGGMb5RLO3Qbsvj22jgfgMU7Trrz2niCyARbSA6nIU5x168g0TmQ/u1VdzAZZvur+HU1izWDjWLaVJbknlJZWY8BvugDoPm/TNIEbFqnl3N9cHgvNznr8oABHttwPzqWV1WS5H962DL6EDcP54qvCb4liY4iynYZHfKzgD5WwBwecHjkVj6nr7adNDaR6dd3M5GBHAyERxvkfMxI7jKnrgYPShuwzfsmJ3E9FYAY4+6AD+teEftJX+lpeaDp8JjOrxCWWZ1wDHA+Cqse2WyQPSvYvD+qHUrdr2C1mkSTcyRkoCSCQVIzwSw69sV8geJbnVr3xPqd3rkE0GpyXLPcxSja0TEkBcHqFAAHbvUSehFTY6fQ5W8oBjM74CszOSxPOevbHrWpfaJqtxpP9ox6dqE9rakl7pISIUjJwTu79vmrQ+CVlpOsa9cz6vNaiCyiE8cdwwVJHzjnJGQv3iD1yPSuw+I/xL0/VLdvD+mXKpp0hCXeobSylAfuRqOSuR8x4BAwKytpc4+Rbs8J1xy1lMXbLK+0/U8YHtgMfesKS281CM5cfN6k56nPtWz4tmbesG0IVcll75AGP5ms2xiM1xFbhthnkWLcR93cwH6A5px2NY7HrfgTVbe80+PUTI0LW8LJM6sRs+XBHHc/1qXw1pb3Vld38kQj86QmMPkkhupJ9hxW94w8C2Xw/spdI02OQabetGfOlcs0hA2uWJ6nPOBwBiu6+E2m2l1pEl29spEMpjhVx045Yj1//AF1nyXlY5vZ3nynjvjjWX06DTtKt42hltYzK7OflfzOQAvQKBnnvXB6jeLfzxmK3jhIiSGQxbizBScyNuJ+Zu+OMCvYf2nruxOp6FawiMX0cEkkrKBkREgIpx7hiPbOK8Z0+S3s/JlukmaB5CZPKxvZcHAXPHp+ZocbM05OR2KM8a+fIqkAKoXA6H2HtX2Z8LtSh1b4b+HLiLayiwjgcY43oNjj8weK+K4Hk3u3B3DBA/H+lew/BD4sW/gyK60PVknm0yVzcQyxDcYJCPmBUnJVsZ46Ee9XB23NYNLcsfEnw7F4P+IKWunL5Vldxi5gjHSMliCq/7IPQe5qn4huJ7BElhJ3yMqIedoc8DI/M/hV34h+L4fGPitNQtkMVnYxCO1L4DSHdku3oDkYWsjxXcm9i0uNYwji7AYc/KSpA+vfFZtK5zSSc9DQ8FaMk8UzJZS3c8eGiYltsQT7xcDoGzx9DUFpdSp4xW+SHbGrEsD0K4CsB+GK9L+EP2LR/Bl9qCyB7iOaQz89Av+r49GDZ98+1cv4Z0gT6leJcEFTCfunoWP8AhjmpmrbG7VrWPWtG1BNRtDBLiQqvTHEsfY4/Q1nadYCPUkRzvCS7VJ/ugnB/z6Vi+HzNaxSW7TFJ7MgKynBZGJGeOvTBH0rotKcNeQMvIYkYP061qnc2Wp0OeMnqev40lH1ptdBqKaOO9JSd6AA8VVv9PtNTs5LO+torm2lGGilGVP8An16irJNN70CavueW/wDCsdU8M+JoNZ0B4b63hkLx28ziOVBjGznAcYOM5/A1U8OQ3Ul3rJmsnsGtJw32QKR5Kvk4ORnaD6eua9d4781nalpMdzI15ChF6ITF1wsydRG/qM9D1Ws/ZpO6MnTW6GaFax2onWPofLJOScnYP65rVrC8K3Qu7NpCGBO0sCMbWA2lT6YIIxW4as0QGkNIaKYCGig0hoAmooBpDjsKYC5FJxRR3FAC0ppKKACiiigAopCaWgdwozjmkdkRGd3CIilmY8BQOST+Fec658dfB9jo93c6XqSX+oohFtaNDIolk6AkkY2Z5JzyBQ2JySI/iv8AFKfwpIuhaGtu2sTxhzPL8yWgOdny/wAUh6gHgcE9q0/BXixNZ8PWetLbXUbNAlrctPCfLMkWQxDJuI5J6jByOmK+fYptRuLu91S5lW5vLyKQ3EtzFuaYv95lz0OcYI6YGK9U+Ffjmz0b4c39vLOkeqabNMIoNwEk7SnMRUd/mJBHbac1jGpqZRqanUat8Y/DmjySRTGW+kiBkkTTQLoxoCAXkAwEXJHU10mkXUfiKG11e3kEdpLEJYA6q24MeGI7Nxjqa+cbLw94j1qfU/D2jgC0vXthqVycImAxwGb+6WYsVHXAPQV9ArfbFTSPDkDuI40QTx/JlFGA5Y8IDjr1bqB3q1NM0hO5u3BuBmPMDBQN25CMZ6dGrnbrRpru++2famglWIREQJhWUtgAhsknOT14rR8NW8MEF0kdwly4uS00kalVLsg6ZySMZwSeea05Lbc+5RgtLGSB6Aj9Kq1zTYx9G0xrGIW6TSiPAaMuoOCOSG45JJz/APqrz/4t6v8AD/Ub4aL4tj1G21qCJWhvLC3MrqjDIyf4l/2Wz7EV69JsRA7OsYVs7iRgHkfyr5f8apP8RvivepoMRvWkdLaDB2qyRJguW7L15/8ArUnorIzqPQ5yxiizIsa742O5DIgVtozgkdATjpnv7VZZ7ZbSKMQyLdtckySGUbJEz8o8vHBXHJzz0rrvHHgFfh9pulyzazFf3N47q0CJsBCqDuTnJGeDnGOMAVyiRcxO6o0jh2dxkHnj6cDj8PWuZp3OKV09TjtQLXGo3EuTnze44znOcfUdK2NVW21ue51GzsYdNEjZNpbklIcAZKbuQCQW74JrJihm1GeRoY03tvm2KQqkKMtjJ+9tHA71vadp8Sadcz3V0Y7hYka3j8skTEvgruH3SF+b9K0vZGl7Hoviz4waN4t+H+kWl7NIniK3uY/tCmM7G2oQ0ofphhg465Nbfhv4x6f4Q8JXFlFatdap5jzQr92Eq2MMx644HA5NfO9xFPdaj5UNuzTzuIliVSxdiQAAPcn9RXTzzXmkWD6fdRTLIGxLHKP9XIoKsef4gMr6cGom7ahPRqRX8R63feItYn1PUbuS7u5yN0x43HHHToADgAdAK6mW00Cx+D11d3S2UmtalqSR6eAd00MMP3zjOVXO7PrkVyWjaLeeIL210+whM1xNIEWPO0FmOBk9hgE11HxE+EmpfD6xs7671GxvVu3MREIZWRwu7ADcsuM8j05FJPqCvucLAgIkODgY6VZR4o443E0xmyxkVk+VVBG3DZOc5PUDBFP01EG5ZFPzMVVh1BxjP61rahZxXKF44oopPlAWJQqkLgcD8Dz6mpciXIntdeNxYR2k1zu8uRnEYYEK57885OB1OKuX+oefYRGLDyWzidM9yCGwfbg1s6hq/hHUvhLpmni3jj8T2Egjj8qApJIN53uzYwyMh7nORxXLWy4sp3LuCkW8kZwD9fpQ9CJKzOx0a+nltxPbvKlncLulIO0Svj5V9Tjd19a9C8G2yG2uLgnB+WJmI5OOcE/lXmWjRmK0gILB4oh8hAJ2ryTnqPp1r0/w35llpNiLqFYZLpC+wdSM5APvtINT9q7NI73NXxBbXGkiO+SNWIUHC90PDAD1zg1t+DZFvbJrxVPlsdsRYcgZOf1rPnl/tJYLKUqEVRESOpBI5+uK6yCCG1hSCCNY4owFVFGAAOlbwWtzoitbkx6U2lLA0hPNbmgUhNBNJSuMKbSmkoJCg4780UmaBkcdrDDLNNGu15mDyH+83qff1PfAqQ9aPxopiCiijNACGkyKUmmmgCaikzzS0wCjpR2ozQAp6Ugo60H0oAM0ZpM8UZoAXHNBPp1oprsqIxLKFAJJJAAx6k9P6UDPOfjl43k8KeGUsLRQbvVy8AyM7YhjeQPVtwUfWvnbV/Cuu+G9UtIde0u605bn50877jD0yMjI6EHkDHFekfHjxHp3iPVtIm0G8W5m0jezSYBhOXR1C/3yCvNc/wCOvizrPjbT47K70qzsIVnS5YpIzsWUHkbuByx7Z6DtWEncwlZnc+Intdd+FnhvXHAWexzYSbm9mVlz3IKK2Pf3ri/Dmk3l0bu8i0tnt7Mo93dNhREGx8ozjL8jIHODWFY3809lGyiUJvYoNxKK+MYA6Z4/Gu4uPEcF/oth4d0y2ksdJsQsssL4827m6mST/gRJAzzWN0zndnua/hK6vJNfi8NWqw/Zb2aS8LsudkixkbmP8SgdF/8Ar49P1ae10fQXt7J3BdlRpyj4ZmIBd3AI9yQcADFebaFpN1peq+HdSuHjT+0iJlRQWdRuKhWB4/iyfxFdlrfxJHhu6Fnd6HcSOVAEkFwoRycg43D2x1OOlbU2lG7OrD6o6+x0m1tLWFbaTJQFvtCEZlLclj2YE8j04xUVzqVxBO9tFaiZ1jDh/M2p16EAE56/X2rN0TWZr7SIr+zsJbeKRRILbeHXaScNjgrkd1z7ir2m3SapPJdCMxsn7uSN2BK9CM47deoHWtkbGZq/hhPGOlS2Ots8iTgqfLYoIuuCg6ZGOpznvXhMU+sfAvxlcedZ21/JNZtHbyPlY5oywIkXHOQygFfXj0NfTaRBCw6gncM/r/jXk3xm0STxP4x8F6GGMZuXnBlA5UEpuPPoob8xSaImeUJrmo+JfE6eJdeMWoyxSIwt5BsjZVYHywvQAAHp685qbxL4jTUdV1fUo7OGyhuEPl2sOCsYwNozj0BJwB1rvvi5oXhjw/p+l6Vo9pb2V6mXcRDDfZsYBkbuS3IPXr2rxbUboys6KqqrELgdMdB+Fc8r3OOV+bU7H4YfCe48cG6lOow2MdkIlw8Jk3uwLAAAjAA79eal+IGh3XhR5NOvPLWeLY4eHlJkOdrrkegII9RXX/Bm7TQtdUPMfs+rgW0m4fKJl5jJOMDOCvp0re/aFsIG0DTr51/0hLl7dAeDIrITj/gJXP51bStc0snG551+zt4Tg1vxtLq1yoePRoRcRqwyDOxKof8AgIy31x6VY+O/hpdE8SXMyODb3/8Ap0SbfuMzBZFPtu+Ye5NWP2atR+weMb/Sz/y/aeT9GiYMDz6q5rvPj94Mn17w/FrVmrNPpaN50Y6vbsQSw9dh+bHpn0okrxLceaJ5l8DbSMePdKMgLKDLIOMjeIzj+Zrc/aC1RdT8S2WmQybl023bzAGHEshyR9QAAc+tcPoM8mmSpNC5ikKnEi9RnofxAyKm12FdPiXULmG4me7LuksqkxOx4I3fxODz71zxnpYw53blMDTFVRdW2ws6ncuOgzgHJq64YY83au/Lr9B3H9RWJa3Mj3FyQSZHiOMD7xx6V9Tat4d03xf8MreIW9uWGlxz2cqKCYZFiDKVYDocEe+TnpVqF9RqFz5knxFcJcR8o5DEf3D6e3OK7nUrfRp9PSTSInEdxpYW8STnZcMAG2n0J59s1yTW6GGMq5ImUkxlW/dMBxyRzxzx7V3ngzwNqV54J1DV76VU063OyCIZ3ThZAJCT2QHj1PPQClHUSVzd8QeErPRvDejzxzzNfXMLtKzN+7xsGAAO4LLg5966HxbbXcVhaxWcchuYZY1CQKWJVlxwMZPGD07Vlyi51OS0S7uZboxKkQLEKscasCw44HQZPfIrt/DVvNdam1+QRHErDJJOXYYAHsFz+dXZN2RvFJ6EHgrQ9WihW61dRDwGWBvvlu5Ofu/Suxo+lFbqPKrGqjZWCkzS02mMWkNGTSUWAM0ZpCQKTPtQAuaTNFFMAozSiigAApD1opDQAhPNBoxTTQBNk07mkFHSmAvIopM0ZoAXNFJRQAdKM0UUAHJxjkngD3r57+MvxWbXZ5/DOjTFdMicx3Mykg3bA/cGOkYP4sRnpXsHxG1ifQfA2t6hanE8dqUjYdVZ8Jn/AMeJr5u8C+Abrxlra6ZFMbeFEMk1wybtkY4zjux7CsqknsjKo+hiw3/lfZxbxLb3ET7vPR2DZ3Ag46DbjjH41V1EvcyzXE0kkrszSvJIxZnJPUnucmur+JfhbSfCXiaPSNHuZbkQ20bzmaRSyytnPIwBwBle2a5S/kd7VbfEZAZiZFX5mzzhm/iAxx6c1zrfUwtqGiajfXRTS4LmKKFZWuYw+1MyBCANx9ew9a9N+FSadr+qXOl383k3dzbYspSPldwclSp65HOOOhxXlvg3R28Q+KNP0lbhLZrqYQrK4yisc4B+pwPYnNdK2m3ttfLbKrW+oW0hQoSVKMp5Bb1HOD60T0YTsmdhrPjBfDuvRHUYZVXTJ3jniVzJhg4+6M9DknOBXtcthpXi20SR44ry1nCXUUhJAZHyCRjsSMEV8f8AifUL681W5+3NM9yZGedpz+8L4xhj1yK7H4YfEnX/AAc8rxwSajpRZY57dgdoPO0I/wDyzfrgdG6VtTtbU2pS5T6oS1VI444yYzEu2PI4Ax0I7ioUs3kdb+MRxXHlqpCk7XUHOxieSPQ9RUPh/VY/Euk2ur2UyraXSb0UAMyc4IJ6BgeCB09a1goCgDIAGBz2rdbG6d9Sob6JJFjlDws2cBx6dt33T9c14X8UfG0lx41S40q68j+wR5UFxGQd0pG6Rs8gqMhffFfQK44DDchOGU9CPpXytbXNp4R+JMjXFn9ttNL1OdWgXAJAY7SM8ZBKnB44rOo9DKs9BIdT1O7vzdG/MN/K7K91dsA29lKtuLDA+U4wRxkAVx+p2kcTW5XcQWQMO45H9OK9J1zUBrVxqWtSW8Mcmoy+ZHCuGEagAYY4G44XJPqciuL+yrd3ttCw3o1wA3uoyeRXN1OHmszpNPubS3tbhSk6zAqYkQhUkVc7uuSCMjgVR126v9RtQ+oX95fJGfLQXM7EJnhSM/060jWn2S/dARsdwAiglwcdBj+LsMdc1JOiMhjkjAKnBRucEDkEGhyYru5e+BkQT4o6cVRg/wBmui7E9Rs9PrX04ypIhSRAyMMOp5DAjBB/AkV4h8BPDRGv6nrT52WluLKM9mkkIZvyVR+de39K6YbanfS+E+UNb06Xw/4mudKkRkawu3hU4/5Z5yhHqNpHP1r1X4xnS7P4XWNjCYTvmtfsaAjJCjLMvtjv07V0HxG+GVt4zja+tJFtNYjjwkrf6ucDOEk/ow6dDXmPgbwYfFPiJ9K1+2uojpSuLqN2O9QvCwg9AMkH5eCCDXPyOMmZuLi9DyS1iBvnLA4Ctjb1BBPT07V6V4a+KWu+FNI/sO1MNzaFSLR7pMSW24HdgKegYnCnpjPSsvx14es/D3xE1HTtMtpLeyhI2IHJOWiVyAT+OK7fRLPRtS+EmupNHaJfWk8swlICyCX5TG4/ixjK4HoaLu9iLu9jiPDmkvr2r6dpFvIE+0yrCsgXOwdC2Ohxgmvpu10Wx03QU0eCDfZw25gCNzvXac59yck+5r59+GMLP470ERrtCXTFhjsEbP4e/vX0XcS+VbSS4JKRlgMZJ+Xge5/nV0Vo2aUVo2ecaJB5eno7sjSBAm3Pzuccr9Og9SfpXoljarZWUUCjG1Ru926n8z1rJ8MaMbGySa7hX7SeF3D/AFagcHnox5J78gVuk1pGNjZKwUZNJRVjFyaTJopKAF5pDRSUwDrRzSUUAGaKSlz2FABk0A5oA9aDj0oADSUGkzQA6mmg/WkNAE9FJmkpgLRQcUlMB1JSZpaQB3ooooA5H4twGf4c64F6rCknHX5ZFJx74rxW08S6j4S028Ok3DW886eVv2Kz4OGLAngMO5r2/wCKF5HZ+BdVVxua7i+yRp/eZyAPywTXjVzoeNMhnnV8KufunAUH16Z9ua5azaehy1209Dg9Ut3trqTzpTNI7ZaU5LMxwWPPOT3JrKupljUKoOWB5IwMZ6/7teleFfBtv4p8dWVhcFntYojc3oB+UovO0Htk4BPpmsj40+IrTxL4llubBYvsVpGmn20kYwJFQksy4/h3EhfYe9TFXV2KOurOG0db1HF9aCZDCys88YP7ok/Llhwpz0r0Hw01x4g1Jrq7maW7dmkmmk5Lv0yR6+teg/s72Wl6p8PNX0y5SOX7ReOl5CRkmNkATI+gOPQ5rzPTzP4I8WX2nzAyJb3D2r5+8wDcMD64A+vNFWOlwqx0F+Mvhz7Fe2OtQAsl3CIpH/vSIMA/iuf++a5jR5tc0zTZDC+o22kaoRBIyqywXRVs4JwVYg+4Neg/F6/jvfDGnw6WGujc3oyEUna2CwRe4JYYAHZT61yHhn4o6pofhi88J3Wn2Op6POGIgvAw+zMf4kKnIIbkDsRxVx1iUl7p6f8AB34hWfhuefQ9XlaGzvZhLb3LH93DMRghv7oYj7w4B6174QckHqO1fFFhqUCTwzXFot9HGR5sEkjJ5oxjBZeQSecivov4J/EBPE2lvod422/09Mwln3NNb5wvPdk4U+owa0py6MqlPoz0w8D6c18qfES3ez8feJ1mGD9veTBPDo6qwOPpivqzHtXz38eLML46hmEBfzrCAlVA+cq7Dn34xn2oq7FVtjs9C+HWk6Z8Pri51yySe/lsnu55JD80PyFkVT/DtGM+pyK8YiEbXdsCQQjFi7Agfdzk46DPSvavH/xB0XUvCV7aaXqEVxNfJ5biIHMcR+9njAJAKgd8ntXikiqb5RAkhtZPNeJpSDIy8Al8cE9Rj0NY1LaWOWry6WN3wjq0Ol+LtM1O9j2pa3IaRnTkKQQXwO6hs/qK6X40XWky6jpt7pl3Z3NxPC63It3DkgEbXbHcgsPX1rjreSaVhNcSvO7qC8kjH2AXd7AAU6Dw7c61cRadZKxkvceSFUcnJwc+gOST6ZpRd9CYT+yezfBBT/wgENzswbq8uZQT1YbggP8A46a72szw3olv4Z0HTtFteYbGBYQ398gfM34tk/jWjmuqKsj0IqysKeP8K4+/htNG8fJqMjJCurWPkyyOcAvGcKTnjJBA59BXXZzXK/ELTWvNLiu1XcbOQs6kZzG42k/gdpqZ6K4p6K5478Vbm2uviJcTwMjoTFAxHILLHhsHuM4H1Ws3+xxfJGZIGVZwTFO0ZAcqcEg8ZA746Zqh4xkWDVxGoYlJEkJ7jBC4z6c5+tevQy2eo/CXTZ5FR2tAsUBH8MqSFCBn1H3vWuO3O7nElzO5a+E3gq00uyTX5MyXd0rrBngQQ7iOB2ZsEk+hAr0P2P5Vz3gFyfCdkNpARpUXP90SNj9DXQmuyCtE7YK0dAJpKM0maooWikzQTQgFPSmigmm0MB2aKSjNMANNzSmjFIAoFJRmgBTSZ96KKYBRRQTQAlFIKKAJse9FFGaYBRSdaXFABS0nFLmgAooooA88+Lbs50i2D7VYzSY/2gFUE/TdWJ4w1yOPw5bWCW4itrOJVjhBzvfaBn9M+uSSa6j4kwI39lXBXc8LzFR9VH5jgVxPimxC6fCZJFkfCuxTozkZI/DgYrkqt3Zx1m7nnd1feUk8oM0Em3YgjkKYU8MGI557g9a5TUXEskMa7QEXdwOnp/8Aq7V3klpcXMckuk6dPd6hYMb+SZSJI44lHAMZ+XAbkZySFIrz4zebNLIzk7iMn3LEk+3J6D1qIp2JgnbU6z4feJ9a+H+rR31tasyXkQZre5DIlzET8rAjpyDhh6GrMVre+PPGm6YxLcanPJJIFJCIM7iffaCfc7fc1zkKxmKx8trt7nayyic/IAH+QRjsNp5Hqa7vTLhtH0XVPENqvlyW8MyxHuDImwEfRsfrQ5NvlZfNrZnPeOfEqaT4k0+x8MylbXw3P5kM7AMbi7BBaZux+7tx0ABxXDXN09zeTXb7XkuXeWTbjBZmJOPxNdH4PtbO48U6LDqKo9o15AJhJyrpvXcT7HjPrk13n7Sui2Fl4l0+6tYI4p7y0bzY4kCqwjcruwP9kgcf3RW6WhpuRfDX4aaB8RPCFw6anc2mv20jCRSwaEIfuEpjO3sWByDXP2i638OPFomngkt7/TJQ7oDlWUjnB7oyE49cj0rG8E63qXh/VRdaZdNbTqu0SRtwQxxj0IOOh4ruteXWPFkGo+ILhJZ0KoksrRBUiKrjbxwBg/r71La3RlKSWx9LQTx3VvFcRnMUqLKh9VYAj9DXnnxs0SWfw6Nbt1VpNPUpcApvzA/BOP8AZYg+wLHqBW98M9aXW/BWmSnia3iFrKvcMnyg/iADW9qtr9v0u9tCgb7RbyxbSMhsoRitnrE6fiifNdtaR3LAxylpEJcbc4yeBx13d8emKy7i4kLQNKhO2Jt2FwcFhu687sA/jXd/AHTmfW9QupwTLBaIUzxiR2IY/Ubce1c98RrpL/xtqU8JBjluJUVx/FtCgnIPIzmuGUGtTjdO2p1Xjjwdp+h29nqmjhp9OuhtCySeYUJUFWVjyQwz16EcVr/B/R5bq+u9aupWmNpELC2DHITd8zBfbG0fnXnllqGu6lp+neHYrqS7tUuEjtrQhQFZgQoDemc8c4Ga968GeHP+EW0GDT5GSS4LNNcSR/daRsZ2+wAAH0963pq7uXSinO6N2kNG6m5rpOwcelYnjO4Nt4W1SQdRCVzjplgP61tZqtqNjDqdjcWNx/qriNonx1AI6j3HX8KUthPY8H+LXgvTdJ8H6PrVsH/tKZo4p33sVmUx7jx0Ug4ww61X8EWl7qep2ekQzqFum85vmLCMDIL4J4YDJ9+Kn+IWrXcnh+DwzqUKi60i4eESDGJRwqceynk9xitn4LaebjxBd6kD+7t4DGO24ucfyrkeskkctrysj2G0tYrK2htbdNsMKBEBOSAPU9z3z71N2pM8daTPNdex1i5ozSH2o4oQB6UUmaCaADvR1pD2ozTAKM0ZpKQBRSGjNAC0UmaM0wCg0H3pMikAtJxRmkpgHtQTSd6QmkwLGaTNFFUAopxptGaAFopM0ZoAUelLTe9OzmgDzz4nakINQ060LMpMMkq4/iJcA498DFcTf3TX7rahZpC2ERVP3mJPyqPT3rtvi7aKo0bUiuAs7WrsDzh1JUfQkGvMdY8RR6ZJHdRjzbngJG3ygHqCT6Ac1wVW+c4qvxHo/im/034XfDyWxwjanfwvEiKAGnmdcM7f7CAnnoMYHNfNlhDHNeW8MjN5c08cZb1UkL+FX9c1W91i4lvb65muriUnc8rZ47AZ6Dp04qfwl4cfxLqdtYwSiCRopJw2ON8cbMoPpkjFaXL5rnr3xr8Gabolrp+t6XYxW6xzCymjhGI2TafLJHqORn3rV8LaFZeIdLs9PvbJJrW+EYnQ8bo1XPUcjkdRTPE3iODxr4W0bSLdXbVLp4p7lCmBD5YIdienLcDHrXW+CLD7NKqr/q7S2EanvuY4H6A/nRypy0KSTlofP/xA+G154B8QLbo0lxpt0rNZXDcM2BzG3beufxHPWtfQ/D+q/GDxJBa6xqzxrYWHl+b5IZljUgKNueSWPJ9BXvHj3w1H4r8MXVj5W6eMC4tT/Esqcrj68r+NeI+FfEK+B9eXWobRprOaF4Xg3iPknI5PcOACPTNaSVmKfuyPK9Qtp9A166s5WzJY3TwMy55KMQSAe3f6GvUPBXjm/wBCsbqK1FvNaXEfMFwCykkYyMdxyCOmMZrznXL+7udV1SW6jgWS/uDPKRGG+fcW+VjyAM4x3Fb/AMH9fstG8XRpqUcM9tNC0SxzoHBzgcbuMjr79KW+xL12PTfh/wCIn8PX0Cux+xOoinUcjaTgOPdSf++c17aeBjPQ/wAJrwzxXa6a+uomlSg2EkSyDywwET4Ysq57Ac+3SvYtAMv9hacJxiX7JFv+uwfrTpN6pl0G9YnjHxAs7/wJ40e906WW103V1aUGBsEE8Sxj8TvH1ri9RvLdL22uIUkSLzWaMO247cZ2k9zxg+pNe2/Gyzim8BXd86KX06WO5XPpuCFfoQ36V82tM9zIgBlIjAKru6t6g/19qwqq0jKrFqR7HpUmn6z8S7G80KJ1tHvo7iOPy9gjXyj5nHYAn6V7V+f41wHwd8MPpXhxNXvGWW81FA0Z248uA8qo926k96788nNdNNaHRRjaOoUlLSVoai0089aXNBPtQB5d8TvB9vq2vLcM8iG60y5ZRFx5txbpvQMew2/ngVo/CazuItJmnuYyj+XbQ4MYQgIhOD6nBXJ96u/FGS7tNAtNR066FpeWd9CY5CQAFfMbqcgjBU1reD7f7N4cswVALq0mcddzEg/987axUfeuZqK5jZ6UUGkrU0FBxSZooxQAUUUhNAC5pKM5ooAKM0lFAC5puaWkNABmjdRg0YoACc0gFLjFISaAFwabntS5zSUAFGAaKTPOKAP/2Q=='},
   {
-    id: 'preset-peperomia-pepperspot', licht: 'halb', luft: 'mit', duengeWo: 8,
+    id: 'preset-peperomia-pepperspot', licht: 'halb', luft: 'norm', duengeWo: 8,
     name: 'Grüne Münzpflanze',
     species: 'Peperomia rotundifolia \'Pepperspot\'',
     emoji: '🌿',
     color: '#b8c8a0',
     interval: 10,
     lastWatered: null,
-    photo: null,
-    standort: 'Halbschattig — auch weiter weg vom Fenster möglich\n• Nordfenster oder 1–2 m vom Ost/West-Fenster\n• Stammt aus der schattigen Amazonasregion\n• Temperatur 18–23 °C, nicht unter 15 °C\n• Kein Zug — ideal als Hängepflanze',
-    erde: '• Locker, gut durchlässig, leicht sauer\n• Mix: Blumenerde + Perlite oder Sand\n• Alternativ: torffreie Zimmerpflanzenerde\n• Hohe Wasserdurchlässigkeit ist entscheidend — Staunässe ist der häufigste Todesgrund!\n• Drainagelöcher im Topf sind Pflicht\n• Kleinen Topf wählen — Peperomia wächst langsam',
-    giessen: '• Erde zu ca. 2/3 antrocknen lassen vor dem Gießen\n• Fingertest: obere 2–3 cm trocken → gießen\n• Sommer: ca. alle 7–10 Tage\n• Winter: alle 14 Tage oder weniger\n• Kalkfreies Wasser: Regenwasser oder abgestandenes Leitungswasser\n• Gut durchnässen, dann komplett abfließen lassen\n• Überschüssiges Wasser im Untersetzer sofort wegschütten!\n• Tipp: lieber zu wenig als zu viel gießen — trockene Erde ist besser als feuchte\n• Blätter hängen oder kräuseln = braucht Wasser',
-    duengen: '• Sehr genügsam — braucht wenig Nährstoffe\n• April–September: alle 4–8 Wochen, halbe Dosis Flüssigdünger\n• Im ersten Jahr nach Kauf oder Umtopfen: nicht düngen\n• Zu viel Dünger → weicher, langer Wuchs (kein gutes Zeichen)\n• Herbst/Winter: nicht düngen oder max. 1× alle 2 Monate schwach',
-    schaedlinge: '• Spinnmilben (bei trockener Luft, silbrige Punkte) → Luftfeuchtigkeit erhöhen, abduschen\n• Wollläuse (weiße Wattebäusche) → Alkohol + Wattestäbchen\n• Schildläuse → Seifen-Spiritus-Lauge\n• Wurzelfäule (häufigstes Problem!) → entsteht durch Staunässe, Topf zu groß oder Erde zu dicht\n• Vorbeugung: immer gut drainierte Erde und nicht zu häufig gießen',
-    notes: 'Umtopfen (Babypflanze):\n• Erst umtopfen wenn Wurzeln aus den Löchern wachsen\n• Wächst langsam → selten umtopfen nötig\n• Alle 2 Jahre im Frühjahr mit frischer Erde versorgen\n• Topf nur minimal größer wählen — zu großer Topf = Staunässegefahr!\n• Drainageschicht (Kieselsteine) auf den Topfboden legen\n\nSchneiden & Formen:\n• Triebspitzen ausbrechen (Frühjahr bis Sommer) → buschigerer Wuchs\n• Welke oder vertrocknete Blätter entfernen\n• Stängelstecklinge einfach in Erde stecken zur Vermehrung\n\nBesonderheit:\n• Tierfreundlich — ungiftig für Hunde und Katzen!\n• Kleine runde Blätter mit roter Unterseite und rotbraunem Stiel',
-    poison: '',
-  },
+    photo: null},
   {
     id: 'preset-oxalis-sunny', licht: 'hell', luft: 'norm', duengeWo: 6,
     name: 'Glücksklee Sunny',
@@ -895,15 +910,7 @@ const PRESET_PLANTS = [
     color: '#b8c8a0',
     interval: 5,
     lastWatered: null,
-    photo: null,
-    standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Morgen- oder Abendsonne ist ok\n• Temperatur 15–24 °C\n• Kein Zug\n• Besonderheit: Blätter falten sich abends zusammen — völlig normal!',
-    erde: '• Lockere, gut durchlässige Blumenerde\n• Mix: Blumenerde + Sand oder Perlite\n• Drainagelöcher im Topf sind Pflicht\n• Knolle darf nicht in Staunässe stehen — führt zu Fäule',
-    giessen: '• Gleichmäßig feucht halten — oberste 1 cm dürfen antrocknen\n• Sommer: wenn obere Schicht trocken ist\n• Ruhephase (Herbst/Winter): alle 2–3 Wochen nur wenig gießen\n• Gießen mit zimmerwarmen Wasser\n• Hängende Blätter = Durstsignal — zuverlässiger Indikator!\n• Gelb werdende, einziehende Blätter im Herbst = Beginn der Ruhephase — normal!',
-    duengen: '• April–September: alle 4–6 Wochen Flüssigdünger (halbe Dosis)\n• Im ersten Jahr nach dem Kauf nicht düngen — Erde ist vorgedüngt\n• Ruhephase: nicht düngen',
-    schaedlinge: '• Spinnmilben (bei trockener Luft) → Luftfeuchtigkeit erhöhen\n• Blattläuse → Neemöl\n• Thripse → Insektizid oder Seifenlauge\n• Mehltau (weißer Belag) → gute Luftzirkulation sicherstellen',
-    notes: 'Ruhephase — wichtig zu wissen:\n• Im Herbst beginnen Blätter einzuziehen und zu vertrocknen — das ist normal!\n• Gießen stark reduzieren bis einstellen\n• Topf kühl und dunkel überwintern (z. B. Keller)\n• Im Frühjahr wieder hell stellen und gießen beginnen\n• Nach 2–4 Wochen treiben neue Blätter aus\n\nUmtopfen (Babypflanze/Knolle):\n• Knollen im Frühjahr in frische Erde setzen\n• Knolle nur leicht bedecken, nicht zu tief einpflanzen\n• Kleinen Topf wählen — Knollen mögen es eng',
-    poison: '• In größeren Mengen giftig für Haustiere (Katzen, Hunde, Pferde)\n• Enthält Oxalsäure → Nierenprobleme bei übermäßigem Verzehr\n• In kleinen Mengen für Menschen nicht gefährlich\n• Haustiere von der Pflanze fernhalten',
-  },
+    photo: null},
   {
     id: 'preset-caladium-spring-fling', licht: 'hell', luft: 'hoch-ns', duengeWo: 3,
     name: 'Buntwurz Spring Fling',
@@ -912,15 +919,7 @@ const PRESET_PLANTS = [
     color: '#b8c8a0',
     interval: 5,
     lastWatered: null,
-    photo: null,
-    standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Helles Badezimmer eignet sich sehr gut (hohe Luftfeuchtigkeit!)\n• Temperatur 18–27 °C, nie dauerhaft unter 16 °C\n• Kein Zug, keine kalte Luft\n• Luftfeuchtigkeit 60–80 % ideal',
-    erde: '• Locker, humusreich, leicht sauer\n• Mix: Blumenerde + Perlite + etwas Rindenmulch\n• Kalkfreie Erde bevorzugt — kein hartes Leitungswasser!\n• Drainageschicht auf den Topfboden (Blähton oder Kies)\n• Staunässe unbedingt vermeiden → Knolle fault sehr schnell',
-    giessen: '• Gleichmäßig feucht halten — obere 2–3 cm antrocknen lassen\n• Sommer: 1–2× pro Woche\n• Weiches Wasser (Regenwasser oder abgestandenes Leitungswasser)\n• Blätter besprühen erhöht Luftfeuchtigkeit — nicht direkt auf Blätter\n• Nicht von oben gießen → Pilzgefahr\n• Blätter hängen = zu wenig Wasser\n• Gelbe Blätter = zu viel Wasser oder Zugluft\n• Ruhephase: Gießen ab September/Oktober langsam einstellen',
-    duengen: '• Mai–August: alle 2–3 Wochen Flüssigdünger (kein stickstoffbetonter Dünger → sonst vergrünen Blätter)\n• Alternativ: alle 4–6 Wochen ausgewogener Flüssigdünger\n• Im ersten Jahr nicht düngen — Erde ist vorgedüngt\n• Ruhephase: nicht düngen',
-    schaedlinge: '• Spinnmilben (bei trockener Luft) → Luftfeuchtigkeit erhöhen\n• Blattläuse → Neemöl\n• Wurzelfäule (bei Staunässe oder Kälte) — häufigstes Problem!\n• Vorbeugung: nie in kalter nasser Erde stehen lassen',
-    notes: 'Ruhephase — sehr wichtig:\n• Ab September/Oktober Blätter einziehen lassen — völlig normal!\n• Gießen langsam reduzieren bis einstellen\n• Topf dunkel und kühl (aber frostfrei, mind. 10 °C) überwintern\n• Knolle darf leicht antrocknen aber nicht komplett austrocknen\n• Im März/April wieder hell und warm stellen → nach 4–6 Wo. neue Blätter\n\nUmtopfen (Babypflanze/Knolle):\n• Im Frühjahr in frische Erde — Knolle mit Knospen nach oben!\n• Knapp unter die Erdoberfläche setzen, nicht zu tief\n• Topf nicht zu groß — Staunässegefahr\n• Temperatur zum Antreiben min. 21 °C nötig',
-    poison: '• Giftig für Menschen und alle Haustiere\n• Enthält Calciumoxalat-Kristalle → Reizungen an Mund, Haut, Augen\n• Handschuhe beim Umtopfen empfohlen\n• Außer Reichweite von Kindern und Tieren halten',
-  },
+    photo: null},
   {
     id: 'preset-caladium-gingerland', licht: 'hell', luft: 'hoch-ns', duengeWo: 3,
     name: 'Buntwurz Gingerland',
@@ -929,15 +928,7 @@ const PRESET_PLANTS = [
     color: '#b8c8a0',
     interval: 5,
     lastWatered: null,
-    photo: null,
-    standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Helles Badezimmer eignet sich sehr gut\n• Temperatur 18–27 °C, nie dauerhaft unter 16 °C\n• Kein Zug, keine kalte Luft\n• Weiß-rote Blattmusterung braucht gutes Licht für kräftige Farben',
-    erde: '• Locker, humusreich, leicht sauer\n• Mix: Blumenerde + Perlite + etwas Rindenmulch\n• Kalkfreie Erde bevorzugt\n• Drainageschicht auf den Topfboden\n• Staunässe unbedingt vermeiden → Knolle fault sehr schnell',
-    giessen: '• Gleichmäßig feucht halten — obere 2–3 cm antrocknen lassen\n• Sommer: 1–2× pro Woche\n• Weiches Wasser (Regenwasser oder abgestandenes Leitungswasser)\n• Nicht direkt auf Blätter gießen → Pilzgefahr\n• Ruhephase: Gießen ab September/Oktober langsam einstellen',
-    duengen: '• Mai–August: alle 2–3 Wochen Flüssigdünger\n• Kein stickstoffbetonter Dünger → sonst vergrünen die Blattmuster!\n• Im ersten Jahr nicht düngen\n• Ruhephase: nicht düngen',
-    schaedlinge: '• Spinnmilben (bei trockener Luft) → Luftfeuchtigkeit erhöhen\n• Blattläuse → Neemöl\n• Wurzelfäule (bei Staunässe oder Kälte) — häufigstes Problem!',
-    notes: 'Ruhephase — sehr wichtig (wie Spring Fling):\n• Ab September/Oktober Blätter einziehen lassen\n• Gießen einstellen — Knolle kühl und dunkel überwintern (mind. 10 °C)\n• Im März/April wieder hell und warm → neue Blätter nach 4–6 Wo.\n\nUmtopfen:\n• Im Frühjahr in frische Erde — Knolle mit Knospen nach oben!\n• Knapp unter die Erdoberfläche, nicht zu tief\n• Temperatur zum Antreiben min. 21 °C nötig',
-    poison: '• Giftig für Menschen und alle Haustiere\n• Enthält Calciumoxalat-Kristalle → Reizungen an Mund, Haut, Augen\n• Handschuhe beim Umtopfen empfohlen',
-  },
+    photo: null},
   {
     id: 'preset-hypoestes-pink', licht: 'hell', luft: 'mit', duengeWo: 3,
     name: 'Rosa Punktblume',
@@ -946,15 +937,7 @@ const PRESET_PLANTS = [
     color: '#b8c8a0',
     interval: 5,
     lastWatered: null,
-    photo: null,
-    standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Zu wenig Licht: Flecken verblassen, Pflanze wird langbeinig\n• Temperatur 18–27 °C, nicht unter 15 °C\n• Kommt aus Madagaskar — mag es warm und feucht',
-    erde: '• Lockere, nährstoffreiche, gut durchlässige Blumenerde\n• Mix: Blumenerde + Perlite\n• Drainagelöcher im Topf nötig',
-    giessen: '• Gleichmäßig feucht — obere 2–3 cm antrocknen lassen\n• Nicht staunass — reagiert empfindlich auf Wurzelfäule\n• Sommer: ca. alle 5–7 Tage\n• Winter: seltener\n• Besprühen erhöht Luftfeuchtigkeit und tut der Pflanze gut',
-    duengen: '• März–September: alle 2–4 Wochen Flüssigdünger\n• Wächst schnell → regelmäßige Düngung wichtig für Blattfarbe\n• Winter: nicht düngen oder sehr selten',
-    schaedlinge: '• Blattläuse → Neemöl\n• Spinnmilben (bei trockener Luft) → Luftfeuchtigkeit erhöhen\n• Weiße Fliege → Gelbklebefallen, Neemöl',
-    notes: 'Schneiden — wichtig:\n• Regelmäßig Triebspitzen ausbrechen → buschiger, kompakter Wuchs\n• Ohne Rückschnitt wird die Pflanze langbeinig und kahl\n• Am besten 1× monatlich stutzen\n• Ältere Pflanzen werden unattraktiv → alle 1–2 Jahre durch Stecklinge erneuern\n\nUmtopfen:\n• Wächst schnell → alle 1–2 Jahre umtopfen\n• Anzeichen: langsames Wachstum, Wasser bleibt an Oberfläche stehen, Wurzeln aus Löchern\n\nGiftigkeit: Ungiftig für Menschen und Tiere!',
-    poison: '',
-  },
+    photo: null},
   {
     id: 'preset-hoya-flamingo-dream', licht: 'hell', luft: 'hoch-ns', duengeWo: 5,
     name: 'Wachsblume Flamingo Dream',
@@ -963,15 +946,7 @@ const PRESET_PLANTS = [
     color: '#b8c8a0',
     interval: 12,
     lastWatered: null,
-    photo: null,
-    standort: 'Helles Zimmer — Ostfenster ideal, kein Mittagslicht\n• Etwas sanfte Morgensonne ist ok\n• Mehr Licht: intensivere Rosa-Färbung und mehr Blüten\n• Temperatur 18–30 °C, nicht unter 12 °C\n• Kein Zug — ideal als Kletter- oder Hängepflanze',
-    erde: '• Sehr gut durchlässige Mischung: Blumenerde + Perlite + Rindenmulch (Orchideenerde)\n• Luftig und locker — Wurzeln brauchen Sauerstoff\n• Drainagelöcher im Topf sind Pflicht',
-    giessen: '• Erde komplett zwischen den Wassergaben trocknen lassen (obere 3–5 cm)\n• Sommer: ca. alle 10–14 Tage\n• Winter: sehr selten — alle 3–4 Wochen\n• Hoyas speichern Wasser in den Blättern — lieber zu wenig als zu viel!\n• Staunässe = Wurzelfäule\n• Kein Besprühen der Blätter → Pilzgefahr\n• Weiches Wasser bevorzugt',
-    duengen: '• April–September: alle 4–6 Wochen ausgewogener Flüssigdünger\n• Blühpflanzendünger (kaliumreich) fördert Blütenbildung\n• Winter: nicht düngen',
-    schaedlinge: '• Wollläuse (weiße Wattebäusche) → Alkohol + Wattestäbchen\n• Spinnmilben → Luftfeuchtigkeit erhöhen\n• Schildläuse → Seifenlauge oder Neemöl\n• Echter Mehltau → Luftzirkulation verbessern, kein Besprühen',
-    notes: 'Blüten — wertvolles Wissen:\n• Blüht erst nach 2–3 Jahren bei guter Pflege und hellem Standort\n• Blütenstiele (Pedunckel) nach der Blüte NICHT abschneiden! → blüht wieder vom selben Stiel\n• Blüten duften wunderschön!\n\nUmtopfen:\n• Hoyas mögen es wurzelgebunden — selten umtopfen!\n• Erde alle 2–3 Jahre erneuern\n• Topf nur minimal größer wählen\n• Bester Zeitpunkt: Frühjahr\n\nBesonderheit:\n• Blätter röten sich bei mehr Licht — natürliche Reaktion, kein Problem',
-    poison: '• Hoya-Sap kann bei empfindlicher Haut reizen\n• Für Menschen und Tiere nicht stark giftig\n• Vorsicht beim Schneiden — Milchsaft kann Reizungen verursachen',
-  },
+    photo: null},
   {
     id: 'preset-peperomia-hope', licht: 'halb', luft: 'norm', duengeWo: 6,
     name: 'Zwergpfeffer Hope',
@@ -980,15 +955,7 @@ const PRESET_PLANTS = [
     color: '#b8c8a0',
     interval: 10,
     lastWatered: null,
-    photo: null,
-    standort: 'Halbschattig — auch weiter weg vom Fenster möglich\n• Ost- oder Westfenster ideal, verträgt auch weniger Licht\n• Temperatur 18–24 °C, nicht unter 15 °C\n• Kein Zug — ideal als Hängepflanze auf Regal oder Hängeampel',
-    erde: '• Locker, gut durchlässig\n• Mix: Blumenerde + Perlite oder Sand\n• Kleiner Topf bevorzugt — nur wenige und kleine Wurzeln\n• Drainagelöcher nötig — Drainageschicht (Kiesel) auf Topfboden',
-    giessen: '• Erde ca. zu 2/3 antrocknen lassen — sukkulente Blätter speichern Wasser\n• Sommer: alle 7–10 Tage\n• Winter: alle 2 Wochen oder seltener\n• Von unten gießen möglich: Topf in Wasserschale stellen, nach 10 Min. Wasser entfernen\n• Weiches Wasser bevorzugt\n• Staunässe = häufigster Todesgrund!\n• Trockene Erde ist besser als feuchte Erde',
-    duengen: '• Sehr genügsam — braucht wenig Nährstoffe\n• April–September: alle 6 Wochen Flüssigdünger (halbe Dosis)\n• Im ersten Jahr nicht düngen\n• Winter: nicht düngen',
-    schaedlinge: '• Spinnmilben → abduschen, Luftfeuchtigkeit erhöhen\n• Wollläuse → Alkohol + Wattestäbchen\n• Schildläuse → Seifenlauge\n• Wurzelfäule (bei Staunässe) → häufigstes Problem',
-    notes: 'Umtopfen:\n• Wächst langsam → alle 2–3 Jahre ausreichend\n• Erst umtopfen wenn Wurzeln aus Löchern wachsen\n• Topf nur minimal größer wählen\n• Bester Zeitpunkt: Frühjahr\n\nBesonderheit:\n• Hängepflanze — ideal für Hängeampel oder hohes Regal\n• Tierfreundlich — ungiftig für Hunde und Katzen!\n• Luftreinigend: filtert Schadstoffe wie Formaldehyd aus der Luft',
-    poison: '',
-  },
+    photo: null},
   {
     id: 'preset-alocasia-zebrina', licht: 'hell', luft: 'hoch', duengeWo: 4,
     name: 'Zebra-Alocasia',
@@ -997,15 +964,7 @@ const PRESET_PLANTS = [
     color: '#b8c8a0',
     interval: 7,
     lastWatered: null,
-    photo: null,
-    standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Mind. 15 cm Abstand vom Glas\n• Temperatur 20–25 °C, nicht unter 18 °C\n• Kein Zug\n• Täglich mit kalkfreiem Wasser besprühen\n• 1× wöchentlich mit handwarmem Wasser abduschen',
-    erde: '• Locker, leicht sauer, gut durchlässig\n• Mix: Blumenerde + Perlite + etwas Rindenmulch\n• Alternativ: spezielle Alocasia-Erde (erdlose Mischung funktioniert gut)\n• Drainagelöcher im Topf zwingend nötig',
-    giessen: '• Erde stets leicht feucht halten — nie ganz austrocknen\n• Fingertest: obere 3 cm trocken → gießen\n• Sommer: wöchentlich\n• Winter: alle 10–14 Tage\n• Nur kalkfreies Wasser — Regenwasser oder abgestandenes Leitungswasser\n• Staunässe unbedingt vermeiden → Wurzelfäule\n• Gelb-braune Ränder = zu viel Wasser oder zu wenig Luftfeuchtigkeit',
-    duengen: '• April–Oktober: 1× monatlich Flüssigdünger (laut PLNTS)\n• Nicht überdüngen — gelbe Blätter als Warnsignal\n• Winter: nicht düngen',
-    schaedlinge: '• Spinnmilben (häufigstes Problem bei trockener Luft!) → Luftfeuchtigkeit erhöhen, abduschen\n• Schildläuse → Seifenlauge\n• Blattläuse → Neemöl\n• Wurzelfäule → bei Staunässe oder zu kalter Erde',
-    notes: 'Besonderheit:\n• Gestreifte, zebramusterartige Stiele — sehr dekorativ\n• Kann bei Lichtmangel oder im Winter einzelne Blätter verlieren — normal!\n• Neue Blätter wachsen aus der Mitte nach\n\nUmtopfen:\n• Wenn Wurzeln aus Drainagelöchern wachsen\n• Topf max. 3–5 cm größer wählen\n• Bester Zeitpunkt: Frühjahr\n• Beim Umtopfen Rhizome trennen für Vermehrung möglich\n\nÜberwinterung:\n• Kühler Standort ok (nicht unter 18 °C)\n• Gießen und Düngen reduzieren\n• Pflanze kann im Winter ruhen und weniger Blätter haben',
-    poison: '• Giftig für Menschen und Tiere\n• Enthält Calciumoxalat-Kristalle → Reizungen an Mund, Rachen, Haut\n• Handschuhe beim Umtopfen empfohlen\n• Außer Reichweite von Kindern und Haustieren halten',
-  },
+    photo: null},
   {
     id: 'preset-monstera-thai', licht: 'hell', luft: 'hoch', duengeWo: 3,
     name: 'Monstera Thai Constellation',
@@ -1014,7 +973,254 @@ const PRESET_PLANTS = [
     color: '#b8c8a0',
     interval: 7,
     lastWatered: null,
-    photo: null,
+    photo: null},
+  {
+    id: 'preset-gummibaum', licht: 'hell', luft: 'norm', duengeWo: 5,
+    name: 'Gummibaum',
+    species: 'Ficus elastica',
+    emoji: '🌳',
+    color: '#b8c8a0',
+    interval: 10,
+    lastWatered: null, photo: null},
+  {
+    id: 'preset-gluecksfeder', licht: 'halb', luft: 'norm', duengeWo: 7,
+    name: 'Glücksfeder',
+    species: 'Zamioculcas zamiifolia',
+    emoji: '🌿',
+    color: '#b8c8a0',
+    interval: 14,
+    lastWatered: null, photo: null},
+  {
+    id: 'preset-gluecksfarn', licht: 'halb', luft: 'hoch-ns', duengeWo: 4,
+    name: 'Glücksfarn',
+    species: 'Nephrolepis exaltata',
+    emoji: '🌿',
+    color: '#b8c8a0',
+    interval: 4,
+    lastWatered: null, photo: null},
+  {
+    id: 'preset-yucca', licht: 'sonne', luft: 'norm', duengeWo: 5,
+    name: 'Yucca-Palme',
+    species: 'Yucca elephantipes',
+    emoji: '🌴',
+    color: '#b8c8a0',
+    interval: 18,
+    lastWatered: null, photo: null},
+  {
+    id: 'preset-dieffenbachie', licht: 'hell', luft: 'mit', duengeWo: 4,
+    name: 'Dieffenbachie',
+    species: 'Dieffenbachia seguine',
+    emoji: '🌱',
+    color: '#b8c8a0',
+    interval: 7,
+    lastWatered: null, photo: null},
+  {
+    id: 'preset-hoya-carnosa', licht: 'hell', luft: 'norm', duengeWo: 4,
+    name: 'Wachsblume',
+    species: 'Hoya carnosa',
+    emoji: '🌸',
+    color: '#b8c8a0',
+    interval: 12,
+    lastWatered: null, photo: null},
+  {
+    id: 'preset-buntnessel', licht: 'hell', luft: 'mit', duengeWo: 2,
+    name: 'Buntnessel',
+    species: 'Coleus scutellarioides',
+    emoji: '🌺',
+    color: '#b8c8a0',
+    interval: 5,
+    lastWatered: null, photo: null},
+  {
+    id: 'preset-ceropegia', licht: 'hell', luft: 'norm', duengeWo: 5,
+    name: 'String of Hearts',
+    species: 'Ceropegia woodii',
+    emoji: '🍃',
+    color: '#b8c8a0',
+    interval: 14,
+    lastWatered: null, photo: null},
+  {
+    id: 'preset-plectranthus', licht: 'sonne', luft: 'norm', duengeWo: 4,
+    name: 'Weihrauchpflanze',
+    species: 'Plectranthus coleoides',
+    emoji: '🌿',
+    color: '#b8c8a0',
+    interval: 7,
+    lastWatered: null, photo: null},
+  {
+    id: 'preset-tradescantia', licht: 'hell', luft: 'norm', duengeWo: 2,
+    name: 'Dreimasterblume',
+    species: 'Tradescantia zebrina',
+    emoji: '🌿',
+    color: '#b8c8a0',
+    interval: 5,
+    lastWatered: null, photo: null},
+  {
+    id: 'preset-efeutute', licht: 'halb', luft: 'mit', duengeWo: 4,
+    name: 'Efeutute',
+    species: 'Epipremnum aureum',
+    emoji: '🌿',
+    color: '#b8c8a0',
+    interval: 10,
+    lastWatered: null, photo: null},
+  {
+    id: 'preset-alocasia-frydek', licht: 'hell', luft: 'hoch', duengeWo: 4,
+    name: 'Alocasia Frydek',
+    species: 'Alocasia micholitziana',
+    emoji: '🌿',
+    color: '#b8c8a0',
+    interval: 7,
+    lastWatered: null, photo: null},
+  {
+    id: 'preset-syngonium', licht: 'hell', luft: 'mit', duengeWo: 4,
+    name: 'Syngonium',
+    species: 'Syngonium podophyllum',
+    emoji: '🌱',
+    color: '#b8c8a0',
+    interval: 7,
+    lastWatered: null, photo: null},
+  {
+    id: 'preset-bergpalme', licht: 'halb', luft: 'mit', duengeWo: 4,
+    name: 'Bergpalme',
+    species: 'Chamaedorea elegans',
+    emoji: '🌴',
+    color: '#b8c8a0',
+    interval: 6,
+    lastWatered: null, photo: null},
+  {
+    id: 'preset-bogenhanf', licht: 'halb', luft: 'norm', duengeWo: 7,
+    name: 'Bogenhanf',
+    species: 'Sansevieria trifasciata',
+    emoji: '🌿',
+    color: '#b8c8a0',
+    interval: 21,
+    lastWatered: null, photo: null},
+  {
+    id: 'preset-klivie', licht: 'hell', luft: 'norm', duengeWo: 2,
+    name: 'Klivie',
+    species: 'Clivia miniata',
+    emoji: '🌺',
+    color: '#b8c8a0',
+    interval: 10,
+    lastWatered: null, photo: null},
+  {
+    id: 'preset-monstera', licht: 'hell', luft: 'hoch', duengeWo: 4,
+    name: 'Monstera Fensterblatt',
+    species: 'Monstera deliciosa',
+    emoji: '🌿',
+    color: '#b8c8a0',
+    interval: 10,
+    lastWatered: null, photo: null},
+  {
+    id: 'preset-zimmertanne', licht: 'hell', luft: 'mit', duengeWo: 5,
+    name: 'Zimmertanne',
+    species: 'Araucaria heterophylla',
+    emoji: '🌲',
+    color: '#b8c8a0',
+    interval: 7,
+    lastWatered: null, photo: null},
+  {
+    id: 'preset-ficus-audrey', licht: 'hell', luft: 'mit', duengeWo: 4,
+    name: 'Ficus Audrey',
+    species: "Ficus benghalensis 'Audrey'",
+    emoji: '🌳',
+    color: '#b8c8a0',
+    interval: 10,
+    lastWatered: null, photo: null},
+];
+
+
+var PLANT_DETAILS = {
+  'preset-begonia-albopicta': {
+    standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Südfenster: mind. 1–2 m Abstand mit Lichtschutz\n• Temperatur 18–22 °C, Minimum 15 °C\n• Kein Zug, keine Kälte\n• Standort möglichst nicht wechseln',
+    erde: '• Locker, humusreich, leicht sauer (pH 6–6,5)\n• Mix: Blumenerde + Perlite + etwas Sand\n• Drainagelöcher im Topf sind Pflicht\n• Kein Staunässe im Untersatz',
+    giessen: '• Gießen wenn obere 2–3 cm trocken sind (Fingertest)\n• Sommer: ca. 1× pro Woche\n• Winter: deutlich weniger\n• Von unten gießen oder um die Basis — Blätter nie benetzen!\n• Nasse Blätter begünstigen Pilzkrankheiten\n• Luftfeuchtigkeit 50–70 % halten\n• Um die Pflanze sprühen, nicht auf die Blätter\n• Tipp: Wasserschale mit Kieselsteinen unter dem Topf',
+    duengen: '• März–September: alle 14 Tage Flüssigdünger\n• Immer halbe Dosis verwenden\n• Kaliumreicher Blühpflanzendünger fördert die Blüten\n• Herbst/Winter: nicht düngen',
+    schaedlinge: '• Blattläuse (Triebspitzen, Blattunterseiten) → Neemöl\n• Spinnmilben (bei trockener Luft) → Luftfeuchtigkeit erhöhen\n• Wollläuse (weiße Wattebäusche) → Alkohol + Wattestäbchen\n• Echter Mehltau (weißer Belag) → entsteht bei Zugluft/Kälte\n• Grauschimmel (Botrytis) → nasse Blätter unbedingt vermeiden',
+    notes: 'Umtopfen (Babypflanze):\n• Erst umtopfen wenn Wurzeln aus den Löchern wachsen\n• Neuen Topf nur 1–2 cm größer wählen\n• Bester Zeitpunkt: Frühjahr (März–April)\n• Frische Blumenerde + Perlite verwenden\n• Nach dem Umtopfen an einem schattigen Platz erholen lassen\n• Wächst schnell — jährliches Umtopfen ist normal\n\nSchneiden:\n• Triebe im Frühjahr zurückschneiden → buschigerer Wuchs\n• Verblühte Blüten direkt abschneiden → fördert neue Blüten',
+    poison: '• Giftig für Menschen und Tiere (Hunde, Katzen, Kleinkinder)\n• Giftigste Teile: Wurzeln und Knollen\n• Auch Blätter und Stängel nicht ungefährlich\n• Enthält Calciumoxalat-Kristalle → Reizungen an Mund und Haut\n• Handschuhe beim Umtopfen empfohlen',
+  },
+  'preset-begonia-maculata': {
+    standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Morgen- oder Abendsonne ist ok\n• Südfenster: mind. 1 m Abstand vom Glas\n• Temperatur 18–22 °C, nicht dauerhaft unter 10 °C\n• Kein Zug, nicht neben die Heizung stellen',
+    erde: '• Locker, humusreich, gut durchlässig\n• Mix: Blumenerde + Perlite + etwas Sand\n• Alternativ: Zimmerpflanzen- oder Kräutererde\n• Drainagelöcher im Topf sind Pflicht\n• Staunässe unbedingt vermeiden — Wurzeln sind fein und empfindlich',
+    giessen: '• Erde darf zu max. 80 % antrocknen zwischen den Wassergaben\n• Fingertest: erst gießen wenn obere 2–3 cm trocken sind\n• Sommer: alle 5–7 Tage\n• Winter: alle 7–10 Tage, deutlich reduzieren\n• Weiches Wasser bevorzugt — Regenwasser oder abgestandenes Leitungswasser\n• Nicht direkt auf die Blätter gießen\n• Luftfeuchtigkeit erhöhen: Schale mit Wasser neben den Topf\n• Blätter gelegentlich mit feinem Sprühnebel besprühen (Luft um die Pflanze, nicht auf Blätter)\n• Im Winter: Luftbefeuchter hilft gegen trockene Heizungsluft',
+    duengen: '• März–September: alle 2–4 Wochen Flüssigdünger\n• Im ersten Jahr nach Kauf kann auf Dünger verzichtet werden\n• Vor und während der Blüte: alle 2 Wochen\n• Nach der Blüte: 1× monatlich\n• Nicht überdüngen — braune Blattränder sind ein Warnsignal\n• Herbst/Winter: nicht düngen',
+    schaedlinge: '• Wollläuse (weiße Wattebäusche) → Alkohol + Wattestäbchen\n• Blattläuse (klebrige Rückstände, verformte Triebe) → Neemöl\n• Echter Mehltau (weißer pudrig-kreisförmiger Belag) → befallene Teile entfernen + Fungizid\n• Grauschimmel / Botrytis (braune Flecken, meist untere Blätter) → befallene Blätter sofort entfernen\n• Vorbeugung: gute Luftzirkulation, Blätter nicht nass werden lassen',
+    notes: 'Umtopfen (Babypflanze):\n• Erst umtopfen wenn Wurzeln aus den Löchern wachsen\n• Neuen Topf nur 1–2 cm größer wählen — kein zu großer Topf!\n• Bester Zeitpunkt: Frühjahr oder Frühsommer\n• Frische Blumenerde + Perlite verwenden\n• Wurzeln sind sehr fein — vorsichtig vorgehen!\n• Wächst schnell → als Babypflanze evtl. 2× pro Jahr umtopfen\n• Ältere Pflanzen: 1× jährlich\n\nSchneiden:\n• Rückschnitt jederzeit möglich — immer oberhalb eines Stängelknotens\n• Triebe kürzen → Pflanze wird buschiger\n• Verblühte Blüten direkt abschneiden → fördert neue Blüten',
+    poison: '• Giftig für Hunde, Katzen, Vögel und Kleintiere (Hamster, Kaninchen)\n• Auch für Menschen nicht ungefährlich\n• Blätter und Stängel enthalten giftige Substanzen\n• Handschuhe beim Umtopfen empfohlen',
+  },
+  'preset-peperomia-pepperspot': {
+    standort: 'Halbschattig — auch weiter weg vom Fenster möglich\n• Nordfenster oder 1–2 m vom Ost/West-Fenster\n• Stammt aus der schattigen Amazonasregion\n• Temperatur 18–23 °C, nicht unter 15 °C\n• Kein Zug — ideal als Hängepflanze',
+    erde: '• Locker, gut durchlässig, leicht sauer\n• Mix: Blumenerde + Perlite oder Sand\n• Alternativ: torffreie Zimmerpflanzenerde\n• Hohe Wasserdurchlässigkeit ist entscheidend — Staunässe ist der häufigste Todesgrund!\n• Drainagelöcher im Topf sind Pflicht\n• Kleinen Topf wählen — Peperomia wächst langsam',
+    giessen: '• Erde zu ca. 2/3 antrocknen lassen vor dem Gießen\n• Fingertest: obere 2–3 cm trocken → gießen\n• Sommer: ca. alle 7–10 Tage\n• Winter: alle 14 Tage oder weniger\n• Kalkfreies Wasser: Regenwasser oder abgestandenes Leitungswasser\n• Gut durchnässen, dann komplett abfließen lassen\n• Überschüssiges Wasser im Untersetzer sofort wegschütten!\n• Tipp: lieber zu wenig als zu viel gießen — trockene Erde ist besser als feuchte\n• Blätter hängen oder kräuseln = braucht Wasser',
+    duengen: '• Sehr genügsam — braucht wenig Nährstoffe\n• April–September: alle 4–8 Wochen, halbe Dosis Flüssigdünger\n• Im ersten Jahr nach Kauf oder Umtopfen: nicht düngen\n• Zu viel Dünger → weicher, langer Wuchs (kein gutes Zeichen)\n• Herbst/Winter: nicht düngen oder max. 1× alle 2 Monate schwach',
+    schaedlinge: '• Spinnmilben (bei trockener Luft, silbrige Punkte) → Luftfeuchtigkeit erhöhen, abduschen\n• Wollläuse (weiße Wattebäusche) → Alkohol + Wattestäbchen\n• Schildläuse → Seifen-Spiritus-Lauge\n• Wurzelfäule (häufigstes Problem!) → entsteht durch Staunässe, Topf zu groß oder Erde zu dicht\n• Vorbeugung: immer gut drainierte Erde und nicht zu häufig gießen',
+    notes: 'Umtopfen (Babypflanze):\n• Erst umtopfen wenn Wurzeln aus den Löchern wachsen\n• Wächst langsam → selten umtopfen nötig\n• Alle 2 Jahre im Frühjahr mit frischer Erde versorgen\n• Topf nur minimal größer wählen — zu großer Topf = Staunässegefahr!\n• Drainageschicht (Kieselsteine) auf den Topfboden legen\n\nSchneiden & Formen:\n• Triebspitzen ausbrechen (Frühjahr bis Sommer) → buschigerer Wuchs\n• Welke oder vertrocknete Blätter entfernen\n• Stängelstecklinge einfach in Erde stecken zur Vermehrung\n\nBesonderheit:\n• Tierfreundlich — ungiftig für Hunde und Katzen!\n• Kleine runde Blätter mit roter Unterseite und rotbraunem Stiel',
+    poison: '',
+  },
+  'preset-oxalis-sunny': {
+    standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Morgen- oder Abendsonne ist ok\n• Temperatur 15–24 °C\n• Kein Zug\n• Besonderheit: Blätter falten sich abends zusammen — völlig normal!',
+    erde: '• Lockere, gut durchlässige Blumenerde\n• Mix: Blumenerde + Sand oder Perlite\n• Drainagelöcher im Topf sind Pflicht\n• Knolle darf nicht in Staunässe stehen — führt zu Fäule',
+    giessen: '• Gleichmäßig feucht halten — oberste 1 cm dürfen antrocknen\n• Sommer: wenn obere Schicht trocken ist\n• Ruhephase (Herbst/Winter): alle 2–3 Wochen nur wenig gießen\n• Gießen mit zimmerwarmen Wasser\n• Hängende Blätter = Durstsignal — zuverlässiger Indikator!\n• Gelb werdende, einziehende Blätter im Herbst = Beginn der Ruhephase — normal!',
+    duengen: '• April–September: alle 4–6 Wochen Flüssigdünger (halbe Dosis)\n• Im ersten Jahr nach dem Kauf nicht düngen — Erde ist vorgedüngt\n• Ruhephase: nicht düngen',
+    schaedlinge: '• Spinnmilben (bei trockener Luft) → Luftfeuchtigkeit erhöhen\n• Blattläuse → Neemöl\n• Thripse → Insektizid oder Seifenlauge\n• Mehltau (weißer Belag) → gute Luftzirkulation sicherstellen',
+    notes: 'Ruhephase — wichtig zu wissen:\n• Im Herbst beginnen Blätter einzuziehen und zu vertrocknen — das ist normal!\n• Gießen stark reduzieren bis einstellen\n• Topf kühl und dunkel überwintern (z. B. Keller)\n• Im Frühjahr wieder hell stellen und gießen beginnen\n• Nach 2–4 Wochen treiben neue Blätter aus\n\nUmtopfen (Babypflanze/Knolle):\n• Knollen im Frühjahr in frische Erde setzen\n• Knolle nur leicht bedecken, nicht zu tief einpflanzen\n• Kleinen Topf wählen — Knollen mögen es eng',
+    poison: '• In größeren Mengen giftig für Haustiere (Katzen, Hunde, Pferde)\n• Enthält Oxalsäure → Nierenprobleme bei übermäßigem Verzehr\n• In kleinen Mengen für Menschen nicht gefährlich\n• Haustiere von der Pflanze fernhalten',
+  },
+  'preset-caladium-spring-fling': {
+    standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Helles Badezimmer eignet sich sehr gut (hohe Luftfeuchtigkeit!)\n• Temperatur 18–27 °C, nie dauerhaft unter 16 °C\n• Kein Zug, keine kalte Luft\n• Luftfeuchtigkeit 60–80 % ideal',
+    erde: '• Locker, humusreich, leicht sauer\n• Mix: Blumenerde + Perlite + etwas Rindenmulch\n• Kalkfreie Erde bevorzugt — kein hartes Leitungswasser!\n• Drainageschicht auf den Topfboden (Blähton oder Kies)\n• Staunässe unbedingt vermeiden → Knolle fault sehr schnell',
+    giessen: '• Gleichmäßig feucht halten — obere 2–3 cm antrocknen lassen\n• Sommer: 1–2× pro Woche\n• Weiches Wasser (Regenwasser oder abgestandenes Leitungswasser)\n• Blätter besprühen erhöht Luftfeuchtigkeit — nicht direkt auf Blätter\n• Nicht von oben gießen → Pilzgefahr\n• Blätter hängen = zu wenig Wasser\n• Gelbe Blätter = zu viel Wasser oder Zugluft\n• Ruhephase: Gießen ab September/Oktober langsam einstellen',
+    duengen: '• Mai–August: alle 2–3 Wochen Flüssigdünger (kein stickstoffbetonter Dünger → sonst vergrünen Blätter)\n• Alternativ: alle 4–6 Wochen ausgewogener Flüssigdünger\n• Im ersten Jahr nicht düngen — Erde ist vorgedüngt\n• Ruhephase: nicht düngen',
+    schaedlinge: '• Spinnmilben (bei trockener Luft) → Luftfeuchtigkeit erhöhen\n• Blattläuse → Neemöl\n• Wurzelfäule (bei Staunässe oder Kälte) — häufigstes Problem!\n• Vorbeugung: nie in kalter nasser Erde stehen lassen',
+    notes: 'Ruhephase — sehr wichtig:\n• Ab September/Oktober Blätter einziehen lassen — völlig normal!\n• Gießen langsam reduzieren bis einstellen\n• Topf dunkel und kühl (aber frostfrei, mind. 10 °C) überwintern\n• Knolle darf leicht antrocknen aber nicht komplett austrocknen\n• Im März/April wieder hell und warm stellen → nach 4–6 Wo. neue Blätter\n\nUmtopfen (Babypflanze/Knolle):\n• Im Frühjahr in frische Erde — Knolle mit Knospen nach oben!\n• Knapp unter die Erdoberfläche setzen, nicht zu tief\n• Topf nicht zu groß — Staunässegefahr\n• Temperatur zum Antreiben min. 21 °C nötig',
+    poison: '• Giftig für Menschen und alle Haustiere\n• Enthält Calciumoxalat-Kristalle → Reizungen an Mund, Haut, Augen\n• Handschuhe beim Umtopfen empfohlen\n• Außer Reichweite von Kindern und Tieren halten',
+  },
+  'preset-caladium-gingerland': {
+    standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Helles Badezimmer eignet sich sehr gut\n• Temperatur 18–27 °C, nie dauerhaft unter 16 °C\n• Kein Zug, keine kalte Luft\n• Weiß-rote Blattmusterung braucht gutes Licht für kräftige Farben',
+    erde: '• Locker, humusreich, leicht sauer\n• Mix: Blumenerde + Perlite + etwas Rindenmulch\n• Kalkfreie Erde bevorzugt\n• Drainageschicht auf den Topfboden\n• Staunässe unbedingt vermeiden → Knolle fault sehr schnell',
+    giessen: '• Gleichmäßig feucht halten — obere 2–3 cm antrocknen lassen\n• Sommer: 1–2× pro Woche\n• Weiches Wasser (Regenwasser oder abgestandenes Leitungswasser)\n• Nicht direkt auf Blätter gießen → Pilzgefahr\n• Ruhephase: Gießen ab September/Oktober langsam einstellen',
+    duengen: '• Mai–August: alle 2–3 Wochen Flüssigdünger\n• Kein stickstoffbetonter Dünger → sonst vergrünen die Blattmuster!\n• Im ersten Jahr nicht düngen\n• Ruhephase: nicht düngen',
+    schaedlinge: '• Spinnmilben (bei trockener Luft) → Luftfeuchtigkeit erhöhen\n• Blattläuse → Neemöl\n• Wurzelfäule (bei Staunässe oder Kälte) — häufigstes Problem!',
+    notes: 'Ruhephase — sehr wichtig (wie Spring Fling):\n• Ab September/Oktober Blätter einziehen lassen\n• Gießen einstellen — Knolle kühl und dunkel überwintern (mind. 10 °C)\n• Im März/April wieder hell und warm → neue Blätter nach 4–6 Wo.\n\nUmtopfen:\n• Im Frühjahr in frische Erde — Knolle mit Knospen nach oben!\n• Knapp unter die Erdoberfläche, nicht zu tief\n• Temperatur zum Antreiben min. 21 °C nötig',
+    poison: '• Giftig für Menschen und alle Haustiere\n• Enthält Calciumoxalat-Kristalle → Reizungen an Mund, Haut, Augen\n• Handschuhe beim Umtopfen empfohlen',
+  },
+  'preset-hypoestes-pink': {
+    standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Zu wenig Licht: Flecken verblassen, Pflanze wird langbeinig\n• Temperatur 18–27 °C, nicht unter 15 °C\n• Kommt aus Madagaskar — mag es warm und feucht',
+    erde: '• Lockere, nährstoffreiche, gut durchlässige Blumenerde\n• Mix: Blumenerde + Perlite\n• Drainagelöcher im Topf nötig',
+    giessen: '• Gleichmäßig feucht — obere 2–3 cm antrocknen lassen\n• Nicht staunass — reagiert empfindlich auf Wurzelfäule\n• Sommer: ca. alle 5–7 Tage\n• Winter: seltener\n• Besprühen erhöht Luftfeuchtigkeit und tut der Pflanze gut',
+    duengen: '• März–September: alle 2–4 Wochen Flüssigdünger\n• Wächst schnell → regelmäßige Düngung wichtig für Blattfarbe\n• Winter: nicht düngen oder sehr selten',
+    schaedlinge: '• Blattläuse → Neemöl\n• Spinnmilben (bei trockener Luft) → Luftfeuchtigkeit erhöhen\n• Weiße Fliege → Gelbklebefallen, Neemöl',
+    notes: 'Schneiden — wichtig:\n• Regelmäßig Triebspitzen ausbrechen → buschiger, kompakter Wuchs\n• Ohne Rückschnitt wird die Pflanze langbeinig und kahl\n• Am besten 1× monatlich stutzen\n• Ältere Pflanzen werden unattraktiv → alle 1–2 Jahre durch Stecklinge erneuern\n\nUmtopfen:\n• Wächst schnell → alle 1–2 Jahre umtopfen\n• Anzeichen: langsames Wachstum, Wasser bleibt an Oberfläche stehen, Wurzeln aus Löchern\n\nGiftigkeit: Ungiftig für Menschen und Tiere!',
+    poison: '',
+  },
+  'preset-hoya-flamingo-dream': {
+    standort: 'Helles Zimmer — Ostfenster ideal, kein Mittagslicht\n• Etwas sanfte Morgensonne ist ok\n• Mehr Licht: intensivere Rosa-Färbung und mehr Blüten\n• Temperatur 18–30 °C, nicht unter 12 °C\n• Kein Zug — ideal als Kletter- oder Hängepflanze',
+    erde: '• Sehr gut durchlässige Mischung: Blumenerde + Perlite + Rindenmulch (Orchideenerde)\n• Luftig und locker — Wurzeln brauchen Sauerstoff\n• Drainagelöcher im Topf sind Pflicht',
+    giessen: '• Erde komplett zwischen den Wassergaben trocknen lassen (obere 3–5 cm)\n• Sommer: ca. alle 10–14 Tage\n• Winter: sehr selten — alle 3–4 Wochen\n• Hoyas speichern Wasser in den Blättern — lieber zu wenig als zu viel!\n• Staunässe = Wurzelfäule\n• Kein Besprühen der Blätter → Pilzgefahr\n• Weiches Wasser bevorzugt',
+    duengen: '• April–September: alle 4–6 Wochen ausgewogener Flüssigdünger\n• Blühpflanzendünger (kaliumreich) fördert Blütenbildung\n• Winter: nicht düngen',
+    schaedlinge: '• Wollläuse (weiße Wattebäusche) → Alkohol + Wattestäbchen\n• Spinnmilben → Luftfeuchtigkeit erhöhen\n• Schildläuse → Seifenlauge oder Neemöl\n• Echter Mehltau → Luftzirkulation verbessern, kein Besprühen',
+    notes: 'Blüten — wertvolles Wissen:\n• Blüht erst nach 2–3 Jahren bei guter Pflege und hellem Standort\n• Blütenstiele (Pedunckel) nach der Blüte NICHT abschneiden! → blüht wieder vom selben Stiel\n• Blüten duften wunderschön!\n\nUmtopfen:\n• Hoyas mögen es wurzelgebunden — selten umtopfen!\n• Erde alle 2–3 Jahre erneuern\n• Topf nur minimal größer wählen\n• Bester Zeitpunkt: Frühjahr\n\nBesonderheit:\n• Blätter röten sich bei mehr Licht — natürliche Reaktion, kein Problem',
+    poison: '• Hoya-Sap kann bei empfindlicher Haut reizen\n• Für Menschen und Tiere nicht stark giftig\n• Vorsicht beim Schneiden — Milchsaft kann Reizungen verursachen',
+  },
+  'preset-peperomia-hope': {
+    standort: 'Halbschattig — auch weiter weg vom Fenster möglich\n• Ost- oder Westfenster ideal, verträgt auch weniger Licht\n• Temperatur 18–24 °C, nicht unter 15 °C\n• Kein Zug — ideal als Hängepflanze auf Regal oder Hängeampel',
+    erde: '• Locker, gut durchlässig\n• Mix: Blumenerde + Perlite oder Sand\n• Kleiner Topf bevorzugt — nur wenige und kleine Wurzeln\n• Drainagelöcher nötig — Drainageschicht (Kiesel) auf Topfboden',
+    giessen: '• Erde ca. zu 2/3 antrocknen lassen — sukkulente Blätter speichern Wasser\n• Sommer: alle 7–10 Tage\n• Winter: alle 2 Wochen oder seltener\n• Von unten gießen möglich: Topf in Wasserschale stellen, nach 10 Min. Wasser entfernen\n• Weiches Wasser bevorzugt\n• Staunässe = häufigster Todesgrund!\n• Trockene Erde ist besser als feuchte Erde',
+    duengen: '• Sehr genügsam — braucht wenig Nährstoffe\n• April–September: alle 6 Wochen Flüssigdünger (halbe Dosis)\n• Im ersten Jahr nicht düngen\n• Winter: nicht düngen',
+    schaedlinge: '• Spinnmilben → abduschen, Luftfeuchtigkeit erhöhen\n• Wollläuse → Alkohol + Wattestäbchen\n• Schildläuse → Seifenlauge\n• Wurzelfäule (bei Staunässe) → häufigstes Problem',
+    notes: 'Umtopfen:\n• Wächst langsam → alle 2–3 Jahre ausreichend\n• Erst umtopfen wenn Wurzeln aus Löchern wachsen\n• Topf nur minimal größer wählen\n• Bester Zeitpunkt: Frühjahr\n\nBesonderheit:\n• Hängepflanze — ideal für Hängeampel oder hohes Regal\n• Tierfreundlich — ungiftig für Hunde und Katzen!\n• Luftreinigend: filtert Schadstoffe wie Formaldehyd aus der Luft',
+    poison: '',
+  },
+  'preset-alocasia-zebrina': {
+    standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Mind. 15 cm Abstand vom Glas\n• Temperatur 20–25 °C, nicht unter 18 °C\n• Kein Zug\n• Täglich mit kalkfreiem Wasser besprühen\n• 1× wöchentlich mit handwarmem Wasser abduschen',
+    erde: '• Locker, leicht sauer, gut durchlässig\n• Mix: Blumenerde + Perlite + etwas Rindenmulch\n• Alternativ: spezielle Alocasia-Erde (erdlose Mischung funktioniert gut)\n• Drainagelöcher im Topf zwingend nötig',
+    giessen: '• Erde stets leicht feucht halten — nie ganz austrocknen\n• Fingertest: obere 3 cm trocken → gießen\n• Sommer: wöchentlich\n• Winter: alle 10–14 Tage\n• Nur kalkfreies Wasser — Regenwasser oder abgestandenes Leitungswasser\n• Staunässe unbedingt vermeiden → Wurzelfäule\n• Gelb-braune Ränder = zu viel Wasser oder zu wenig Luftfeuchtigkeit',
+    duengen: '• April–Oktober: 1× monatlich Flüssigdünger (laut PLNTS)\n• Nicht überdüngen — gelbe Blätter als Warnsignal\n• Winter: nicht düngen',
+    schaedlinge: '• Spinnmilben (häufigstes Problem bei trockener Luft!) → Luftfeuchtigkeit erhöhen, abduschen\n• Schildläuse → Seifenlauge\n• Blattläuse → Neemöl\n• Wurzelfäule → bei Staunässe oder zu kalter Erde',
+    notes: 'Besonderheit:\n• Gestreifte, zebramusterartige Stiele — sehr dekorativ\n• Kann bei Lichtmangel oder im Winter einzelne Blätter verlieren — normal!\n• Neue Blätter wachsen aus der Mitte nach\n\nUmtopfen:\n• Wenn Wurzeln aus Drainagelöchern wachsen\n• Topf max. 3–5 cm größer wählen\n• Bester Zeitpunkt: Frühjahr\n• Beim Umtopfen Rhizome trennen für Vermehrung möglich\n\nÜberwinterung:\n• Kühler Standort ok (nicht unter 18 °C)\n• Gießen und Düngen reduzieren\n• Pflanze kann im Winter ruhen und weniger Blätter haben',
+    poison: '• Giftig für Menschen und Tiere\n• Enthält Calciumoxalat-Kristalle → Reizungen an Mund, Rachen, Haut\n• Handschuhe beim Umtopfen empfohlen\n• Außer Reichweite von Kindern und Haustieren halten',
+  },
+  'preset-monstera-thai': {
     standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Weiße/cremefarbene Blattteile verbrennen bei direkter Sonne!\n• Panaschierung braucht gutes Licht für intensive Farben\n• Temperatur 18–27 °C, nicht unter 15 °C\n• Standortwechsel unbedingt vermeiden — stresst die Pflanze stark!',
     erde: '• Sehr locker und luftig: Blumenerde + Perlite + Rindenmulch\n• pH 5,5–6,5 (leicht sauer)\n• Gute Drainage zwingend nötig\n• Kletterstab oder Moosstab unterstützt Wachstum und Blattentwicklung',
     giessen: '• Mäßig: obere 3–4 cm antrocknen lassen vor dem Gießen\n• Sommer: ca. 1× pro Woche\n• Winter: alle 2–3 Wochen\n• Wächst deutlich langsamer als normale Monstera — weniger Wasser nötig\n• Blätter regelmäßig mit feuchtem Tuch abwischen → bessere Fotosynthese',
@@ -1023,14 +1229,7 @@ const PRESET_PLANTS = [
     notes: 'Besonderheit Thai Constellation:\n• Panaschierung ist genetisch stabil — verliert Muster nicht!\n• Wächst langsamer als normale Monstera (weniger Chlorophyll)\n• Neue Blätter können Monate brauchen — Geduld!\n• Jedes Blatt ist einzigartig gemustert\n\nUmtopfen:\n• Alle 2 Jahre oder wenn Wurzeln herauswachsen\n• Frühjahr ist der beste Zeitpunkt\n• Kletterstab von Anfang an einsetzen\n\nNach dem Umzug:\n• Standortwechsel kann kurzzeitig Wachstumsstopp auslösen — normal',
     poison: '• Giftig für Tiere (Hunde, Katzen) und Menschen\n• Enthält Calciumoxalat-Kristalle → Reizungen an Mund und Haut\n• Handschuhe beim Umtopfen empfohlen',
   },
-  {
-    id: 'preset-gummibaum', licht: 'hell', luft: 'norm', duengeWo: 5,
-    name: 'Gummibaum',
-    species: 'Ficus elastica',
-    emoji: '🌳',
-    color: '#b8c8a0',
-    interval: 10,
-    lastWatered: null, photo: null,
+  'preset-gummibaum': {
     standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Braucht relativ viel Licht für gutes Wachstum\n• Temperatur mind. 18 °C, kein Zug\n• Buntblättrige Sorten brauchen noch mehr Licht\n• Standort möglichst nicht wechseln — wirft sonst Blätter ab',
     erde: '• Humusreiche, lockere, gut durchlässige Blumenerde\n• Mit Perlite oder Quarzsand mischen\n• Drainagelöcher zwingend nötig',
     giessen: '• Obere 2–3 cm antrocknen lassen — mäßig gießen\n• Winter: deutlich weniger\n• Staunässe vermeiden — Blattfall droht\n• Blätter regelmäßig mit feuchtem Tuch abwischen — verbessert Fotosynthese\n• Verträgt auch trockene Raumluft (bis 30% Luftfeuchtigkeit)',
@@ -1039,14 +1238,7 @@ const PRESET_PLANTS = [
     notes: 'Umtopfen: alle 2–3 Jahre im Frühjahr\nKein häufiger Standortwechsel — wirft sonst Blätter ab',
     poison: '• Milchsaft reizend für Haut und Schleimhäute\n• Handschuhe beim Schneiden empfohlen',
   },
-  {
-    id: 'preset-gluecksfeder', licht: 'halb', luft: 'norm', duengeWo: 7,
-    name: 'Glücksfeder',
-    species: 'Zamioculcas zamiifolia',
-    emoji: '🌿',
-    color: '#b8c8a0',
-    interval: 14,
-    lastWatered: null, photo: null,
+  'preset-gluecksfeder': {
     standort: 'Halbschattig — sehr tolerant, auch dunkle Ecken möglich\n• Nordfenster oder weiter weg vom Fenster\n• Mind. 1.000 Lux\n• Temperatur 18–26 °C',
     erde: '• Durchlässige Blumenerde mit Bims oder Perlite\n• Mineralisches Substrat möglich\n• Gute Drainage ist entscheidend',
     giessen: '• Sehr selten — Erde komplett trocknen lassen\n• Sommer: alle 1–2 Wochen testen (Fingertest)\n• Winter: alle 2–4 Wochen\n• Staunässe = Wurzelfäule — häufigste Todesursache!\n• Gelbe Blätter = zu viel Wasser',
@@ -1055,14 +1247,7 @@ const PRESET_PLANTS = [
     notes: 'Umtopfen: alle 2–3 Jahre im Frühjahr\nSpeichert Wasser in Knollen — vergibt Vergessen gut',
     poison: '• Leicht giftig für Menschen und Tiere\n• Handschuhe beim Umtopfen empfohlen',
   },
-  {
-    id: 'preset-gluecksfarn', licht: 'halb', luft: 'hoch-ns', duengeWo: 4,
-    name: 'Glücksfarn',
-    species: 'Nephrolepis exaltata',
-    emoji: '🌿',
-    color: '#b8c8a0',
-    interval: 4,
-    lastWatered: null, photo: null,
+  'preset-gluecksfarn': {
     standort: 'Halbschattig — Ost- oder Westfenster, kein Mittagslicht\n• Auch weiter vom Fenster möglich\n• Hohe Luftfeuchtigkeit wichtig — Badezimmer ideal\n• Temperatur 18–22 °C, kein Zug, nicht über Heizung',
     erde: '• Lockere, torfhaltige Blumenerde\n• Leicht sauer, gut wasserhaltend aber nicht stauend',
     giessen: '• Konstant gleichmäßig feucht halten — nie ganz austrocknen!\n• Ballentrockenheit → sofortiger Blattfall\n• Regelmäßig besprühen mit kalkfreiem Wasser\n• Alle 3–4 Tage testen',
@@ -1071,14 +1256,7 @@ const PRESET_PLANTS = [
     notes: 'Umtopfen: alle 1–2 Jahre\nTipp: auf Untersetzer mit Wasser stellen erhöht Luftfeuchtigkeit',
     poison: '',
   },
-  {
-    id: 'preset-yucca', licht: 'sonne', luft: 'norm', duengeWo: 5,
-    name: 'Yucca-Palme',
-    species: 'Yucca elephantipes',
-    emoji: '🌴',
-    color: '#b8c8a0',
-    interval: 18,
-    lastWatered: null, photo: null,
+  'preset-yucca': {
     standort: 'Direkte Sonne — Südfenster, direkt am Glas\n• Verträgt direktes Mittagslicht\n• Im Sommer gerne draußen\n• Temperatur mind. 10 °C',
     erde: '• Sandige, durchlässige Kakteenerde\n• Mit Quarzsand/Bims mischen\n• Drainageschicht im Topf nötig',
     giessen: '• Sehr sparsam — erst wenn Erde komplett trocken\n• Sommer: alle 2–3 Wochen\n• Winter: alle 4–6 Wochen\n• Staunässe = sofortiger Tod',
@@ -1087,14 +1265,7 @@ const PRESET_PLANTS = [
     notes: 'Sehr robust und langlebig — verzeiht Trockenheit besser als alle anderen Fehler',
     poison: '• Giftig für Hunde und Katzen',
   },
-  {
-    id: 'preset-dieffenbachie', licht: 'hell', luft: 'mit', duengeWo: 4,
-    name: 'Dieffenbachie',
-    species: 'Dieffenbachia seguine',
-    emoji: '🌱',
-    color: '#b8c8a0',
-    interval: 7,
-    lastWatered: null, photo: null,
+  'preset-dieffenbachie': {
     standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Mind. 1.500 Lux — Nordfenster ist zu dunkel\n• Temperatur 18–25 °C, kein Zug',
     erde: '• Nährstoffreiche, lockere, durchlässige Blumenerde\n• Lehmig-humos, nicht zu kompakt',
     giessen: '• Gleichmäßig feucht — obere 2 cm abtrocknen lassen\n• Winter: weniger\n• Blätter regelmäßig besprühen',
@@ -1103,14 +1274,7 @@ const PRESET_PLANTS = [
     notes: 'Umtopfen: alle 2 Jahre im Frühjahr',
     poison: '• Stark giftig — alle Pflanzenteile!\n• Pflanzensaft → Reizungen, Schwellungen im Mund\n• Handschuhe beim Umtopfen und Schneiden\n• Außer Reichweite von Kindern und Tieren',
   },
-  {
-    id: 'preset-hoya-carnosa', licht: 'hell', luft: 'norm', duengeWo: 4,
-    name: 'Wachsblume',
-    species: 'Hoya carnosa',
-    emoji: '🌸',
-    color: '#b8c8a0',
-    interval: 12,
-    lastWatered: null, photo: null,
+  'preset-hoya-carnosa': {
     standort: 'Helles Zimmer — etwas Morgensonne ok\n• Mehr Licht = mehr Blüten\n• Temperatur 18–25 °C',
     erde: '• Lockere Orchideenerde oder Blumenerde + Perlite + Rindenmulch\n• Sehr durchlässig',
     giessen: '• Erde komplett trocknen lassen zwischen Wassergaben\n• Sommer: alle 10–14 Tage\n• Winter: sehr selten\n• Blätter NICHT besprühen → Pilzgefahr',
@@ -1119,14 +1283,7 @@ const PRESET_PLANTS = [
     notes: 'Blütenstiel nach der Blüte NICHT abschneiden — blüht wieder!\nUmtopfen: selten — mag es wurzelgebunden',
     poison: '• Saft kann Haut reizen — Handschuhe empfohlen',
   },
-  {
-    id: 'preset-buntnessel', licht: 'hell', luft: 'mit', duengeWo: 2,
-    name: 'Buntnessel',
-    species: 'Coleus scutellarioides',
-    emoji: '🌺',
-    color: '#b8c8a0',
-    interval: 5,
-    lastWatered: null, photo: null,
+  'preset-buntnessel': {
     standort: 'Helles Zimmer — Ost- oder Westfenster\n• Kein Mittagslicht\n• Direktes Morgenlicht ideal für kräftige Blattfarben',
     erde: '• Nährstoffreiche, lockere Blumenerde\n• Gute Drainage',
     giessen: '• Regelmäßig, gleichmäßig feucht\n• Nie ganz austrocknen — Blätter hängen sofort\n• Blätter nicht benetzen',
@@ -1135,14 +1292,7 @@ const PRESET_PLANTS = [
     notes: 'Triebspitzen regelmäßig ausbrechen → buschigerer Wuchs\nRegelmäßiger Rückschnitt verlängert die Lebensdauer',
     poison: '',
   },
-  {
-    id: 'preset-ceropegia', licht: 'hell', luft: 'norm', duengeWo: 5,
-    name: 'String of Hearts',
-    species: 'Ceropegia woodii',
-    emoji: '🍃',
-    color: '#b8c8a0',
-    interval: 14,
-    lastWatered: null, photo: null,
+  'preset-ceropegia': {
     standort: 'Helles Zimmer — helles indirektes Licht, kein direktes Mittagslicht\n• Ost- oder Nordfenster ideal laut PLNTS\n• Als Hängepflanze hoch ans Fenster\n• Im Halbschatten langsamer Wuchs',
     erde: '• Sukkulentenerde mit extra Sand und Perlite\n• Sehr durchlässig — kleine Töpfe bevorzugt',
     giessen: '• Sehr sparsam — sukkulentenartig\n• Erde komplett durchtrocknen lassen\n• Sommer: alle 2 Wochen\n• Winter: alle 4–6 Wochen',
@@ -1151,14 +1301,7 @@ const PRESET_PLANTS = [
     notes: 'Tierfreundlich — ungiftig für Hunde und Katzen!\nIdeal für Hängeampel',
     poison: '',
   },
-  {
-    id: 'preset-plectranthus', licht: 'sonne', luft: 'norm', duengeWo: 4,
-    name: 'Weihrauchpflanze',
-    species: 'Plectranthus coleoides',
-    emoji: '🌿',
-    color: '#b8c8a0',
-    interval: 7,
-    lastWatered: null, photo: null,
+  'preset-plectranthus': {
     standort: 'Direkte Sonne — Süd- oder Westfenster\n• Auch Nordfenster möglich, dann langsamer Wuchs\n• Kein grelles Mittagslicht',
     erde: '• Universalerde mit Perlite\n• Gut durchlässig, nährstoffreich',
     giessen: '• Mäßig — Erde leicht feucht halten\n• Obere 2 cm abtrocknen lassen\n• Nicht staunass',
@@ -1167,14 +1310,7 @@ const PRESET_PLANTS = [
     notes: 'Triebe regelmäßig kürzen → regt Wachstum an\nLeicht zu vermehren durch Stecklinge',
     poison: '',
   },
-  {
-    id: 'preset-tradescantia', licht: 'hell', luft: 'norm', duengeWo: 2,
-    name: 'Dreimasterblume',
-    species: 'Tradescantia zebrina',
-    emoji: '🌿',
-    color: '#b8c8a0',
-    interval: 5,
-    lastWatered: null, photo: null,
+  'preset-tradescantia': {
     standort: 'Helles Zimmer — Ost- oder Westfenster\n• Für intensive Streifenfärbung möglichst viel Licht\n• Kein grelles Mittagslicht',
     erde: '• Lockere, nährstoffreiche Blumenerde\n• Durchlässig',
     giessen: '• Regelmäßig, gleichmäßig feucht\n• Obere 1–2 cm abtrocknen lassen\n• Blätter nicht benetzen',
@@ -1183,14 +1319,7 @@ const PRESET_PLANTS = [
     notes: 'Triebspitzen regelmäßig zurückschneiden → buschiger Wuchs\nSehr schnellwüchsig — leicht zu vermehren',
     poison: '',
   },
-  {
-    id: 'preset-efeutute', licht: 'halb', luft: 'mit', duengeWo: 4,
-    name: 'Efeutute',
-    species: 'Epipremnum aureum',
-    emoji: '🌿',
-    color: '#b8c8a0',
-    interval: 10,
-    lastWatered: null, photo: null,
+  'preset-efeutute': {
     standort: 'Halbschattig — sehr tolerant\n• Auch schattiger Standort möglich\n• Buntblättrige Sorten brauchen mehr Licht für intensive Farben',
     erde: '• Standard Blumenerde, locker und durchlässig',
     giessen: '• Mäßig — obere 2–3 cm trocknen lassen\n• Sommer: alle 1–2 Wochen\n• Winter: alle 3–4 Wochen\n• Überlebt auch mal vergessenes Gießen',
@@ -1199,14 +1328,7 @@ const PRESET_PLANTS = [
     notes: 'Umtopfen: alle 1–2 Jahre\nIdeal als Hänge- oder Kletterpflanze',
     poison: '• Schwach giftig für Tiere und Menschen',
   },
-  {
-    id: 'preset-alocasia-frydek', licht: 'hell', luft: 'hoch', duengeWo: 4,
-    name: 'Alocasia Frydek',
-    species: 'Alocasia micholitziana',
-    emoji: '🌿',
-    color: '#b8c8a0',
-    interval: 7,
-    lastWatered: null, photo: null,
+  'preset-alocasia-frydek': {
     standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Kein direktes Sonnenlicht — führt zu Blattbrand!\n• Luftfeuchtigkeit >60 % ist Kernbedingung\n• Temperatur 18–25 °C',
     erde: '• Sehr lockere Mischung: Blumenerde + Perlite + Rindenmulch (1:1:1)\n• Luftig und durchlässig',
     giessen: '• Gleichmäßig feucht — nie ganz austrocknen, nie staunass\n• Hohe Luftfeuchtigkeit ist Kernbedingung',
@@ -1215,14 +1337,7 @@ const PRESET_PLANTS = [
     notes: 'Umtopfen: wenn Wurzeln herauswachsen, Frühjahr',
     poison: '• Giftig für Menschen und Tiere\n• Calciumoxalat-Kristalle → Reizungen',
   },
-  {
-    id: 'preset-syngonium', licht: 'hell', luft: 'mit', duengeWo: 4,
-    name: 'Syngonium',
-    species: 'Syngonium podophyllum',
-    emoji: '🌱',
-    color: '#b8c8a0',
-    interval: 7,
-    lastWatered: null, photo: null,
+  'preset-syngonium': {
     standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Buntblättrige Sorten brauchen mehr Licht\n• Temperatur 18–25 °C',
     erde: '• Lockere, durchlässige Blumenerde\n• Leicht humos',
     giessen: '• Gleichmäßig feucht — obere 2 cm abtrocknen lassen\n• Winter: weniger\n• Hohe Luftfeuchtigkeit mag es',
@@ -1231,14 +1346,7 @@ const PRESET_PLANTS = [
     notes: 'Umtopfen: alle 1–2 Jahre',
     poison: '• Giftig für Tiere und Menschen\n• Pflanzensaft reizend',
   },
-  {
-    id: 'preset-bergpalme', licht: 'halb', luft: 'mit', duengeWo: 4,
-    name: 'Bergpalme',
-    species: 'Chamaedorea elegans',
-    emoji: '🌴',
-    color: '#b8c8a0',
-    interval: 6,
-    lastWatered: null, photo: null,
+  'preset-bergpalme': {
     standort: 'Halbschattig — auch Nordfenster möglich\n• Verträgt auch schattigen Standort\n• Kein Mittagslicht\n• Temperatur 16–24 °C',
     erde: '• Humusreiche, lockere Palmenerde\n• Leicht sauer, gute Drainage',
     giessen: '• Gleichmäßig feucht — nie ganz austrocknen\n• Kalkfreies Wasser bevorzugt\n• Regelmäßig besprühen',
@@ -1247,14 +1355,7 @@ const PRESET_PLANTS = [
     notes: 'Umtopfen: alle 2 Jahre im Frühjahr\nTierfreundlich — ungiftig!',
     poison: '',
   },
-  {
-    id: 'preset-bogenhanf', licht: 'halb', luft: 'norm', duengeWo: 7,
-    name: 'Bogenhanf',
-    species: 'Sansevieria trifasciata',
-    emoji: '🌿',
-    color: '#b8c8a0',
-    interval: 21,
-    lastWatered: null, photo: null,
+  'preset-bogenhanf': {
     standort: 'Halbschattig — sehr tolerant\n• Auch dunkle Ecken möglich\n• Verträgt sogar direkte Sonne\n• Temperatur egal — sehr robust',
     erde: '• Kaktus-/Sukkulentenerde mit extra Perlite\n• Sehr durchlässig — Drainageschicht im Topf',
     giessen: '• Sehr selten — erst wenn Erde komplett trocken\n• Sommer: alle 3–4 Wochen\n• Winter: alle 6–8 Wochen\n• Staunässe = sofortiger Tod (Wurzelfäule!)',
@@ -1263,14 +1364,7 @@ const PRESET_PLANTS = [
     notes: 'Nahezu unverwüstlich — perfekte Anfängerpflanze\nUmtopfen: alle 3–4 Jahre',
     poison: '• Leicht giftig für Tiere',
   },
-  {
-    id: 'preset-klivie', licht: 'hell', luft: 'norm', duengeWo: 2,
-    name: 'Klivie',
-    species: 'Clivia miniata',
-    emoji: '🌺',
-    color: '#b8c8a0',
-    interval: 10,
-    lastWatered: null, photo: null,
+  'preset-klivie': {
     standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Ruhephase (Okt.–Feb.): kühl und hell bei 8–12 °C\n• Ruhephase ist entscheidend für die Blüte!',
     erde: '• Nährstoffreiche, lockere, durchlässige Blumenerde',
     giessen: '• Mäßig — Erde leicht antrocknen lassen\n• Ruhephase (Okt.–Feb.): kaum gießen bei kühlem Standort\n• Nach Ruhephase: Blüte!',
@@ -1279,14 +1373,7 @@ const PRESET_PLANTS = [
     notes: 'Ruhephase ist entscheidend für Blüte!\nNicht zu oft umtopfen — blüht besser wenn wurzelgebunden',
     poison: '• Alle Pflanzenteile giftig für Menschen und Tiere!\n• Handschuhe beim Umtopfen',
   },
-  {
-    id: 'preset-monstera', licht: 'hell', luft: 'hoch', duengeWo: 4,
-    name: 'Monstera Fensterblatt',
-    species: 'Monstera deliciosa',
-    emoji: '🌿',
-    color: '#b8c8a0',
-    interval: 10,
-    lastWatered: null, photo: null,
+  'preset-monstera': {
     standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Südfenster: mind. 1–2 m Abstand vom Glas\n• Temperatur 18–27 °C',
     erde: '• Nährstoffreiche, lockere Blumenerde mit Perlite oder Rindenmulch\n• Leicht sauer',
     giessen: '• Obere 3–4 cm antrocknen lassen\n• Sommer: alle 1–2 Wochen\n• Winter: alle 3 Wochen\n• Blätter abwischen für bessere Fotosynthese\n• Luftfeuchtigkeit 50–70% — gelegentlich besprühen ok\n• Moosstab einsetzen: fördert größere Blätter',
@@ -1295,14 +1382,7 @@ const PRESET_PLANTS = [
     notes: 'Umtopfen: alle 2 Jahre im Frühjahr',
     poison: '• Giftig für Tiere (Hunde, Katzen)\n• Calciumoxalat-Kristalle → Reizungen',
   },
-  {
-    id: 'preset-zimmertanne', licht: 'hell', luft: 'mit', duengeWo: 5,
-    name: 'Zimmertanne',
-    species: 'Araucaria heterophylla',
-    emoji: '🌲',
-    color: '#b8c8a0',
-    interval: 7,
-    lastWatered: null, photo: null,
+  'preset-zimmertanne': {
     standort: 'Helles Zimmer — kein grelles Mittagslicht\n• Kühler Standort bevorzugt (16–20 °C)\n• Im Sommer gerne draußen im Halbschatten\n• Trockene Heizungsluft im Winter = größtes Problem',
     erde: '• Lockere, leicht saure Blumenerde\n• Gut durchlässig',
     giessen: '• Gleichmäßig feucht — nie staunass\n• Kalkfreies Wasser bevorzugt\n• Winter: weniger bei kühlem Standort',
@@ -1311,14 +1391,7 @@ const PRESET_PLANTS = [
     notes: 'Umtopfen: alle 2–3 Jahre im Frühjahr\nNadeln fallen bei Trockenheit oder Heizungsluft ab',
     poison: '',
   },
-  {
-    id: 'preset-ficus-audrey', licht: 'hell', luft: 'mit', duengeWo: 4,
-    name: 'Ficus Audrey',
-    species: "Ficus benghalensis 'Audrey'",
-    emoji: '🌳',
-    color: '#b8c8a0',
-    interval: 10,
-    lastWatered: null, photo: null,
+  'preset-ficus-audrey': {
     standort: 'Helles Zimmer — Ost- oder Westfenster, kein Mittagslicht\n• Temperatur mind. 15 °C, kein Zug\n• Standortwechsel vermeiden — wirft sonst Blätter ab',
     erde: '• Humusreiche, lockere, gut durchlässige Blumenerde\n• Mit Perlite mischen',
     giessen: '• Obere 3–4 cm antrocknen lassen\n• Winter: deutlich weniger\n• Blätter mit feuchtem Tuch abwischen',
@@ -1327,8 +1400,7 @@ const PRESET_PLANTS = [
     notes: 'Umtopfen: alle 2 Jahre im Frühjahr',
     poison: '• Milchsaft reizend\n• Handschuhe beim Schneiden',
   },
-];
-
+};
 // Pflanzen hinzufügen ODER aktualisieren — neue Felder werden immer aus Preset übernommen
 var SYNC_FIELDS = ['licht','luft','duengeWo','standort','erde','giessen','duengen','schaedlinge','notes','poison','name','species','color','interval','emoji'];
 for (var _i = 0; _i < PRESET_PLANTS.length; _i++) {
