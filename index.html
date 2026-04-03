@@ -1458,7 +1458,7 @@ function loadPlants() {
     }
   } catch(e) { plants = []; }
   // Preset-Felder immer aktuell halten — inkl. Pflegetexte und Vermehrung
-  var DATA_VERSION = '5.2'; // erhöhen wenn Preset-Daten sich ändern
+  var DATA_VERSION = '5.3'; // erhöhen wenn Preset-Daten sich ändern
   var savedVersion = localStorage.getItem('pl_data_version');
   plants.forEach(function(p) {
     var preset = PRESETS.filter(function(pr) { return pr.id === p.id; })[0];
@@ -1483,6 +1483,8 @@ function loadPlants() {
     }
   });
   localStorage.setItem('pl_data_version', DATA_VERSION);
+  // Aktualisierte Daten sofort zurückspeichern
+  try { localStorage.setItem('pl_v5', JSON.stringify(plants)); } catch(e) {}
 }
 
 function savePlants() {
