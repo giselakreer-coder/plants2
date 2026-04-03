@@ -1457,15 +1457,32 @@ function loadPlants() {
       }
     }
   } catch(e) { plants = []; }
-  // Preset-Felder immer aktuell halten
+  // Preset-Felder immer aktuell halten — inkl. Pflegetexte und Vermehrung
+  var DATA_VERSION = '5.2'; // erhöhen wenn Preset-Daten sich ändern
+  var savedVersion = localStorage.getItem('pl_data_version');
   plants.forEach(function(p) {
     var preset = PRESETS.filter(function(pr) { return pr.id === p.id; })[0];
     if (preset) {
+      // Kerndaten immer aktualisieren
       ['licht','luft','interval','duengeWo','poison'].forEach(function(f) {
         if (preset[f] !== undefined && !p._custom) p[f] = preset[f];
       });
+      // Pflegetexte: bei veralteter Version IMMER neu laden (außer _custom)
+      var textFields = ['standort','erde','giessen','duengen','schaedlinge','notes','vermehrung'];
+      if (savedVersion !== DATA_VERSION) {
+        // Neue Version: alle Preset-Texte aktualisieren (eigene Texte bleiben)
+        textFields.forEach(function(f) {
+          if (preset[f] && !p._custom) p[f] = preset[f];
+        });
+      } else {
+        // Gleiche Version: nur fehlende Felder ergänzen
+        textFields.forEach(function(f) {
+          if (!p[f] && preset[f]) p[f] = preset[f];
+        });
+      }
     }
   });
+  localStorage.setItem('pl_data_version', DATA_VERSION);
 }
 
 function savePlants() {
