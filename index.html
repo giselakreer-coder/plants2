@@ -53,9 +53,9 @@ nav button {
   background: none;
   border: none;
   border-top: 2px solid transparent;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: .8px;
+  letter-spacing: .5px;
   text-transform: uppercase;
   color: #9a8070;
   cursor: pointer;
@@ -104,7 +104,7 @@ h1 {
 
 /* ── Sektions-Label ── */
 .sec {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 1.2px;
   text-transform: uppercase;
@@ -137,7 +137,7 @@ h1 {
 .pthumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 11px; }
 .pinfo { flex: 1; min-width: 0; }
 .pinfo h3 { font-size: 15px; font-weight: 500; color: #2a2018; }
-.pinfo p { font-size: 12px; color: #8a7060; font-style: italic; margin-top: 1px; }
+.pinfo p { font-size: 13px; color: #8a7060; font-style: italic; margin-top: 1px; }
 .badges {
   display: flex;
   flex-direction: column;
@@ -154,72 +154,50 @@ h1 {
 }
 
 /* ── Legende ── */
-.legend {
-  padding: 8px 20px 8px;
-  border-bottom: 1.5px solid rgba(90,64,48,.12);
-  background: #e8dfd5;
-  position: sticky;
-  top: 88px;
-  z-index: 40;
-}
+.legend-bar { display: none; }
+.legend-filter-bar { display: none; }
+.legend-left, .legend-right { display: none; }
 .legend-title {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 1.2px;
   text-transform: uppercase;
   color: #8a7060;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
-.legend-cats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3px 16px;
-}
+.legend-cats { display: none; }
 .lcat {
   display: flex;
   align-items: center;
   gap: 6px;
+  margin-bottom: 3px;
 }
-.lcat-lbl { font-size: 12px; color: #6a5040; min-width: 68px; }
+.lcat-lbl { font-size: 12px; color: #6a5040; min-width: 48px; }
 .ldots { display: flex; gap: 3px; }
-.ld {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.lhint { font-size: 11px; color: #8a7060; }
+.ld { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.lhint { font-size: 12px; color: #8a7060; }
 
 /* ── Filter-Dropdown ── */
-.filter-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px 8px;
-  border-bottom: 1px solid rgba(90,64,48,.08);
-  background: #e8dfd5;
-  position: sticky;
-  top: 172px;
-  z-index: 39;
-}
-.filter-label { font-size: 12px; color: #8a7060; white-space: nowrap; }
+.filter-bar { display: none; }
+.filter-label { display: none; }
 .filter-btn {
-  flex: 1;
+  width: auto;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  gap: 4px;
+  padding: 6px 10px;
   background: rgba(255,255,255,.55);
   border: 1px solid rgba(90,64,48,.18);
   border-radius: 9px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: #2a2018;
   cursor: pointer;
   font-family: inherit;
   -webkit-tap-highlight-color: transparent;
 }
-.filter-btn .arrow { margin-left: auto; color: #8a7060; font-size: 11px; }
-.filter-btn.has-filter { border-color: #c87848; }
+.filter-btn .arrow { margin-left: auto; color: #8a7060; font-size: 10px; }
+.filter-btn.has-filter { border-color: #c87848; background: rgba(200,120,72,.08); }
 .filter-tags {
   display: flex;
   flex-wrap: wrap;
@@ -229,20 +207,22 @@ h1 {
 .ftag {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 11px;
+  gap: 3px;
+  font-size: 9px;
   font-weight: 600;
-  padding: 3px 8px;
+  padding: 2px 6px;
   border-radius: 20px;
   cursor: pointer;
+  margin-top: 3px;
 }
-.ftag-x { opacity: .65; margin-left: 1px; }
+.ftag-x { opacity: .65; }
 .filter-reset {
-  font-size: 11px;
+  font-size: 10px;
   color: #c87848;
   cursor: pointer;
-  padding: 3px 0;
-  align-self: center;
+  padding: 2px 0;
+  display: block;
+  margin-top: 3px;
 }
 
 /* ── Filter-Overlay ── */
@@ -256,12 +236,13 @@ h1 {
 .filter-overlay.open { display: block; }
 .filter-dropdown {
   position: absolute;
-  left: 20px; right: 20px;
+  right: 16px;
+  width: 230px;
   background: #f5ede5;
   border-radius: 14px;
   border: 1px solid rgba(90,64,48,.15);
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(42,32,24,.15);
+  box-shadow: 0 4px 20px rgba(42,32,24,.18);
 }
 .fsheet-title {
   font-size: 10px;
@@ -275,18 +256,29 @@ h1 {
 .fopt {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
+  gap: 8px;
+  padding: 7px 12px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: background .1s;
+  border-radius: 7px;
+  margin: 0 6px 1px;
 }
 .fopt:active { background: rgba(90,64,48,.06); }
-.fopt.selected { background: rgba(200,120,72,.1); }
-.fopt-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-.fopt-txt { flex: 1; font-size: 14px; color: #2a2018; }
+.fopt.selected .fopt-txt { font-weight: 600; }
+.fopt-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.fopt-txt { flex: 1; font-size: 13px; color: #2a2018; }
 .fopt-chk { display: none; }
 .fsheet-done { display: none; }
+.fsheet-title {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #8a7060;
+  padding: 5px 12px 2px;
+  background: rgba(90,64,48,.06);
+  margin-bottom: 1px;
+}
 
 /* ── Hinzufügen Button ── */
 .add-btn {
@@ -325,7 +317,7 @@ h1 {
 .acc-header:active { opacity: .8; }
 .acc-info { flex: 1; }
 .acc-title { font-size: 15px; font-weight: 500; color: #2a2018; }
-.acc-sub { font-size: 12px; color: #6a5040; margin-top: 2px; }
+.acc-sub { font-size: 13px; color: #6a5040; margin-top: 2px; }
 .acc-arrow { font-size: 13px; transition: transform .2s; }
 .acc-arrow.open { transform: rotate(90deg); }
 .acc-body { display: none; margin: 0 20px; border-radius: 0 0 12px 12px; overflow: hidden; }
@@ -402,7 +394,7 @@ h1 {
 .ruhe-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 9px; }
 .ruhe-info { flex: 1; }
 .ruhe-name { font-size: 13px; font-weight: 500; color: #5a2e10; }
-.ruhe-hint { font-size: 11px; color: #7a4828; margin-top: 2px; }
+.ruhe-hint { font-size: 12px; color: #7a4828; margin-top: 2px; }
 .ruhe-badge {
   font-size: 10px;
   font-weight: 700;
@@ -448,8 +440,8 @@ h1 {
   flex-shrink: 0;
   margin-top: 6px;
 }
-.saison-task-title { font-size: 13px; font-weight: 500; color: #fff; }
-.saison-task-sub { font-size: 11px; color: rgba(255,255,255,.8); margin-top: 1px; }
+.saison-task-title { font-size: 14px; font-weight: 500; color: #fff; }
+.saison-task-sub { font-size: 12px; color: rgba(255,255,255,.8); margin-top: 1px; }
 
 /* ── Detailansicht ── */
 .detail-page {
@@ -546,7 +538,7 @@ h1 {
   padding: 10px 12px;
 }
 .care-tile-label {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -571,7 +563,7 @@ h1 {
 }
 .care-head-title {
   flex: 1;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -854,6 +846,41 @@ input[type="file"] { display: none; }
   transition: opacity .15s;
 }
 .bpick-sel { opacity: 1; outline: 2px solid rgba(42,32,24,.3); outline-offset: 1px; }
+
+.plants-header {
+  padding: 52px 20px 10px;
+  border-bottom: 1.5px solid rgba(90,64,48,.12);
+  background: #e8dfd5;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.plants-top-row {
+  display: grid;
+  grid-template-columns: 1fr 44%;
+  align-items: flex-end;
+  margin-bottom: 10px;
+}
+.plants-top-row .add-btn {
+  width: 100%;
+  text-align: left;
+}
+.plants-divider {
+  height: 1px;
+  background: rgba(90,64,48,.12);
+  margin-bottom: 10px;
+}
+.plants-cols {
+  display: grid;
+  grid-template-columns: 1fr 44%;
+  gap: 16px;
+  align-items: flex-start;
+}
+.plants-legend { flex: 1; min-width: 0; }
+.plants-filter-col {
+  width: 100%;
+}
+.plants-filter-col .filter-btn { width: 100%; justify-content: center; }
 </style>
 </head>
 <body>
@@ -870,66 +897,36 @@ input[type="file"] { display: none; }
 
   <!-- ═══ TAB: PFLANZEN ═══ -->
   <div class="page" id="page-plants">
-    <div class="topbar">
-      <div class="topbar-row">
+    <div class="plants-header">
+      <!-- Zeile 1: Überschrift + Hinzufügen -->
+      <div class="plants-top-row">
         <div>
           <div class="eyebrow">Übersicht</div>
           <h1>Pflanzen</h1>
         </div>
         <button class="add-btn" id="btn-add">+ Hinzufügen</button>
       </div>
-    </div>
-    <!-- Legende -->
-    <div class="legend">
-      <div class="legend-title">Pflege</div>
-      <div class="legend-cats">
-        <div class="lcat">
-          <span class="lcat-lbl">Licht</span>
-          <div class="ldots">
-            <div class="ld" style="background:#f0c830"></div>
-            <div class="ld" style="background:#f7e88a"></div>
-            <div class="ld" style="background:#fdf6d0;border:1px solid #ede8a0"></div>
-          </div>
-          <span class="lhint">viel → wenig</span>
+      <!-- Trennstrich -->
+      <div class="plants-divider"></div>
+      <!-- Zeile 2: Legende links + Filter rechts -->
+      <div class="plants-cols">
+        <div class="plants-legend">
+          <div class="legend-title">Pflege</div>
+          <div class="lcat"><span class="lcat-lbl">Licht</span><div class="ldots"><div class="ld" style="background:#f0c830"></div><div class="ld" style="background:#f7e88a"></div><div class="ld" style="background:#fdf6d0;border:1px solid #ede8a0"></div></div><span class="lhint">viel→wenig</span></div>
+          <div class="lcat"><span class="lcat-lbl">Gießen</span><div class="ldots"><div class="ld" style="background:#378add"></div><div class="ld" style="background:#85b7eb"></div><div class="ld" style="background:#e6f1fb;border:1px solid #b5d4f4"></div></div><span class="lhint">oft→selten</span></div>
+          <div class="lcat"><span class="lcat-lbl">Luft</span><div class="ldots"><div class="ld" style="background:#1d9e75"></div><div class="ld" style="background:#5dcaa5"></div><div class="ld" style="background:#e1f5ee;border:1px solid #9fe1cb"></div></div><span class="lhint">hoch→trocken</span></div>
+          <div class="lcat"><span class="lcat-lbl">Düngen</span><div class="ldots"><div class="ld" style="background:#27500a"></div><div class="ld" style="background:#3b6d11"></div><div class="ld" style="background:#c0dd97;border:1px solid #a8c880"></div></div><span class="lhint">oft→selten</span></div>
         </div>
-        <div class="lcat">
-          <span class="lcat-lbl">Gießen</span>
-          <div class="ldots">
-            <div class="ld" style="background:#378add"></div>
-            <div class="ld" style="background:#85b7eb"></div>
-            <div class="ld" style="background:#e6f1fb;border:1px solid #b5d4f4"></div>
-          </div>
-          <span class="lhint">oft → selten</span>
-        </div>
-        <div class="lcat">
-          <span class="lcat-lbl">Luftfeuchte</span>
-          <div class="ldots">
-            <div class="ld" style="background:#1d9e75"></div>
-            <div class="ld" style="background:#5dcaa5"></div>
-            <div class="ld" style="background:#e1f5ee;border:1px solid #9fe1cb"></div>
-          </div>
-          <span class="lhint">hoch→normal</span>
-        </div>
-        <div class="lcat">
-          <span class="lcat-lbl">Düngen</span>
-          <div class="ldots">
-            <div class="ld" style="background:#27500a"></div>
-            <div class="ld" style="background:#3b6d11"></div>
-            <div class="ld" style="background:#c0dd97;border:1px solid #a8c880"></div>
-          </div>
-          <span class="lhint">oft → selten</span>
+        <div class="plants-filter-col">
+          <div class="legend-title">Filter</div>
+          <button class="filter-btn" id="filter-btn">
+            <span id="filter-btn-text">Alle</span>
+            <span class="arrow">▾</span>
+          </button>
+
         </div>
       </div>
     </div>
-    <!-- Filter -->
-    <div class="filter-bar">
-      <span class="filter-label">Zeige:</span>
-      <button class="filter-btn" id="filter-btn">
-        <span id="filter-btn-text">Alle Pflanzen</span>
-        <span class="arrow">▾</span>
-      </button>
-    </div>
-    <div class="filter-tags hidden" id="filter-tags"></div>
     <!-- Liste -->
     <div id="p-sec" class="sec"></div>
     <div id="plant-list"></div>
@@ -948,44 +945,44 @@ input[type="file"] { display: none; }
   <!-- ═══ FILTER-DROPDOWN ═══ -->
   <div class="filter-overlay" id="filter-overlay">
     <div class="filter-dropdown" id="filter-dropdown">
-      <div class="fopt fopt-all" data-key="all" data-val="all">
+      <div class="fopt fopt-all" data-key="all" data-val="all" data-selbg="rgba(90,64,48,.12)" data-selclr="#2a2018">
         <div class="fopt-dot" style="background:#c87848"></div>
         <span class="fopt-txt" style="font-weight:600">Alle Pflanzen</span>
       </div>
       <div class="fsheet-divider"></div>
       <div class="fsheet-title">Luftfeuchte</div>
-      <div class="fopt" data-key="luft" data-val="hoch">
+      <div class="fopt" data-key="luft" data-val="hoch" data-selbg="#1d9e75" data-selclr="#fff">
         <div class="fopt-dot" style="background:#1d9e75"></div>
         <span class="fopt-txt">Hoch — Luftbefeuchter</span>
       </div>
-      <div class="fopt" data-key="luft" data-val="hoch-ns">
+      <div class="fopt" data-key="luft" data-val="hoch-ns" data-selbg="#5dcaa5" data-selclr="#085041">
         <div class="fopt-dot" style="background:#5dcaa5"></div>
         <span class="fopt-txt">Hoch — kein Besprühen</span>
       </div>
-      <div class="fopt" data-key="luft" data-val="mit">
+      <div class="fopt" data-key="luft" data-val="mit" data-selbg="#9fe1cb" data-selclr="#0f6e56">
         <div class="fopt-dot" style="background:#9fe1cb"></div>
         <span class="fopt-txt">Moderat</span>
       </div>
-      <div class="fopt" data-key="luft" data-val="norm">
+      <div class="fopt" data-key="luft" data-val="norm" data-selbg="#e1f5ee" data-selclr="#0f6e56">
         <div class="fopt-dot" style="background:#e1f5ee;border:1px solid #9fe1cb"></div>
         <span class="fopt-txt">Trockentoleranz</span>
       </div>
       <div class="fsheet-divider"></div>
       <div class="fsheet-title">Licht</div>
-      <div class="fopt" data-key="licht" data-val="sonne">
+      <div class="fopt" data-key="licht" data-val="sonne" data-selbg="#f0c830" data-selclr="#6a4e08">
         <div class="fopt-dot" style="background:#f0c830"></div>
         <span class="fopt-txt">Direkte Sonne</span>
       </div>
-      <div class="fopt" data-key="licht" data-val="hell">
+      <div class="fopt" data-key="licht" data-val="hell" data-selbg="#f7e88a" data-selclr="#7a5e08">
         <div class="fopt-dot" style="background:#f7e88a"></div>
         <span class="fopt-txt">Helles Zimmer</span>
       </div>
-      <div class="fopt" data-key="licht" data-val="halb">
+      <div class="fopt" data-key="licht" data-val="halb" data-selbg="#fdf6d0" data-selclr="#8a7020">
         <div class="fopt-dot" style="background:#fdf6d0;border:1px solid #ede8a0"></div>
         <span class="fopt-txt">Halbschattig</span>
       </div>
       <div style="padding:10px 12px">
-        <button id="filter-apply-btn" style="width:100%;padding:11px;background:#c87848;border:none;border-radius:12px;color:#fff;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer">Filter anwenden</button>
+        <button id="filter-apply-btn" style="width:100%;padding:9px;background:#c87848;border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer">Anwenden</button>
       </div>
     </div>
   </div>
@@ -1068,10 +1065,10 @@ var GIESS_STYLE = function(d) {
   return {bg:'#e6f1fb',clr:'#185fa5',brd:'1px solid #b5d4f4'};
 };
 var LUFT_STYLE = {
-  'hoch':    {bg:'#1d9e75',clr:'#fff',lbl:'Hoch'},
-  'hoch-ns': {bg:'#5dcaa5',clr:'#085041',lbl:'Hoch, kein Besprühen'},
-  'mit':     {bg:'#9fe1cb',clr:'#0f6e56',lbl:'Moderat',brd:'1px solid #5dcaa5'},
-  'norm':    {bg:'#e1f5ee',clr:'#0f6e56',lbl:'Trockentoleranz',brd:'1px solid #9fe1cb'}
+  'hoch':    {bg:'#1d9e75',clr:'#fff',lbl:'Hoch',pct:'>60%',sub:'täglich besprühen ok'},
+  'hoch-ns': {bg:'#5dcaa5',clr:'#085041',lbl:'Hoch, kein Besprühen',pct:'>60%',sub:'Luftbefeuchter — Blätter trocken halten!'},
+  'mit':     {bg:'#9fe1cb',clr:'#0f6e56',lbl:'Moderat',pct:'40–60%',sub:'normale Wohnluft, gelegentlich besprühen ok',brd:'1px solid #5dcaa5'},
+  'norm':    {bg:'#e1f5ee',clr:'#0f6e56',lbl:'Trockentoleranz',pct:'<40%',sub:'robust — verträgt auch trockene Heizungsluft',brd:'1px solid #9fe1cb'}
 };
 var DUENG_STYLE = function(w) {
   if (w<=2) return {bg:'#27500a',clr:'#eaf3de'};
@@ -1700,7 +1697,11 @@ function openFilter() {
   var overlay = document.getElementById('filter-overlay');
   if (btn && dd) {
     var rect = btn.getBoundingClientRect();
-    dd.style.top = (rect.bottom + 4) + 'px';
+    var appRect = document.getElementById('app').getBoundingClientRect();
+    dd.style.top = (rect.bottom - appRect.top + 4) + 'px';
+    dd.style.right = '20px';
+    dd.style.left = 'auto';
+    dd.style.width = '220px';
   }
   // Aktive Filter markieren
   document.querySelectorAll('.fopt').forEach(function(opt) {
@@ -1713,6 +1714,23 @@ function openFilter() {
     }
   });
   overlay.classList.add('open');
+}
+
+function selectFopt(opt) {
+  var bg = opt.getAttribute('data-selbg') || 'rgba(90,64,48,.12)';
+  var clr = opt.getAttribute('data-selclr') || '#2a2018';
+  opt.classList.add('selected');
+  opt.style.background = bg;
+  var txt = opt.querySelector('.fopt-txt');
+  if (txt) { txt.style.color = clr; txt.style.fontWeight = '600'; }
+}
+
+function deselectFopt(opt) {
+  opt.classList.remove('selected');
+  opt.style.background = '';
+  opt.style.fontWeight = '';
+  var txt = opt.querySelector('.fopt-txt');
+  if (txt) { txt.style.color = ''; txt.style.fontWeight = ''; }
 }
 
 function closeFilter() {
@@ -1757,35 +1775,7 @@ function updateFilterBtn() {
 }
 
 function renderFilterTags() {
-  var tagsEl = document.getElementById('filter-tags');
-  var tags = [];
-  Object.keys(activeFilters).forEach(function(k) {
-    (activeFilters[k] || []).forEach(function(v) {
-      tags.push({k:k, v:v, key:k+'-'+v});
-    });
-  });
-  if (!tags.length) { tagsEl.classList.add('hidden'); return; }
-  tagsEl.classList.remove('hidden');
-  tagsEl.innerHTML = tags.map(function(t) {
-    var m = FILTER_META[t.key] || {label:t.v, bg:'#c87848', clr:'#fff'};
-    return '<span class="ftag" data-fkey="' + t.key + '" style="background:' + m.bg + ';color:' + m.clr + '">' +
-      m.label + '<span class="ftag-x">×</span></span>';
-  }).join('') + (tags.length > 1 ? '<span class="filter-reset" id="btn-reset-all">× alle</span>' : '');
-
-  tagsEl.querySelectorAll('.ftag').forEach(function(tag) {
-    tag.addEventListener('click', function() {
-      var key = this.getAttribute('data-fkey');
-      var parts = key.split('-');
-      var k = parts[0], v = parts.slice(1).join('-');
-      if (activeFilters[k]) {
-        activeFilters[k] = activeFilters[k].filter(function(x) { return x !== v; });
-      }
-      renderPlants();
-      updateFilterBtn();
-    });
-  });
-  var resetAll = document.getElementById('btn-reset-all');
-  if (resetAll) resetAll.addEventListener('click', resetFilters);
+  // Tags werden nicht mehr angezeigt — nur Filter-Button-Text wird aktualisiert
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1828,8 +1818,9 @@ function openDetail(plantId) {
     '<div class="care-tile-value" style="color:' + gs.clr + '">alle ' + (p.interval||7) + ' Tage</div>' +
     '</div>';
   html += '<div class="care-tile" style="background:' + us.bg + (us.brd?';border:'+us.brd:'') + '">' +
-    '<div class="care-tile-label" style="color:' + us.clr + '">Luftfeuchte</div>' +
+    '<div class="care-tile-label" style="color:' + us.clr + '">Luftfeuchte ' + us.pct + '</div>' +
     '<div class="care-tile-value" style="color:' + us.clr + '">' + us.lbl + '</div>' +
+    '<div class="care-tile-sub" style="color:' + us.clr + '">' + us.sub + '</div>' +
     '</div>';
   html += '<div class="care-tile" style="background:' + ds.bg + (ds.brd?';border:'+ds.brd:'') + '">' +
     '<div class="care-tile-label" style="color:' + ds.clr + '">Düngen</div>' +
@@ -1842,7 +1833,6 @@ function openDetail(plantId) {
     {k:'standort',    lbl:'Standort & Licht'},
     {k:'giessen',     lbl:'Gießen'},
     {k:'duengen',     lbl:'Düngen'},
-    {k:'luft_info',   lbl:'Luftfeuchtigkeit'},
     {k:'erde',        lbl:'Erde & Umtopfen'},
     {k:'schaedlinge', lbl:'Schädlinge'},
     {k:'vermehrung',  lbl:'Vermehrung'},
@@ -2213,10 +2203,9 @@ document.addEventListener('click', function(ev) {
     var key = foptEl.getAttribute('data-key');
     var val = foptEl.getAttribute('data-val');
     if (key === 'all') {
-      // Alle zurücksetzen
       activeFilters = {};
-      document.querySelectorAll('.fopt').forEach(function(o) { o.classList.remove('selected'); });
-      foptEl.classList.add('selected');
+      document.querySelectorAll('.fopt').forEach(function(o) { deselectFopt(o); });
+      selectFopt(foptEl);
       closeFilter();
       return;
     }
@@ -2224,13 +2213,14 @@ document.addEventListener('click', function(ev) {
     var idx = activeFilters[key].indexOf(val);
     if (idx > -1) {
       activeFilters[key].splice(idx, 1);
+      deselectFopt(foptEl);
     } else {
       activeFilters[key].push(val);
+      selectFopt(foptEl);
     }
-    foptEl.classList.toggle('selected', idx === -1);
-    // "Alle" deselektieren wenn ein Filter aktiv
+    // "Alle" deselektieren
     var allOpt = document.querySelector('.fopt-all');
-    if (allOpt) allOpt.classList.remove('selected');
+    if (allOpt) deselectFopt(allOpt);
     renderPlants();
     updateFilterBtn();
     return;
