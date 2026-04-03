@@ -926,6 +926,24 @@ input[type="file"] { display: none; }
 .search-wrap { position: relative; }
 .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; color: #8a7060; pointer-events: none; }
 .search-clear { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; color: #8a7060; cursor: pointer; display: none; background: none; border: none; padding: 0; line-height: 1; }
+
+.reset-zone {
+  padding: 24px 20px;
+  text-align: center;
+  border-top: 1px solid rgba(90,64,48,.1);
+  margin-top: 8px;
+}
+.reset-btn-small {
+  font-size: 11px;
+  color: #b0a090;
+  background: none;
+  border: 1px solid rgba(90,64,48,.15);
+  border-radius: 20px;
+  padding: 6px 16px;
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
 </style>
 </head>
 <body>
@@ -986,6 +1004,9 @@ input[type="file"] { display: none; }
     <div class="empty hidden" id="p-empty">
       <h3>Noch keine Pflanzen</h3>
       <p>Tippe auf „+ Hinzufügen" um deine erste Pflanze anzulegen.</p>
+    </div>
+    <div class="reset-zone">
+      <button class="reset-btn-small" onclick="resetAppData()">App-Daten zurücksetzen</button>
     </div>
   </div>
 
@@ -1436,6 +1457,23 @@ var detailId = null;
 var photoData = null;   // base64 des neuen Fotos
 var photoCallback = null;
 
+
+function resetAppData() {
+  if (confirm('Alle App-Daten löschen und neu starten? Deine eigenen Änderungen gehen verloren.')) {
+    localStorage.removeItem('pl_v5');
+    localStorage.removeItem('pl_v4');
+    localStorage.removeItem('pl_data_version');
+    // Alle done_ Keys löschen
+    var toDelete = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var key = localStorage.key(i);
+      if (key && key.indexOf('done_') === 0) toDelete.push(key);
+    }
+    toDelete.forEach(function(k) { localStorage.removeItem(k); });
+    // Neu laden
+    window.location.reload();
+  }
+}
 function loadPlants() {
   try {
     var raw = localStorage.getItem('pl_v5');
