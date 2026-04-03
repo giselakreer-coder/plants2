@@ -1478,6 +1478,13 @@ function loadPlants() {
   try {
     var raw = localStorage.getItem('pl_v5');
     if (raw) plants = JSON.parse(raw);
+    // Alte Wikimedia-URLs entfernen — nur eigene Fotos (base64) behalten
+    plants.forEach(function(p) {
+      if (p.photo && p.photo.indexOf('http') === 0) p.photo = null;
+      if (p.photos) p.photos = p.photos.map(function(ph) {
+        return (ph && ph.indexOf('http') === 0) ? null : ph;
+      });
+    });
     // Migration von v4
     if (!plants.length) {
       var old = localStorage.getItem('pl_v4');
