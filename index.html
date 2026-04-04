@@ -538,7 +538,7 @@ h1 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-  padding: 14px 20px 0;
+  padding: 12px 20px 0;
 }
 .care-tile {
   border-radius: 12px;
@@ -2070,14 +2070,18 @@ function openDetail(plantId) {
 
   var html = '';
 
-  // Foto
-  html += '<div class="detail-photo">';
-  if (src) {
-    html += '<img class="detail-photo-img" src="' + src + '">';
-  } else {
-    html += '<div class="detail-photo-placeholder"><span style="font-size:32px">' + (p.emoji||'🪴') + '</span><span>Kein Foto</span></div>';
-  }
-  html += '</div>';
+  // Kompakter Header: Thumb + Name + Species
+  var thumbHtml = src
+    ? '<img src="' + src + '" style="width:100%;height:100%;object-fit:cover;border-radius:12px">'
+    : '<span style="font-size:28px">' + (p.emoji||'🪴') + '</span>';
+  var thumbBg = src ? 'transparent' : (p.color||'#b8c8a0');
+  html += '<div style="display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid rgba(90,64,48,.08)">' +
+    '<div style="width:58px;height:58px;border-radius:12px;background:' + thumbBg + ';flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden">' + thumbHtml + '</div>' +
+    '<div style="flex:1;min-width:0">' +
+      '<div style="font-size:18px;font-weight:400;color:#2a2018;line-height:1.3">' + p.name + '</div>' +
+      (p.species ? '<div style="font-size:12px;color:#8a7060;font-style:italic;margin-top:2px">' + p.species + '</div>' : '') +
+    '</div>' +
+    '</div>';
 
   // Giftig-Badge
 
